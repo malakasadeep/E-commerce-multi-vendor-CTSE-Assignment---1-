@@ -107,13 +107,13 @@ export const login = async (
       return next(new ValidationError('Invalid email or password'));
     }
     const accsessToken = jwt.sign(
-      { userId: user.id, role: 'user' },
+      { id: user.id, role: 'user' },
       process.env.ACCESS_TOKEN_SECRET as string,
       { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
-      { userId: user.id, role: 'user' },
+      { id: user.id, role: 'user' },
       process.env.REFRESH_TOKEN_SECRET as string,
       { expiresIn: '7d' }
     );
@@ -195,7 +195,7 @@ export const refreshToken = async (
   next: NextFunction
 ) => {
   try {
-    const refreshToken =  req.cookies["refreshToken"] || req.cookies["sellerRefreshToken"] || req.headers.authorization?.split(' ')[1];
+    const refreshToken =  req.cookies["refreshToken"] || req.cookies["sellerRefreshToken"] || req.cookies["adminRefreshToken"] || req.headers.authorization?.split(' ')[1];
 
     if (!refreshToken) {
       throw new ValidationError('Refresh token not found');
@@ -218,6 +218,8 @@ export const refreshToken = async (
       account = await prisma.user.findUnique({ where: { id: decoded.id } });
     }else if (decoded.role === 'seller'){
       account = await prisma.sellers.findUnique({ where: { id: decoded.id }, include: { shop: true } });
+    }else if (decoded.role === 'admin'){
+      account = await prisma.admin.findUnique({ where: { id: decoded.id } });
     }
 
     if (!account) {
@@ -234,6 +236,8 @@ export const refreshToken = async (
       setCookie(res, 'accessToken', newAccessToken);
     }else if(decoded.role === 'seller'){
       setCookie(res, 'sellerAccessToken', newAccessToken);
+    }else if(decoded.role === 'admin'){
+      setCookie(res, 'adminAccessToken', newAccessToken);
     }
 
     return res.status(200).json({
@@ -488,5 +492,112 @@ export const getSeller = async (
     });
   } catch (error) {
     return next(error);
+  }
+};
+
+// Admin Authentication
+export const loginAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(new ValidationError('Missing required fields'));
+    }
+    const admin = await prisma.admin.findUnique({ where: { email } });
+    if (!admin) {
+      return next(new ValidationError('Invalid email or password'));
+    }
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
+    if (!isPasswordValid) {
+      return next(new ValidationError('Invalid email or password'));
+    }
+    const accessToken = jwt.sign(
+      { id: admin.id, role: 'admin' },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      { expiresIn: '15m' }
+    );
+    const adminRefreshToken = jwt.sign(
+      { id: admin.id, role: 'admin' },
+      process.env.REFRESH_TOKEN_SECRET as string,
+      { expiresIn: '7d' }
+    );
+    setCookie(res, 'adminAccessToken', accessToken);
+    setCookie(res, 'adminRefreshToken', adminRefreshToken);
+    return res.status(200).json({
+      success: true,
+      message: 'Admin logged in successfully',
+      admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role },
+      accessToken,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const getAdmin = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const admin = req.admin;
+    if (!admin) {
+      return next(new ValidationError('Admin not found'));
+    }
+    return res.status(200).json({
+      success: true,
+      admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role },
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const logoutAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    res.clearCookie('adminAccessToken');
+    res.clearCookie('adminRefreshToken');
+    return res.status(200).json({
+      success: true,
+      message: 'Admin logged out successfully',
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// Seed admin - called on service startup
+export const seedAdmin = async () => {
+  try {
+    const adminEmail = process.env.ADMIN_SEED_EMAIL || 'admin@eshop.com';
+    const adminPassword = process.env.ADMIN_SEED_PASSWORD || 'admin123';
+
+    const existingAdmin = await prisma.admin.findUnique({
+      where: { email: adminEmail },
+    });
+
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      await prisma.admin.create({
+        data: {
+          name: 'Super Admin',
+          email: adminEmail,
+          password: hashedPassword,
+          role: 'super_admin',
+        },
+      });
+      console.log(`Admin seeded successfully: ${adminEmail}`);
+    } else {
+      console.log('Admin already exists, skipping seed.');
+    }
+  } catch (error) {
+    console.error('Error seeding admin:', error);
   }
 };

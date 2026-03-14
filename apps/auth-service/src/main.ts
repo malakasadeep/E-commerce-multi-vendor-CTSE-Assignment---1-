@@ -4,6 +4,7 @@ import * as path from 'path';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import router from './routes/auth.router';
+import { seedAdmin } from './controller/auth.controller';
 import swaggerUi from 'swagger-ui-express';
 const swaggerDocument = require('./swagger-output.json');
 
@@ -14,6 +15,7 @@ app.use(
     origin: [
       'http://localhost:3000',
       'http://localhost:3001',
+      'http://localhost:3002',
       'http://localhost:4200',
     ],
     allowedHeaders: ['Authorization', 'Content-Type'],
@@ -41,9 +43,11 @@ app.use(errorMiddleware);
 
 const port = process.env.PORT || 6001;
 
-const server = app.listen(port, () => {
+const server = app.listen(port, async () => {
   console.log(`Auth service listening at http://localhost:${port}/api`);
   console.log(`Docs available at http://localhost:${port}/docs-json`);
+  // Seed admin on startup
+  await seedAdmin();
 });
 server.on('error', err => {
   console.log('Server error: ', err);

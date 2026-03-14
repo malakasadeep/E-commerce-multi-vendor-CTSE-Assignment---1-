@@ -31,6 +31,9 @@ model User {
 
   shopReviews shopReviews[]
   productReviews ProductReview[]
+  orders Order[]
+  payments Payment[]
+  orderReviews OrderReview[]
 }
 
 model shopReviews {
@@ -95,6 +98,7 @@ model Product {
   shop           Shops           @relation(fields: [shopId], references: [id])
   ratings        Float           @default(0)
   reviews        ProductReview[]
+  orderItems     OrderItem[]
   sold_out       Int             @default(0)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
@@ -114,6 +118,77 @@ model ProductReview {
   user      User     @relation(fields: [userId], references: [id])
   productId String   @db.ObjectId
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating    Float
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Admin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber     String      @unique
+  userId          String      @db.ObjectId
+  user            User        @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+  subtotal        Float
+  serviceFee      Float
+  total           Float
+  status          String      @default("pending")
+  shippingAddress Json
+  paymentId       String?     @db.ObjectId
+  payment         Payment?    @relation(fields: [paymentId], references: [id])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model OrderItem {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId       String   @db.ObjectId
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId     String   @db.ObjectId
+  product       Product  @relation(fields: [productId], references: [id])
+  sellerId      String   @db.ObjectId
+  shopId        String   @db.ObjectId
+  productName   String
+  productImage  String?
+  price         Float
+  quantity      Int
+  sellerAmount  Float
+  platformFee   Float
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Payment {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  stripePaymentId String   @unique
+  userId          String   @db.ObjectId
+  user            User     @relation(fields: [userId], references: [id])
+  amount          Float
+  currency        String   @default("usd")
+  status          String   @default("pending")
+  orders          Order[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model OrderReview {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  orderId   String   @db.ObjectId
+  sellerId  String   @db.ObjectId
   rating    Float
   comment   String
   createdAt DateTime @default(now())

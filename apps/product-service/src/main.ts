@@ -4,6 +4,7 @@ import * as path from 'path';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import router from './routes/product.router';
+import { startProductConsumer } from './utils/kafka.consumer';
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(
     origin: [
       'http://localhost:3000',
       'http://localhost:3001',
+      'http://localhost:3002',
       'http://localhost:4200',
     ],
     allowedHeaders: ['Authorization', 'Content-Type'],
@@ -36,6 +38,7 @@ const port = process.env.PRODUCT_SERVICE_PORT || 6002;
 
 const server = app.listen(port, () => {
   console.log(`Product service listening at http://localhost:${port}/product-api`);
+  startProductConsumer();
 });
 server.on('error', (err) => {
   console.log('Server error: ', err);

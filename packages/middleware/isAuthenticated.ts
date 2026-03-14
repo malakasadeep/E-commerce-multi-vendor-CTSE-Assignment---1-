@@ -5,17 +5,14 @@ import jwt from 'jsonwebtoken';
 const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
     
     try {
-        const token = req.cookies["accessToken"] || req.cookies["sellerAccessToken"] || req.headers.authorization?.split(' ')[1];
+        const token = req.cookies["accessToken"] || req.cookies["sellerAccessToken"] || req.cookies["adminAccessToken"] || req.headers.authorization?.split(' ')[1];
 
         if (!token) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        // Verify the token and extract user information
-        // You can use a library like jsonwebtoken to verify the token
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as { id: string; role: "user" | "seller"};
-        
-        
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as { id: string; role: "user" | "seller" | "admin" };
+
         if (!decoded || !decoded.id || !decoded.role) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
@@ -27,6 +24,9 @@ const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
         }else if (decoded.role === "seller"){
             account = await prisma.sellers.findUnique({ where: { id: decoded.id }, include: { shop: true } });
             req.seller = account;
+        }else if (decoded.role === "admin"){
+            account = await prisma.admin.findUnique({ where: { id: decoded.id } });
+            req.admin = account;
         }
 
         if (!account) {

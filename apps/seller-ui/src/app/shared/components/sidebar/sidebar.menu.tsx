@@ -10,7 +10,8 @@ import {
     Settings,
     Bell,
     Tag,
-    Plus
+    Plus,
+    TrendingUp,
 } from 'lucide-react';
 
 export interface SidebarMenuItem {
@@ -42,6 +43,11 @@ export const SIDEBAR_MENU: SidebarMenuSection[] = [
                 label: 'Orders',
                 href: '/dashboard/orders',
                 icon: ShoppingBag,
+            },
+            {
+                label: 'Revenue',
+                href: '/dashboard/revenue',
+                icon: TrendingUp,
             },
             {
                 label: 'Payments',

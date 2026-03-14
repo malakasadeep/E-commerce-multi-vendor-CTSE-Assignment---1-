@@ -4,14 +4,17 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, User2Icon, Heart, ShoppingCart, LogOut } from 'lucide-react';
+import { useAtom } from 'jotai';
+import { Search, User2Icon, Heart, ShoppingCart, LogOut, Package } from 'lucide-react';
 import HeaderBottom from './header-bottom';
 import useUser from '../../../hooks/useUser';
+import { cartCountAtom } from '../../../store/cartAtom';
 
 function Header() {
   const { user, isLoading, isError } = useUser();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [cartCount] = useAtom(cartCountAtom);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,9 +68,15 @@ function Header() {
                   <span className="block font-semibold">{user.firstName || user.name || 'User'}</span>
                 </div>
               </Link>
+              <Link
+                href="/orders"
+                className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors"
+                title="My Orders"
+              >
+                <Package size={20} />
+              </Link>
               <button
                 onClick={() => {
-                  // Add logout logic here
                   localStorage.removeItem('token');
                   window.location.reload();
                 }}
@@ -100,9 +109,11 @@ function Header() {
           </Link>
           <Link href={'/cart'} className="relative cursor-pointer">
             <ShoppingCart size={25} />
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              0
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {cartCount > 99 ? '99+' : cartCount}
+              </span>
+            )}
           </Link>
         </div>
       </div>

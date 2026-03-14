@@ -1,0 +1,36 @@
+{
+  "name": "@eshop/payment-service",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "payment-service",
+    "projectType": "application",
+    "sourceRoot": "payment-service/src",
+    "targets": {
+      "serve": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "payment-service:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "payment-service:build:development"
+          },
+          "production": {
+            "buildTarget": "payment-service:build:production"
+          }
+        }
+      },
+      "test": {
+        "options": {
+          "passWithNoTests": true
+        }
+      }
+    }
+  }
+}

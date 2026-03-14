@@ -1,0 +1,36 @@
+{
+  "name": "@eshop/review-service",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "review-service",
+    "projectType": "application",
+    "sourceRoot": "review-service/src",
+    "targets": {
+      "serve": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "review-service:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "review-service:build:development"
+          },
+          "production": {
+            "buildTarget": "review-service:build:production"
+          }
+        }
+      },
+      "test": {
+        "options": {
+          "passWithNoTests": true
+        }
+      }
+    }
+  }
+}

@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useAtom } from 'jotai';
 import { useProduct } from '../../../../hooks/useProducts';
 import { ProductReviewSection } from '../../../../components/products/ProductReviewSection';
 import { Button } from '../../../../components/ui/button';
 import { Badge } from '../../../../components/ui/badge';
 import { Skeleton } from '../../../../components/ui/skeleton';
+import { cartAtom, CartItem } from '../../../../store/cartAtom';
 import {
   Star,
   ShoppingCart,
@@ -18,6 +20,9 @@ import {
   ImageIcon,
   ChevronLeft,
   ChevronRight,
+  Minus,
+  Plus,
+  Check,
 } from 'lucide-react';
 
 export default function ProductDetailPage() {
@@ -25,6 +30,41 @@ export default function ProductDetailPage() {
   const id = params.id as string;
   const { data, isLoading } = useProduct(id);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [cart, setCart] = useAtom(cartAtom);
+  const [quantity, setQuantity] = useState(1);
+  const [addedToCart, setAddedToCart] = useState(false);
+
+  const existingCartItem = cart.find((item) => item.productId === id);
+
+  const handleAddToCart = () => {
+    if (!data?.product) return;
+    const product = data.product;
+    const effectivePrice = product.discountPrice && product.discountPrice < product.price
+      ? product.discountPrice
+      : product.price;
+
+    if (existingCartItem) {
+      const newQty = Math.min(product.stock, existingCartItem.quantity + quantity);
+      setCart(cart.map((item) =>
+        item.productId === id ? { ...item, quantity: newQty } : item
+      ));
+    } else {
+      const newItem: CartItem = {
+        productId: product.id,
+        name: product.name,
+        price: effectivePrice,
+        quantity,
+        image: product.images?.[0]?.url || null,
+        sellerId: product.sellerId,
+        shopId: product.shop?.id || '',
+        shopName: product.shop?.name || '',
+        stock: product.stock,
+      };
+      setCart([...cart, newItem]);
+    }
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
+  };
 
   if (isLoading) {
     return (
@@ -204,11 +244,50 @@ export default function ProductDetailPage() {
             </span>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-2">
-            <Button className="flex-1" size="lg" disabled={product.stock === 0}>
-              <ShoppingCart className="h-5 w-5 mr-2" />
-              Add to Cart
+          {/* Quantity Selector + Action Buttons */}
+          {product.stock > 0 && (
+            <div className="flex items-center gap-3 pt-2">
+              <span className="text-sm font-medium text-gray-700">Qty:</span>
+              <div className="flex items-center border rounded-lg">
+                <button
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  className="w-9 h-9 flex items-center justify-center hover:bg-gray-50 rounded-l-lg"
+                  disabled={quantity <= 1}
+                >
+                  <Minus className="h-3 w-3" />
+                </button>
+                <span className="w-10 text-center font-medium text-sm">{quantity}</span>
+                <button
+                  onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+                  className="w-9 h-9 flex items-center justify-center hover:bg-gray-50 rounded-r-lg"
+                  disabled={quantity >= product.stock}
+                >
+                  <Plus className="h-3 w-3" />
+                </button>
+              </div>
+              {existingCartItem && (
+                <span className="text-xs text-gray-500">({existingCartItem.quantity} in cart)</span>
+              )}
+            </div>
+          )}
+          <div className="flex gap-3">
+            <Button
+              className="flex-1"
+              size="lg"
+              disabled={product.stock === 0}
+              onClick={handleAddToCart}
+            >
+              {addedToCart ? (
+                <>
+                  <Check className="h-5 w-5 mr-2" />
+                  Added!
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  {existingCartItem ? 'Update Cart' : 'Add to Cart'}
+                </>
+              )}
             </Button>
             <Button variant="outline" size="lg">
               <Heart className="h-5 w-5" />

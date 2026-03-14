@@ -4,7 +4,10 @@
       "Bash(grep -E \"\\\\.\\(ts|json\\)$\")",
       "Bash(grep -r @packages '/d/SLIIT/CTSE project/eshop/apps' --include=*.ts --include=*.tsx --include=*.js)",
       "Bash(npx prisma:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(mkdir -p \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\\\\apps\\\\admin-ui\\\\src\\\\app\\\\\\(routes\\)\\\\dashboard\\\\sellers\\\\[id]\")",
+      "Bash(mkdir -p \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\\\\apps\\\\admin-ui\\\\src\\\\app\\\\\\(routes\\)\\\\dashboard\\\\customers\\\\[id]\")",
+      "Bash(mkdir -p \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\\\\apps\\\\admin-ui\\\\src\\\\app\\\\\\(routes\\)\\\\dashboard\\\\orders\\\\[id]\")"
     ]
   }
 }

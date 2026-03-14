@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "out-tsc/order-service-spec",
+    "types": ["jest", "node"],
+    "rootDir": "../../"
+  },
+  "include": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ]
+}

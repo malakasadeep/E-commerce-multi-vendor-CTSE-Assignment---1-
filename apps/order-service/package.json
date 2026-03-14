@@ -1,0 +1,36 @@
+{
+  "name": "@eshop/order-service",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "order-service",
+    "projectType": "application",
+    "sourceRoot": "order-service/src",
+    "targets": {
+      "serve": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "order-service:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "order-service:build:development"
+          },
+          "production": {
+            "buildTarget": "order-service:build:production"
+          }
+        }
+      },
+      "test": {
+        "options": {
+          "passWithNoTests": true
+        }
+      }
+    }
+  }
+}

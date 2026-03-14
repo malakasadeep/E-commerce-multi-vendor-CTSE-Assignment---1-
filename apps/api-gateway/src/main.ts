@@ -20,6 +20,7 @@ app.use(
     origin: [
       'http://localhost:3000',
       'http://localhost:3001',
+      'http://localhost:3002',
       'http://localhost:4200',
     ],
     allowedHeaders: ['Authorization', 'Content-Type'],
@@ -89,6 +90,81 @@ app.use(
     },
     onError: (err, req, res) => {
       console.error('Product proxy error:', err);
+      (res as express.Response)
+        .status(500)
+        .json({ error: 'Proxy error', message: err.message });
+    },
+  })
+);
+
+// Order Service Proxy
+app.use(
+  '/order-api',
+  createProxyMiddleware({
+    target: 'http://localhost:6003',
+    changeOrigin: true,
+    timeout: 60000,
+    proxyTimeout: 60000,
+    onProxyReq: (proxyReq, req, res) => {
+      console.log(
+        `[Proxy] ${req.method} ${req.url} -> http://localhost:6003${req.url}`
+      );
+    },
+    onProxyRes: (proxyRes, req, res) => {
+      console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
+    },
+    onError: (err, req, res) => {
+      console.error('Order proxy error:', err);
+      (res as express.Response)
+        .status(500)
+        .json({ error: 'Proxy error', message: err.message });
+    },
+  })
+);
+
+// Payment Service Proxy
+app.use(
+  '/payment-api',
+  createProxyMiddleware({
+    target: 'http://localhost:6004',
+    changeOrigin: true,
+    timeout: 60000,
+    proxyTimeout: 60000,
+    onProxyReq: (proxyReq, req, res) => {
+      console.log(
+        `[Proxy] ${req.method} ${req.url} -> http://localhost:6004${req.url}`
+      );
+    },
+    onProxyRes: (proxyRes, req, res) => {
+      console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
+    },
+    onError: (err, req, res) => {
+      console.error('Payment proxy error:', err);
+      (res as express.Response)
+        .status(500)
+        .json({ error: 'Proxy error', message: err.message });
+    },
+  })
+);
+
+// Review Service Proxy
+app.use(
+  '/review-api',
+  createProxyMiddleware({
+    target: 'http://localhost:6005',
+    changeOrigin: true,
+    timeout: 60000,
+    proxyTimeout: 60000,
+    onProxyReq: (proxyReq, req, res) => {
+      console.log(
+        `[Proxy] ${req.method} ${req.url} -> http://localhost:6005${req.url}`
+      );
+    },
+    onProxyRes: (proxyRes, req, res) => {
+      console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
+    },
+    onError: (err, req, res) => {
+      console.error('Review proxy error:', err);
       (res as express.Response)
         .status(500)
         .json({ error: 'Proxy error', message: err.message });

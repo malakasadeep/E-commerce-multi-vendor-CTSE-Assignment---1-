@@ -30,4 +30,25 @@ export const PRODUCT_TOPICS = {
   PRODUCT_DELETED: 'product.deleted',
 } as const;
 
+export const ORDER_TOPICS = {
+  ORDER_PLACED: 'order.placed',
+  ORDER_CONFIRMED: 'order.confirmed',
+  ORDER_SHIPPED: 'order.shipped',
+  ORDER_DELIVERED: 'order.delivered',
+  ORDER_CANCELLED: 'order.cancelled',
+  ORDER_REFUNDED: 'order.refunded',
+} as const;
+
+export const PAYMENT_TOPICS = {
+  PAYMENT_CREATED: 'payment.created',
+  PAYMENT_SUCCEEDED: 'payment.succeeded',
+  PAYMENT_FAILED: 'payment.failed',
+  PAYMENT_REFUNDED: 'payment.refunded',
+} as const;
+
+export const REVIEW_TOPICS = {
+  REVIEW_CREATED: 'review.created',
+  REVIEW_DELETED: 'review.deleted',
+} as const;
+
 export default kafka;

@@ -1,37 +1,53 @@
 "use client";
 import React from 'react';
+import Link from 'next/link';
 import useSeller from '../../../hooks/useSeller';
-import { Package, ShoppingBag, DollarSign, TrendingUp, Users } from 'lucide-react';
+import { useSellerRevenue, useSellerOrders } from '../../../hooks/useOrders';
+import { Badge } from '../../../components/ui/badge';
+import { Package, ShoppingBag, DollarSign, TrendingUp, Users, Truck } from 'lucide-react';
+
+const STATUS_COLORS: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-800',
+  processing: 'bg-indigo-100 text-indigo-800',
+  shipped: 'bg-purple-100 text-purple-800',
+  delivered: 'bg-green-100 text-green-800',
+  cancelled: 'bg-red-100 text-red-800',
+};
 
 function DashBoard() {
   const { seller, isLoading } = useSeller();
+  const { data: revenueData } = useSellerRevenue();
+  const { data: ordersData } = useSellerOrders(1, 5);
+
+  const revenue = revenueData?.revenue;
+  const recentOrders = ordersData?.orderItems || [];
 
   const stats = [
     {
-      title: 'Total Products',
-      value: '0',
-      icon: Package,
+      title: 'Total Sales',
+      value: revenue ? `$${revenue.totalSales.toFixed(2)}` : '$0.00',
+      icon: DollarSign,
       color: 'bg-blue-500',
       bgLight: 'bg-blue-50',
     },
     {
-      title: 'Total Orders',
-      value: '0',
-      icon: ShoppingBag,
+      title: 'Your Earnings',
+      value: revenue ? `$${revenue.totalEarned.toFixed(2)}` : '$0.00',
+      icon: TrendingUp,
       color: 'bg-green-500',
       bgLight: 'bg-green-50',
     },
     {
-      title: 'Total Revenue',
-      value: '$0',
-      icon: DollarSign,
+      title: 'Items Sold',
+      value: revenue ? revenue.totalItemsSold.toString() : '0',
+      icon: Package,
       color: 'bg-yellow-500',
       bgLight: 'bg-yellow-50',
     },
     {
-      title: 'Growth',
-      value: '0%',
-      icon: TrendingUp,
+      title: 'Order Items',
+      value: revenue ? revenue.totalOrders.toString() : '0',
+      icon: ShoppingBag,
       color: 'bg-purple-500',
       bgLight: 'bg-purple-50',
     },
@@ -72,29 +88,62 @@ function DashBoard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Orders */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Orders</h2>
-          <div className="text-center py-8 text-gray-500">
-            <ShoppingBag className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-            <p>No orders yet</p>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900">Recent Orders</h2>
+            <Link href="/dashboard/orders" className="text-sm text-blue-600 hover:underline">
+              View all
+            </Link>
           </div>
+          {recentOrders.length > 0 ? (
+            <div className="space-y-3">
+              {recentOrders.map((item: any) => (
+                <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  {item.product?.images?.[0]?.url ? (
+                    <img src={item.product.images[0].url} alt="" className="w-10 h-10 rounded object-cover" />
+                  ) : (
+                    <div className="w-10 h-10 rounded bg-gray-200 flex items-center justify-center">
+                      <Package className="h-4 w-4 text-gray-400" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{item.productName}</p>
+                    <p className="text-xs text-gray-500">
+                      {item.order?.user?.name || 'Customer'} · Qty: {item.quantity}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-green-600">${item.sellerAmount.toFixed(2)}</p>
+                    <Badge className={`text-[10px] ${STATUS_COLORS[item.status] || 'bg-gray-100'}`}>
+                      {item.status}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <ShoppingBag className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+              <p>No orders yet</p>
+            </div>
+          )}
         </div>
 
         {/* Quick Actions */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
           <div className="space-y-3">
-            <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-left flex items-center gap-3">
+            <Link href="/dashboard/products/create" className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-left flex items-center gap-3">
               <Package className="w-5 h-5" />
               Create New Product
-            </button>
-            <button className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-left flex items-center gap-3">
+            </Link>
+            <Link href="/dashboard/orders" className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-left flex items-center gap-3">
               <ShoppingBag className="w-5 h-5" />
               View Orders
-            </button>
-            <button className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium text-left flex items-center gap-3">
-              <Users className="w-5 h-5" />
-              Manage Shop
-            </button>
+            </Link>
+            <Link href="/dashboard/revenue" className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium text-left flex items-center gap-3">
+              <TrendingUp className="w-5 h-5" />
+              View Revenue
+            </Link>
           </div>
         </div>
       </div>

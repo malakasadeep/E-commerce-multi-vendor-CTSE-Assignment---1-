@@ -2,10 +2,13 @@ import express, { Router } from 'express';
 import {
   createShop,
   createStripeLink,
+  getAdmin,
   getSeller,
   getUser,
   login,
+  loginAdmin,
   loginSeller,
+  logoutAdmin,
   refreshToken,
   registerSeller,
   resetUserPassword,
@@ -16,7 +19,7 @@ import {
   veryfyUserForgotPassword,
 } from '../controller/auth.controller';
 import isAuthenticated from '@packages/middleware/isAuthenticated';
-import { isSeller } from '@packages/middleware/autherizeRoles';
+import { isAdmin, isSeller } from '@packages/middleware/autherizeRoles';
 
 const router: Router = express.Router();
 
@@ -34,5 +37,10 @@ router.post('/create-shop', createShop);
 router.post('/create-stripe-link', createStripeLink);
 router.post('/login-seller', loginSeller);
 router.get('/logged-in-seller', isAuthenticated, isSeller, getSeller);
+
+// Admin routes
+router.post('/login-admin', loginAdmin);
+router.get('/logged-in-admin', isAuthenticated, isAdmin, getAdmin);
+router.post('/logout-admin', logoutAdmin);
 
 export default router;
