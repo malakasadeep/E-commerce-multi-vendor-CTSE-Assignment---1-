@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.\\(ts|json\\)$\")",
+      "Bash(grep -r @packages '/d/SLIIT/CTSE project/eshop/apps' --include=*.ts --include=*.tsx --include=*.js)",
+      "Bash(npx prisma:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}

@@ -1,0 +1,121 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Image {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  file_id   String
+  name      String
+  userId    String   @db.ObjectId @unique
+  shopId    String?  @db.ObjectId @unique
+  users     User     @relation(fields: [userId], references: [id])
+  shops     Shops?   @relation(fields: [shopId], references: [id])
+}
+
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  name      String
+  password  String?
+  following String[]
+  avatar    Image?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shopReviews shopReviews[]
+  productReviews ProductReview[]
+}
+
+model shopReviews {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  rating    Float
+  reviews  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shopsId   String?  @db.ObjectId
+  shops     Shops?   @relation(fields: [shopsId], references: [id])
+}
+
+model Shops {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  bio String?
+  category String
+  avatar Image?
+  coverBanner String?
+  address String
+  openingHours String?
+  website String?
+  socialLinks Json[]
+  ratings Float @default(0)
+  reviews shopReviews[]
+  products Product[]
+  sellerId String? @db.ObjectId @unique
+  sellers Sellers? @relation(fields: [sellerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+model Sellers {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String   @unique
+  phone_number String
+  country   String
+  password  String
+  stripeId  String?
+  shop     Shops? 
+  shopid String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shopId    String?  @db.ObjectId
+}
+
+model Product {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  description    String
+  price          Float
+  discountPrice  Float?
+  category       String
+  tags           String[]
+  stock          Int             @default(0)
+  images         ProductImage[]
+  sellerId       String          @db.ObjectId
+  shopId         String          @db.ObjectId
+  shop           Shops           @relation(fields: [shopId], references: [id])
+  ratings        Float           @default(0)
+  reviews        ProductReview[]
+  sold_out       Int             @default(0)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model ProductImage {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  url       String
+  file_id   String?
+  productId String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model ProductReview {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating    Float
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
