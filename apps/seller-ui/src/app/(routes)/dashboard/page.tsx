@@ -4,7 +4,7 @@ import Link from 'next/link';
 import useSeller from '../../../hooks/useSeller';
 import { useSellerRevenue, useSellerOrders } from '../../../hooks/useOrders';
 import { Badge } from '../../../components/ui/badge';
-import { Package, ShoppingBag, DollarSign, TrendingUp, Users, Truck } from 'lucide-react';
+import { Package, ShoppingBag, DollarSign, TrendingUp } from 'lucide-react';
 
 const STATUS_COLORS: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',

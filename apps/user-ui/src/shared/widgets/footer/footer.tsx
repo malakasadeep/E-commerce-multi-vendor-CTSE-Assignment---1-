@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { SELLER_URL } from '../../../configs/constants';
 import {
   ShoppingBag,
   Mail,
@@ -89,16 +90,28 @@ function Footer() {
                 { label: 'Products', href: '/products' },
                 { label: 'My Orders', href: '/orders' },
                 { label: 'Shopping Cart', href: '/cart' },
-                { label: 'Become a Seller', href: '/become-seller' },
+                { label: 'Become a Seller', href: SELLER_URL, external: true },
               ].map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm hover:text-white hover:pl-1 transition-all duration-200 flex items-center gap-2"
-                  >
-                    <ArrowRight className="h-3 w-3 text-blue-400" />
-                    {link.label}
-                  </Link>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm hover:text-white hover:pl-1 transition-all duration-200 flex items-center gap-2"
+                    >
+                      <ArrowRight className="h-3 w-3 text-blue-400" />
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="text-sm hover:text-white hover:pl-1 transition-all duration-200 flex items-center gap-2"
+                    >
+                      <ArrowRight className="h-3 w-3 text-blue-400" />
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

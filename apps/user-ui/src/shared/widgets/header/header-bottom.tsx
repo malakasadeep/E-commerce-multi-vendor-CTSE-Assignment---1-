@@ -89,6 +89,19 @@ function HeaderBottom() {
         <nav className="flex items-center gap-1">
           {NAV_ITEMS.map((item: NavItemTypes) => {
             const isActive = pathname === item.href;
+            if (item.external) {
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200"
+                >
+                  {item.title}
+                </a>
+              );
+            }
             return (
               <Link
                 key={item.href}

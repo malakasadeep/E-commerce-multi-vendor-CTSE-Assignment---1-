@@ -7,6 +7,7 @@ import { ProductCard } from '../components/products/ProductCard';
 import { Skeleton } from '../components/ui/skeleton';
 import { Button } from '../components/ui/button';
 import { PRODUCT_CATEGORIES } from '../types/product';
+import { SELLER_URL } from '../configs/constants';
 import {
   ArrowRight,
   ShoppingBag,
@@ -108,7 +109,7 @@ export default function HomePage() {
                     Shop Now
                   </Button>
                 </Link>
-                <Link href="/become-seller">
+                <a href={SELLER_URL} target="_blank" rel="noopener noreferrer">
                   <Button
                     size="lg"
                     variant="outline"
@@ -117,7 +118,7 @@ export default function HomePage() {
                     <Store className="h-5 w-5 mr-2" />
                     Become a Seller
                   </Button>
-                </Link>
+                </a>
               </div>
 
               {/* Stats */}
@@ -320,7 +321,7 @@ export default function HomePage() {
                 business.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/become-seller">
+                <a href={SELLER_URL} target="_blank" rel="noopener noreferrer">
                   <Button
                     size="lg"
                     className="bg-white text-indigo-700 hover:bg-indigo-50 font-semibold px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
@@ -328,7 +329,7 @@ export default function HomePage() {
                     <Store className="h-5 w-5 mr-2" />
                     Get Started
                   </Button>
-                </Link>
+                </a>
               </div>
             </div>
             <div className="hidden md:flex justify-center">
