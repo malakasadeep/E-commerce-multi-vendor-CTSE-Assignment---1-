@@ -1,4 +1,5 @@
 import Header from '../shared/widgets/header';
+import Footer from '../shared/widgets/footer';
 import './global.css';
 import { Poppins, Roboto } from 'next/font/google';
 import Providers from './providers';
@@ -27,10 +28,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${roboto.variable} ${poppins.variable}`}>
+      <body className={`${roboto.variable} ${poppins.variable} font-Roboto`}>
         <Providers>
-          <Header />
-          {children}
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>

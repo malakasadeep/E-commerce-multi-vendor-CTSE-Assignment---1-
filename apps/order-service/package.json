@@ -5,7 +5,7 @@
   "nx": {
     "name": "order-service",
     "projectType": "application",
-    "sourceRoot": "order-service/src",
+    "sourceRoot": "apps/order-service/src",
     "targets": {
       "serve": {
         "executor": "@nx/js:node",

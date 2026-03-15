@@ -5,7 +5,7 @@
   "nx": {
     "name": "payment-service",
     "projectType": "application",
-    "sourceRoot": "payment-service/src",
+    "sourceRoot": "apps/payment-service/src",
     "targets": {
       "serve": {
         "executor": "@nx/js:node",

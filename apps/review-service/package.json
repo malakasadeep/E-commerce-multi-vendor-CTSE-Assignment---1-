@@ -5,7 +5,7 @@
   "nx": {
     "name": "review-service",
     "projectType": "application",
-    "sourceRoot": "review-service/src",
+    "sourceRoot": "apps/review-service/src",
     "targets": {
       "serve": {
         "executor": "@nx/js:node",

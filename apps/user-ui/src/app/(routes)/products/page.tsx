@@ -7,7 +7,7 @@ import { ProductCard } from '../../../components/products/ProductCard';
 import { CategoryFilter } from '../../../components/products/CategoryFilter';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { Button } from '../../../components/ui/button';
-import { ChevronLeft, ChevronRight, Search, PackageOpen } from 'lucide-react';
+import { ChevronLeft, ChevronRight, PackageOpen } from 'lucide-react';
 
 export default function ProductsPage() {
   const searchParams = useSearchParams();

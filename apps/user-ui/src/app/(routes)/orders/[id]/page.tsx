@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useOrderDetail } from '../../../../hooks/useOrders';
 import { Button } from '../../../../components/ui/button';
@@ -23,7 +23,6 @@ const STATUS_TIMELINE = ['pending', 'confirmed', 'processing', 'shipped', 'deliv
 
 export default function OrderDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
   const { data, isLoading } = useOrderDetail(id);
 

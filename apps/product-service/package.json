@@ -5,7 +5,7 @@
   "nx": {
     "name": "product-service",
     "projectType": "application",
-    "sourceRoot": "product-service/src",
+    "sourceRoot": "apps/product-service/src",
     "targets": {
       "serve": {
         "executor": "@nx/js:node",

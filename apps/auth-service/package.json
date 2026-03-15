@@ -8,7 +8,7 @@
   "nx": {
     "name": "auth-service",
     "projectType": "application",
-    "sourceRoot": "auth-service/src",
+    "sourceRoot": "apps/auth-service/src",
     "targets": {
       "serve": {
         "executor": "@nx/js:node",
