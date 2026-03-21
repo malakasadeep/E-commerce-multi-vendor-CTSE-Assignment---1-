@@ -44,7 +44,7 @@ jobs:
         run: npx nx run-many -t lint --all --parallel=3
 
       - name: Nx test
-        run: npx nx run-many -t test --all --parallel=3 --skip-nx-cache
+        run: npx nx run-many -t test --all --parallel=3 --skip-nx-cache -- --passWithNoTests
 
       - name: Nx build
         run: npx nx run-many -t build --all --parallel=2
