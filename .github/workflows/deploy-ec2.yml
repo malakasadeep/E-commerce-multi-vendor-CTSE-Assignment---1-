@@ -160,7 +160,7 @@ jobs:
             --instance-id "${{ steps.target.outputs.instance_id }}"
 
       - name: Show deployment output
-        if: always()
+        if: always() && steps.deploy_ssm.outputs.command_id != ''
         run: |
           aws ssm list-command-invocations \
             --details \
