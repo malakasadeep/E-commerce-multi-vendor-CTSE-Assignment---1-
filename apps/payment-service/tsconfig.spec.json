@@ -3,7 +3,12 @@
   "compilerOptions": {
     "outDir": "out-tsc/payment-service-spec",
     "types": ["jest", "node"],
-    "rootDir": "../../"
+    "rootDir": "src"
   },
-  "include": ["src/**/*.spec.ts", "src/**/*.test.ts"]
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
 }

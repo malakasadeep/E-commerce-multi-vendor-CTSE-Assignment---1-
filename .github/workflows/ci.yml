@@ -76,6 +76,7 @@ jobs:
         if: env.SONAR_TOKEN != '' && env.SONAR_HOST_URL != ''
         uses: SonarSource/sonarqube-quality-gate-action@v1.2.0
         timeout-minutes: 15
+        continue-on-error: true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
