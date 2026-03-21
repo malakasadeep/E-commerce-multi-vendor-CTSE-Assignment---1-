@@ -98,6 +98,7 @@ jobs:
         id: vars
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "Using AWS account: $ACCOUNT_ID in region: ${{ env.AWS_REGION }}"
           SHORT_SHA="${{ needs.guard.outputs.commit_sha }}"
           SHORT_SHA="${SHORT_SHA:0:12}"
 
@@ -112,7 +113,11 @@ jobs:
       - name: Resolve target instance from tags
         id: target
         run: |
+          echo "Resolving target for service=${{ matrix.service }} env=${{ needs.guard.outputs.deploy_env }} region=${{ env.AWS_REGION }}"
+          aws sts get-caller-identity
+
           INSTANCE_IDS=$(aws ec2 describe-instances \
+            --region "${{ env.AWS_REGION }}" \
             --filters \
               "Name=tag:Service,Values=${{ matrix.service }}" \
               "Name=tag:Environment,Values=${{ needs.guard.outputs.deploy_env }}" \
@@ -124,6 +129,12 @@ jobs:
 
           if [ "$COUNT" -eq 0 ]; then
             echo "No running EC2 instance found for Service=${{ matrix.service }} Environment=${{ needs.guard.outputs.deploy_env }}"
+            echo "Debug: running instances and tags in region ${{ env.AWS_REGION }}"
+            aws ec2 describe-instances \
+              --region "${{ env.AWS_REGION }}" \
+              --filters "Name=instance-state-name,Values=running" \
+              --query "Reservations[].Instances[].{Id:InstanceId,Service:Tags[?Key=='Service']|[0].Value,Environment:Tags[?Key=='Environment']|[0].Value,Name:Tags[?Key=='Name']|[0].Value}" \
+              --output table || true
             exit 1
           fi
 
@@ -139,6 +150,7 @@ jobs:
         id: deploy_ssm
         run: |
           COMMAND_ID=$(aws ssm send-command \
+            --region "${{ env.AWS_REGION }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Deploy ${{ matrix.service }} from GitHub Actions" \
             --instance-ids "${{ steps.target.outputs.instance_id }}" \
@@ -156,6 +168,7 @@ jobs:
           echo "command_id=$COMMAND_ID" >> "$GITHUB_OUTPUT"
 
           aws ssm wait command-executed \
+            --region "${{ env.AWS_REGION }}" \
             --command-id "$COMMAND_ID" \
             --instance-id "${{ steps.target.outputs.instance_id }}"
 
@@ -163,5 +176,6 @@ jobs:
         if: always() && steps.deploy_ssm.outputs.command_id != ''
         run: |
           aws ssm list-command-invocations \
+            --region "${{ env.AWS_REGION }}" \
             --details \
             --command-id "${{ steps.deploy_ssm.outputs.command_id }}" || true
