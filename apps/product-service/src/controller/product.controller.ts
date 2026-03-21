@@ -54,8 +54,9 @@ export const createProduct = async (
         sellerId: seller.id,
         shopId: shop.id,
         images: {
-          create: (images || []).map((img: { url: string }) => ({
+          create: (images || []).map((img: { url: string; file_id?: string }) => ({
             url: img.url,
+            file_id: img.file_id || null,
           })),
         },
       },
@@ -247,8 +248,9 @@ export const updateProduct = async (
         where: { productId: id },
       });
       updateData.images = {
-        create: images.map((img: { url: string }) => ({
+        create: images.map((img: { url: string; file_id?: string }) => ({
           url: img.url,
+          file_id: img.file_id || null,
         })),
       };
     }

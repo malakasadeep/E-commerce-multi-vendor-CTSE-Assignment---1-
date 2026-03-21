@@ -38,7 +38,7 @@ export interface CreateProductInput {
   category: string;
   tags: string[];
   stock: number;
-  images: { url: string }[];
+  images: { url: string; file_id?: string }[];
 }
 
 export interface ProductsResponse {

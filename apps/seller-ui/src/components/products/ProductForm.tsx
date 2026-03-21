@@ -30,15 +30,15 @@ interface ProductFormProps {
     category: string;
     tags: string[];
     stock: number;
-    images: { url: string }[];
+    images: { url: string; file_id?: string }[];
   }) => void;
   isSubmitting: boolean;
   submitLabel: string;
 }
 
 export function ProductForm({ initialData, onSubmit, isSubmitting, submitLabel }: ProductFormProps) {
-  const [images, setImages] = React.useState<{ url: string }[]>(
-    initialData?.images?.map((img) => ({ url: img.url })) || []
+  const [images, setImages] = React.useState<{ url: string; file_id?: string }[]>(
+    initialData?.images?.map((img) => ({ url: img.url, file_id: img.file_id })) || []
   );
 
   const {
@@ -69,7 +69,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, submitLabel }
         tags: initialData.tags?.join(', ') || '',
         stock: initialData.stock.toString(),
       });
-      setImages(initialData.images?.map((img) => ({ url: img.url })) || []);
+      setImages(initialData.images?.map((img) => ({ url: img.url, file_id: img.file_id })) || []);
     }
   }, [initialData, reset]);
 
