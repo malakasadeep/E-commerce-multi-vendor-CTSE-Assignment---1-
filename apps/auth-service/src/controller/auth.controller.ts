@@ -481,14 +481,13 @@ export const loginSeller = async (
 };
 
 export const getSeller = async (
-  req: Request,
+  req: any,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const seller = await prisma.sellers.findUnique({
-      where: { id: req.body.sellerId },
-    });
+    // req.seller is already set by the isAuthenticated middleware
+    const seller = req.seller;
     if (!seller) {
       return next(new ValidationError('Seller not found'));
     }

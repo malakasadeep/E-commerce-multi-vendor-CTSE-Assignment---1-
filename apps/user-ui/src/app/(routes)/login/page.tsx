@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import GoogleButton from 'apps/user-ui/src/shared/components/google-button';
 import axios, { AxiosError } from 'axios';
 import { Eye, EyeOff, Mail, Lock, ShoppingBag, ArrowRight } from 'lucide-react';
@@ -19,6 +19,7 @@ function LoginPage() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -35,8 +36,9 @@ function LoginPage() {
       );
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       setServerError(null);
+      await queryClient.invalidateQueries({ queryKey: ['user'] });
       router.push('/');
     },
     onError: (error: AxiosError) => {
