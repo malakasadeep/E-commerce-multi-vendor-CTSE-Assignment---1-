@@ -6,12 +6,12 @@ import {
   Heart,
   ShoppingCart,
   User2Icon,
-  LogOut,
   ChevronDown,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import ProfileDropdown from './profile-dropdown';
 import useUser from '../../../hooks/useUser';
 import { useAtom } from 'jotai';
 import { cartCountAtom } from '../../../store/cartAtom';
@@ -125,26 +125,7 @@ function HeaderBottom() {
               {isLoading ? (
                 <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
               ) : user && !isError ? (
-                <>
-                  <Link
-                    href="/profile"
-                    className="p-2 rounded-lg hover:bg-blue-50 transition-colors"
-                  >
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                      <User2Icon className="h-3.5 w-3.5 text-white" />
-                    </div>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      localStorage.removeItem('token');
-                      window.location.reload();
-                    }}
-                    className="p-2 rounded-lg hover:bg-red-50 transition-colors group"
-                    title="Logout"
-                  >
-                    <LogOut className="h-4 w-4 text-gray-500 group-hover:text-red-500 transition-colors" />
-                  </button>
-                </>
+                <ProfileDropdown user={user} />
               ) : (
                 <Link
                   href="/login"

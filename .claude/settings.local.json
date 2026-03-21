@@ -7,7 +7,11 @@
       "Bash(npm install:*)",
       "Bash(mkdir -p \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\\\\apps\\\\admin-ui\\\\src\\\\app\\\\\\(routes\\)\\\\dashboard\\\\sellers\\\\[id]\")",
       "Bash(mkdir -p \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\\\\apps\\\\admin-ui\\\\src\\\\app\\\\\\(routes\\)\\\\dashboard\\\\customers\\\\[id]\")",
-      "Bash(mkdir -p \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\\\\apps\\\\admin-ui\\\\src\\\\app\\\\\\(routes\\)\\\\dashboard\\\\orders\\\\[id]\")"
+      "Bash(mkdir -p \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\\\\apps\\\\admin-ui\\\\src\\\\app\\\\\\(routes\\)\\\\dashboard\\\\orders\\\\[id]\")",
+      "Bash(find \"/d/SLIIT/CTSE project/eshop/apps/seller-ui/src/app/\\(routes\\)/dashboard\" -name \"page.tsx\" -o -name \"layout.tsx\")",
+      "Bash(xargs ls:*)",
+      "Bash(find \"/d/SLIIT/CTSE project/eshop/apps/seller-ui/src/app/\\(routes\\)/dashboard\" -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" \\\\\\))",
+      "Bash(grep -r NEXT_PUBLIC_API_URL '/d/SLIIT/CTSE project/eshop/apps/seller-ui' --include=*.ts --include=*.tsx --include=*.js)"
     ]
   }
 }

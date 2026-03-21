@@ -9,13 +9,12 @@ import {
   User2Icon,
   Heart,
   ShoppingCart,
-  LogOut,
-  Package,
   ShoppingBag,
   Menu,
   X,
 } from 'lucide-react';
 import HeaderBottom from './header-bottom';
+import ProfileDropdown from './profile-dropdown';
 import useUser from '../../../hooks/useUser';
 import { cartCountAtom } from '../../../store/cartAtom';
 import { NAV_ITEMS } from '../../../configs/constants';
@@ -84,39 +83,7 @@ function Header() {
               </div>
             </div>
           ) : user && !isError ? (
-            <>
-              <Link
-                href="/profile"
-                className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-blue-50 transition-colors group"
-              >
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                  <User2Icon className="h-4 w-4 text-white" />
-                </div>
-                <div className="hidden lg:block">
-                  <p className="text-[11px] text-gray-500 leading-none">Hello,</p>
-                  <p className="text-sm font-semibold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
-                    {user.firstName || user.name || 'User'}
-                  </p>
-                </div>
-              </Link>
-              <Link
-                href="/orders"
-                className="relative p-2.5 rounded-xl hover:bg-blue-50 transition-colors group"
-                title="My Orders"
-              >
-                <Package className="h-5 w-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
-              </Link>
-              <button
-                onClick={() => {
-                  localStorage.removeItem('token');
-                  window.location.reload();
-                }}
-                className="p-2.5 rounded-xl hover:bg-red-50 transition-colors group"
-                title="Logout"
-              >
-                <LogOut className="h-5 w-5 text-gray-600 group-hover:text-red-500 transition-colors" />
-              </button>
-            </>
+            <ProfileDropdown user={user} />
           ) : (
             <Link
               href="/login"
