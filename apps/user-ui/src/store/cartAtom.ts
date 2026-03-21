@@ -29,7 +29,7 @@ const baseCartAtom = atom<CartItem[]>(getInitialCart());
 
 // Wrapper atom that syncs to localStorage
 export const cartAtom = atom(
-  (get) => get(baseCartAtom),
+  get => get(baseCartAtom),
   (get, set, newCart: CartItem[]) => {
     set(baseCartAtom, newCart);
     if (typeof window !== 'undefined') {
@@ -39,13 +39,13 @@ export const cartAtom = atom(
 );
 
 // Derived atom for cart count
-export const cartCountAtom = atom((get) => {
+export const cartCountAtom = atom(get => {
   const cart = get(cartAtom);
   return cart.reduce((sum, item) => sum + item.quantity, 0);
 });
 
 // Derived atom for cart total
-export const cartTotalAtom = atom((get) => {
+export const cartTotalAtom = atom(get => {
   const cart = get(cartAtom);
   return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 });

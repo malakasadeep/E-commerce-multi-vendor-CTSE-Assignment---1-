@@ -1,4 +1,8 @@
-import { createConsumer, ORDER_TOPICS, PAYMENT_TOPICS } from '@packages/libs/kafka';
+import {
+  createConsumer,
+  ORDER_TOPICS,
+  PAYMENT_TOPICS,
+} from '@packages/libs/kafka';
 import prisma from '@packages/libs/prisma';
 import { publishPaymentEvent } from './kafka.producer';
 import Stripe from 'stripe';
@@ -49,9 +53,14 @@ export const startPaymentConsumer = async () => {
                     amount: payment.amount,
                   });
 
-                  console.log(`[payment-service] Refund processed for order ${data.id}`);
+                  console.log(
+                    `[payment-service] Refund processed for order ${data.id}`
+                  );
                 } catch (err) {
-                  console.error(`[payment-service] Refund failed for order ${data.id}:`, err);
+                  console.error(
+                    `[payment-service] Refund failed for order ${data.id}:`,
+                    err
+                  );
                 }
               }
             }

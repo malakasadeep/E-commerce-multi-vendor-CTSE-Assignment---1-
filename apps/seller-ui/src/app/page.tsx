@@ -130,7 +130,7 @@ export default function BecomeSellerPage() {
               { value: '10K+', label: 'Products Listed', icon: Package },
               { value: '95%', label: 'Seller Satisfaction', icon: TrendingUp },
               { value: '$2M+', label: 'Monthly Sales', icon: BarChart3 },
-            ].map((stat) => (
+            ].map(stat => (
               <div key={stat.label} className="text-center">
                 <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center mx-auto mb-3">
                   <stat.icon className="h-6 w-6 text-indigo-600" />
@@ -194,7 +194,7 @@ export default function BecomeSellerPage() {
                 desc: 'Comprehensive policies to protect you from fraud and disputes.',
                 color: 'from-indigo-500 to-blue-500',
               },
-            ].map((benefit) => (
+            ].map(benefit => (
               <div
                 key={benefit.title}
                 className="bg-white rounded-2xl p-7 border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
@@ -244,7 +244,7 @@ export default function BecomeSellerPage() {
                 title: 'Start Earning',
                 desc: 'Receive orders from customers, ship products, and get paid securely into your account.',
               },
-            ].map((item) => (
+            ].map(item => (
               <div key={item.step} className="text-center group">
                 <div className="relative inline-flex items-center justify-center mb-6">
                   <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center group-hover:from-indigo-200 group-hover:to-purple-200 transition-all duration-300">
@@ -290,7 +290,7 @@ export default function BecomeSellerPage() {
               </Link>
               <div className="flex flex-wrap justify-center gap-6 mt-8 text-sm text-purple-200">
                 {['Free to start', 'No listing fees', 'Cancel anytime'].map(
-                  (item) => (
+                  item => (
                     <span key={item} className="flex items-center gap-1.5">
                       <CheckCircle2 className="h-4 w-4 text-green-400" />
                       {item}
@@ -344,7 +344,7 @@ export default function BecomeSellerPage() {
                   { label: 'Create Account', href: '/signup' },
                   { label: 'Sign In', href: '/login' },
                   { label: 'Help Center', href: '#' },
-                ].map((link) => (
+                ].map(link => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
@@ -369,7 +369,7 @@ export default function BecomeSellerPage() {
                   'Shipping Policy',
                   'Terms of Service',
                   'Privacy Policy',
-                ].map((item) => (
+                ].map(item => (
                   <li key={item}>
                     <span className="text-sm hover:text-white hover:pl-1 transition-all duration-200 flex items-center gap-2 cursor-pointer">
                       <ArrowRight className="h-3 w-3 text-blue-400" />

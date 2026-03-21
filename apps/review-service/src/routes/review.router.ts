@@ -12,7 +12,12 @@ import {
 const router: Router = express.Router();
 
 // User routes
-router.post('/orders/:orderId/review', isAuthenticated, isUser, createOrderReview);
+router.post(
+  '/orders/:orderId/review',
+  isAuthenticated,
+  isUser,
+  createOrderReview
+);
 router.get('/orders/:orderId/review', isAuthenticated, isUser, getOrderReview);
 
 // Public routes

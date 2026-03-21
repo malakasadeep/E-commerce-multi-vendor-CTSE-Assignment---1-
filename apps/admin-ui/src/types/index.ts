@@ -100,7 +100,12 @@ export interface Revenue {
   totalPlatformFees: number;
   totalSellerPayouts: number;
   orderCount: number;
-  chartData: { date: string; total: number; platformFee: number; sellerPayout: number }[];
+  chartData: {
+    date: string;
+    total: number;
+    platformFee: number;
+    sellerPayout: number;
+  }[];
 }
 
 export interface DashboardStats {

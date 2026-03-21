@@ -4,7 +4,13 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '../../../components/ui/card';
 import { Shield, Eye, EyeOff } from 'lucide-react';
 import axiosInstance from '../../../utils/axiosInstance';
 
@@ -25,7 +31,9 @@ export default function AdminLoginPage() {
       await axiosInstance.post('/api/login-admin', { email, password });
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError(
+        err.response?.data?.message || 'Login failed. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -39,7 +47,9 @@ export default function AdminLoginPage() {
             <Shield className="h-7 w-7 text-blue-600" />
           </div>
           <CardTitle className="text-2xl">Admin Login</CardTitle>
-          <CardDescription>Sign in to the Eshop admin dashboard</CardDescription>
+          <CardDescription>
+            Sign in to the Eshop admin dashboard
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -54,18 +64,20 @@ export default function AdminLoginPage() {
                 type="email"
                 placeholder="admin@eshop.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Password</label>
+              <label className="text-sm font-medium text-gray-700">
+                Password
+              </label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                 />
                 <button
@@ -73,7 +85,11 @@ export default function AdminLoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             </div>

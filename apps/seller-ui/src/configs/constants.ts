@@ -1,3 +1,3 @@
-import { atom } from "jotai";
+import { atom } from 'jotai';
 
-export const activeSidebarItem = atom<string>("/dashboard")
+export const activeSidebarItem = atom<string>('/dashboard');

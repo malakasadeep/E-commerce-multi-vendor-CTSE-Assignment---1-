@@ -16,7 +16,9 @@ export default function Header() {
             <Shield className="h-4 w-4 text-blue-600" />
           </div>
           <div className="text-sm">
-            <p className="font-medium text-gray-900">{admin?.name || 'Admin'}</p>
+            <p className="font-medium text-gray-900">
+              {admin?.name || 'Admin'}
+            </p>
             <p className="text-gray-500 text-xs">{admin?.role || 'admin'}</p>
           </div>
         </div>

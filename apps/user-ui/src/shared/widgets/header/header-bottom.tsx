@@ -62,7 +62,7 @@ function HeaderBottom() {
                 'Sports & Outdoors',
                 'Books & Media',
                 'Health & Beauty',
-              ].map((cat) => (
+              ].map(cat => (
                 <Link
                   key={cat}
                   href={`/products?category=${encodeURIComponent(cat)}`}

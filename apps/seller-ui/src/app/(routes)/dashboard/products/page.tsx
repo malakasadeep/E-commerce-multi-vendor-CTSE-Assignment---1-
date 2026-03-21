@@ -2,7 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useSellerProducts, useDeleteProduct } from '../../../../hooks/useProducts';
+import {
+  useSellerProducts,
+  useDeleteProduct,
+} from '../../../../hooks/useProducts';
 import { Product } from '../../../../types/product';
 import { Badge } from '../../../../components/ui/badge';
 import { Skeleton } from '../../../../components/ui/skeleton';
@@ -69,7 +72,9 @@ export default function ProductsPage() {
       {/* Header */}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 font-Poppins">Products</h1>
+          <h1 className="text-2xl font-bold text-gray-900 font-Poppins">
+            Products
+          </h1>
           <p className="text-gray-500 text-sm mt-1">
             {pagination?.total || 0} total products in your store
           </p>
@@ -88,7 +93,9 @@ export default function ProductsPage() {
           <div className="w-20 h-20 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-5">
             <Package className="h-9 w-9 text-gray-300" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No products yet</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            No products yet
+          </h3>
           <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">
             Start building your store by creating your first product
           </p>
@@ -106,19 +113,38 @@ export default function ProductsPage() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50/80">
-                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16">Image</TableHead>
-                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Product</TableHead>
-                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</TableHead>
-                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Price</TableHead>
-                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Stock</TableHead>
-                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Sold</TableHead>
-                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Rating</TableHead>
-                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider w-16">
+                    Image
+                  </TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Product
+                  </TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Category
+                  </TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">
+                    Price
+                  </TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">
+                    Stock
+                  </TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">
+                    Sold
+                  </TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">
+                    Rating
+                  </TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {products.map((product) => (
-                  <TableRow key={product.id} className="hover:bg-gray-50/50 transition-colors group">
+                {products.map(product => (
+                  <TableRow
+                    key={product.id}
+                    className="hover:bg-gray-50/50 transition-colors group"
+                  >
                     <TableCell>
                       {product.images?.[0] ? (
                         <img
@@ -215,14 +241,17 @@ export default function ProductsPage() {
             <div className="flex justify-center items-center gap-2 mt-6">
               <button
                 disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
+                onClick={() => setPage(p => p - 1)}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="h-3.5 w-3.5" />
                 Previous
               </button>
               <div className="flex items-center gap-1">
-                {Array.from({ length: Math.min(pagination.totalPages, 5) }, (_, i) => i + 1).map((p) => (
+                {Array.from(
+                  { length: Math.min(pagination.totalPages, 5) },
+                  (_, i) => i + 1
+                ).map(p => (
                   <button
                     key={p}
                     onClick={() => setPage(p)}
@@ -238,7 +267,7 @@ export default function ProductsPage() {
               </div>
               <button
                 disabled={page >= pagination.totalPages}
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => setPage(p => p + 1)}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Next
@@ -252,7 +281,7 @@ export default function ProductsPage() {
       {deleteTarget && (
         <DeleteProductDialog
           open={!!deleteTarget}
-          onOpenChange={(open) => !open && setDeleteTarget(null)}
+          onOpenChange={open => !open && setDeleteTarget(null)}
           productName={deleteTarget.name}
           onConfirm={handleDelete}
           isDeleting={deleteProduct.isPending}

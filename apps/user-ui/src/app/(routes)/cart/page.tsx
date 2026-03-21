@@ -5,7 +5,14 @@ import Link from 'next/link';
 import { useAtom } from 'jotai';
 import { cartAtom, cartTotalAtom } from '../../../store/cartAtom';
 import { Button } from '../../../components/ui/button';
-import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from 'lucide-react';
+import {
+  ShoppingCart,
+  Trash2,
+  Plus,
+  Minus,
+  ArrowLeft,
+  ShoppingBag,
+} from 'lucide-react';
 import useUser from '../../../hooks/useUser';
 
 export default function CartPage() {
@@ -13,14 +20,17 @@ export default function CartPage() {
   const [cartTotal] = useAtom(cartTotalAtom);
   const { user } = useUser();
 
-  const serviceFee = Math.round(cartTotal * 0.20 * 100) / 100;
+  const serviceFee = Math.round(cartTotal * 0.2 * 100) / 100;
   const total = Math.round((cartTotal + serviceFee) * 100) / 100;
 
   const updateQuantity = (productId: string, delta: number) => {
     setCart(
-      cart.map((item) => {
+      cart.map(item => {
         if (item.productId === productId) {
-          const newQty = Math.max(1, Math.min(item.stock, item.quantity + delta));
+          const newQty = Math.max(
+            1,
+            Math.min(item.stock, item.quantity + delta)
+          );
           return { ...item, quantity: newQty };
         }
         return item;
@@ -29,7 +39,7 @@ export default function CartPage() {
   };
 
   const removeItem = (productId: string) => {
-    setCart(cart.filter((item) => item.productId !== productId));
+    setCart(cart.filter(item => item.productId !== productId));
   };
 
   const clearCart = () => {
@@ -40,8 +50,12 @@ export default function CartPage() {
     return (
       <div className="w-[90%] max-w-7xl mx-auto py-16 text-center">
         <ShoppingCart className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h2>
-        <p className="text-gray-500 mb-6">Browse products and add them to your cart</p>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          Your cart is empty
+        </h2>
+        <p className="text-gray-500 mb-6">
+          Browse products and add them to your cart
+        </p>
         <Link href="/products">
           <Button>
             <ShoppingBag className="h-4 w-4 mr-2" />
@@ -55,7 +69,9 @@ export default function CartPage() {
   return (
     <div className="w-[90%] max-w-7xl mx-auto py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 font-Poppins">Shopping Cart ({cart.length} items)</h1>
+        <h1 className="text-2xl font-bold text-gray-900 font-Poppins">
+          Shopping Cart ({cart.length} items)
+        </h1>
         <Button variant="ghost" className="text-red-600" onClick={clearCart}>
           <Trash2 className="h-4 w-4 mr-2" /> Clear Cart
         </Button>
@@ -63,10 +79,17 @@ export default function CartPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
-          {cart.map((item) => (
-            <div key={item.productId} className="flex items-center gap-4 p-4 bg-white rounded-xl border">
+          {cart.map(item => (
+            <div
+              key={item.productId}
+              className="flex items-center gap-4 p-4 bg-white rounded-xl border"
+            >
               {item.image ? (
-                <img src={item.image} alt={item.name} className="w-20 h-20 rounded-lg object-cover" />
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-20 h-20 rounded-lg object-cover"
+                />
               ) : (
                 <div className="w-20 h-20 rounded-lg bg-gray-100 flex items-center justify-center">
                   <ShoppingBag className="h-8 w-8 text-gray-300" />
@@ -75,7 +98,9 @@ export default function CartPage() {
               <div className="flex-1">
                 <h3 className="font-medium text-gray-900">{item.name}</h3>
                 <p className="text-sm text-gray-500">{item.shopName}</p>
-                <p className="font-semibold text-blue-600 mt-1">${item.price.toFixed(2)}</p>
+                <p className="font-semibold text-blue-600 mt-1">
+                  ${item.price.toFixed(2)}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -84,7 +109,9 @@ export default function CartPage() {
                 >
                   <Minus className="h-3 w-3" />
                 </button>
-                <span className="w-8 text-center font-medium">{item.quantity}</span>
+                <span className="w-8 text-center font-medium">
+                  {item.quantity}
+                </span>
                 <button
                   onClick={() => updateQuantity(item.productId, 1)}
                   className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-gray-50"
@@ -93,7 +120,9 @@ export default function CartPage() {
                 </button>
               </div>
               <div className="text-right">
-                <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                <p className="font-semibold">
+                  ${(item.price * item.quantity).toFixed(2)}
+                </p>
               </div>
               <button
                 onClick={() => removeItem(item.productId)}

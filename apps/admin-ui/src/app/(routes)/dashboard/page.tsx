@@ -3,10 +3,22 @@
 import React from 'react';
 import { useAdminStats, useAdminOrders } from '../../../hooks/useOrders';
 import StatsCards from '../../../components/dashboard/StatsCards';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/card';
 import { Badge } from '../../../components/ui/badge';
 import { Skeleton } from '../../../components/ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../../components/ui/table';
 import { STATUS_COLORS } from '../../../types';
 import Link from 'next/link';
 
@@ -31,7 +43,9 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
-        <p className="text-gray-500 text-sm mt-1">Welcome to the Eshop admin dashboard</p>
+        <p className="text-gray-500 text-sm mt-1">
+          Welcome to the Eshop admin dashboard
+        </p>
       </div>
 
       {stats && <StatsCards stats={stats} />}
@@ -39,7 +53,10 @@ export default function DashboardPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">Recent Orders</CardTitle>
-          <Link href="/dashboard/orders" className="text-sm text-blue-600 hover:underline">
+          <Link
+            href="/dashboard/orders"
+            className="text-sm text-blue-600 hover:underline"
+          >
             View All
           </Link>
         </CardHeader>
@@ -63,16 +80,28 @@ export default function DashboardPage() {
                 {ordersData.orders.slice(0, 10).map((order: any) => (
                   <TableRow key={order.id}>
                     <TableCell className="font-mono text-sm">
-                      <Link href={`/dashboard/orders/${order.id}`} className="text-blue-600 hover:underline">
+                      <Link
+                        href={`/dashboard/orders/${order.id}`}
+                        className="text-blue-600 hover:underline"
+                      >
                         {order.orderNumber}
                       </Link>
                     </TableCell>
                     <TableCell>{order.user?.name || 'N/A'}</TableCell>
                     <TableCell>{order.items?.length || 0}</TableCell>
-                    <TableCell className="font-semibold">${order.total.toFixed(2)}</TableCell>
-                    <TableCell className="text-green-600">${order.serviceFee.toFixed(2)}</TableCell>
+                    <TableCell className="font-semibold">
+                      ${order.total.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="text-green-600">
+                      ${order.serviceFee.toFixed(2)}
+                    </TableCell>
                     <TableCell>
-                      <Badge className={STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-800'}>
+                      <Badge
+                        className={
+                          STATUS_COLORS[order.status] ||
+                          'bg-gray-100 text-gray-800'
+                        }
+                      >
                         {order.status}
                       </Badge>
                     </TableCell>

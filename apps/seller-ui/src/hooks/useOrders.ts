@@ -7,9 +7,14 @@ export function useSellerOrders(page = 1, limit = 10, status?: string) {
   return useQuery({
     queryKey: ['seller-orders', page, limit, status],
     queryFn: async () => {
-      const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+      });
       if (status) params.set('status', status);
-      const { data } = await axiosInstance.get(`/order-api/seller/orders?${params}`);
+      const { data } = await axiosInstance.get(
+        `/order-api/seller/orders?${params}`
+      );
       return data;
     },
     staleTime: 30 * 1000,

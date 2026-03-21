@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React from 'react';
 import Link from 'next/link';
 import useSeller from '../../../hooks/useSeller';
@@ -122,7 +122,7 @@ function DashBoard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 stagger-children">
-        {stats.map((stat) => {
+        {stats.map(stat => {
           const Icon = stat.icon;
           return (
             <div
@@ -130,14 +130,18 @@ function DashBoard() {
               className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg hover:shadow-gray-200/50 transition-all duration-300 hover:-translate-y-0.5 group"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`${stat.bgLight} p-2.5 rounded-xl group-hover:scale-110 transition-transform duration-300`}>
+                <div
+                  className={`${stat.bgLight} p-2.5 rounded-xl group-hover:scale-110 transition-transform duration-300`}
+                >
                   <Icon className={`w-5 h-5 ${stat.iconColor}`} />
                 </div>
                 <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
                   {stat.change}
                 </span>
               </div>
-              <p className="text-xs font-medium text-gray-500 mb-1">{stat.title}</p>
+              <p className="text-xs font-medium text-gray-500 mb-1">
+                {stat.title}
+              </p>
               <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
             </div>
           );
@@ -150,8 +154,12 @@ function DashBoard() {
         <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 overflow-hidden animate-fade-in">
           <div className="flex items-center justify-between p-5 border-b border-gray-50">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">Recent Orders</h2>
-              <p className="text-xs text-gray-400 mt-0.5">Latest order activity</p>
+              <h2 className="text-base font-semibold text-gray-900">
+                Recent Orders
+              </h2>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Latest order activity
+              </p>
             </div>
             <Link
               href="/dashboard/orders"
@@ -186,7 +194,8 @@ function DashBoard() {
                         {item.productName}
                       </p>
                       <p className="text-xs text-gray-400">
-                        {item.order?.user?.name || 'Customer'} &middot; Qty: {item.quantity}
+                        {item.order?.user?.name || 'Customer'} &middot; Qty:{' '}
+                        {item.quantity}
                       </p>
                     </div>
                     <div className="text-right flex-shrink-0">
@@ -207,8 +216,12 @@ function DashBoard() {
                 <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-3">
                   <ShoppingBag className="w-6 h-6 text-gray-300" />
                 </div>
-                <p className="text-sm font-medium text-gray-900 mb-1">No orders yet</p>
-                <p className="text-xs text-gray-400">Orders will appear here once customers purchase your products</p>
+                <p className="text-sm font-medium text-gray-900 mb-1">
+                  No orders yet
+                </p>
+                <p className="text-xs text-gray-400">
+                  Orders will appear here once customers purchase your products
+                </p>
               </div>
             )}
           </div>
@@ -217,11 +230,13 @@ function DashBoard() {
         {/* Quick Actions */}
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden animate-fade-in">
           <div className="p-5 border-b border-gray-50">
-            <h2 className="text-base font-semibold text-gray-900">Quick Actions</h2>
+            <h2 className="text-base font-semibold text-gray-900">
+              Quick Actions
+            </h2>
             <p className="text-xs text-gray-400 mt-0.5">Common tasks</p>
           </div>
           <div className="p-4 space-y-2">
-            {quickActions.map((action) => {
+            {quickActions.map(action => {
               const Icon = action.icon;
               return (
                 <Link
@@ -229,14 +244,18 @@ function DashBoard() {
                   href={action.href}
                   className="flex items-center gap-3 p-3.5 rounded-xl hover:bg-gray-50/80 transition-all duration-200 group"
                 >
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                  <div
+                    className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300`}
+                  >
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
                       {action.label}
                     </p>
-                    <p className="text-xs text-gray-400">{action.description}</p>
+                    <p className="text-xs text-gray-400">
+                      {action.description}
+                    </p>
                   </div>
                   <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-indigo-500 transition-colors" />
                 </Link>
@@ -250,7 +269,9 @@ function DashBoard() {
       {seller?.shop && (
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden animate-fade-in">
           <div className="p-5 border-b border-gray-50">
-            <h2 className="text-base font-semibold text-gray-900">Shop Information</h2>
+            <h2 className="text-base font-semibold text-gray-900">
+              Shop Information
+            </h2>
             <p className="text-xs text-gray-400 mt-0.5">Your store details</p>
           </div>
           <div className="p-5">
@@ -260,8 +281,12 @@ function DashBoard() {
                   <Store className="w-4 h-4 text-indigo-600" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400 mb-0.5">Shop Name</p>
-                  <p className="text-sm font-medium text-gray-900">{seller.shop.name}</p>
+                  <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400 mb-0.5">
+                    Shop Name
+                  </p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {seller.shop.name}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/50">
@@ -269,8 +294,12 @@ function DashBoard() {
                   <MapPin className="w-4 h-4 text-emerald-600" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400 mb-0.5">Address</p>
-                  <p className="text-sm font-medium text-gray-900">{seller.shop.address}</p>
+                  <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400 mb-0.5">
+                    Address
+                  </p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {seller.shop.address}
+                  </p>
                 </div>
               </div>
               {seller.shop.category && (
@@ -279,8 +308,12 @@ function DashBoard() {
                     <Tag className="w-4 h-4 text-amber-600" />
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400 mb-0.5">Category</p>
-                    <p className="text-sm font-medium text-gray-900">{seller.shop.category}</p>
+                    <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400 mb-0.5">
+                      Category
+                    </p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {seller.shop.category}
+                    </p>
                   </div>
                 </div>
               )}
@@ -290,8 +323,12 @@ function DashBoard() {
                     <Package className="w-4 h-4 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400 mb-0.5">Description</p>
-                    <p className="text-sm font-medium text-gray-900">{seller.shop.bio}</p>
+                    <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400 mb-0.5">
+                      Description
+                    </p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {seller.shop.bio}
+                    </p>
                   </div>
                 </div>
               )}

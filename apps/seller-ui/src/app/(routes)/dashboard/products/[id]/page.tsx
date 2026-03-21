@@ -56,7 +56,9 @@ export default function EditProductPage() {
       <div className="p-6 text-center">
         <p className="text-gray-500">Product not found</p>
         <Link href="/dashboard/products">
-          <Button variant="outline" className="mt-4">Back to Products</Button>
+          <Button variant="outline" className="mt-4">
+            Back to Products
+          </Button>
         </Link>
       </div>
     );

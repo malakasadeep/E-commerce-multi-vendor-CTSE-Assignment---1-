@@ -2,35 +2,17 @@
   "name": "@eshop/order-service",
   "version": "0.0.1",
   "private": true,
-  "nx": {
-    "name": "order-service",
-    "projectType": "application",
-    "sourceRoot": "apps/order-service/src",
-    "targets": {
-      "serve": {
-        "executor": "@nx/js:node",
-        "defaultConfiguration": "development",
-        "dependsOn": [
-          "build"
-        ],
-        "options": {
-          "buildTarget": "order-service:build",
-          "runBuildTargetDependencies": false
-        },
-        "configurations": {
-          "development": {
-            "buildTarget": "order-service:build:development"
-          },
-          "production": {
-            "buildTarget": "order-service:build:production"
-          }
-        }
-      },
-      "test": {
-        "options": {
-          "passWithNoTests": true
-        }
-      }
-    }
+  "description": "Order service for e-commerce platform",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "express": "^4.21.2",
+    "kafkajs": "^2.2.4",
+    "morgan": "^1.10.1",
+    "tslib": "^2.3.0"
   }
 }

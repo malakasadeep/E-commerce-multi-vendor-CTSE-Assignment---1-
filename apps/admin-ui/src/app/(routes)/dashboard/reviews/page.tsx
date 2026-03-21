@@ -2,8 +2,20 @@
 
 import React, { useState } from 'react';
 import { useAdminReviews, useDeleteReview } from '../../../../hooks/useReviews';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../../components/ui/table';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../../../../components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../../../components/ui/table';
 import { Badge } from '../../../../components/ui/badge';
 import { Button } from '../../../../components/ui/button';
 import { Skeleton } from '../../../../components/ui/skeleton';
@@ -31,13 +43,17 @@ export default function ReviewsPage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Reviews Management</h1>
         <p className="text-gray-500 text-sm mt-1">
-          {(data?.pagination?.orderReviewTotal || 0) + (data?.pagination?.productReviewTotal || 0)} total reviews
+          {(data?.pagination?.orderReviewTotal || 0) +
+            (data?.pagination?.productReviewTotal || 0)}{' '}
+          total reviews
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Product Reviews ({data?.pagination?.productReviewTotal || 0})</CardTitle>
+          <CardTitle className="text-lg">
+            Product Reviews ({data?.pagination?.productReviewTotal || 0})
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {productReviews.length > 0 ? (
@@ -55,7 +71,9 @@ export default function ReviewsPage() {
               <TableBody>
                 {productReviews.map((review: any) => (
                   <TableRow key={review.id}>
-                    <TableCell className="font-medium">{review.product?.name || 'N/A'}</TableCell>
+                    <TableCell className="font-medium">
+                      {review.product?.name || 'N/A'}
+                    </TableCell>
                     <TableCell>{review.user?.name || 'N/A'}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
@@ -63,14 +81,18 @@ export default function ReviewsPage() {
                           <Star
                             key={i}
                             className={`h-3 w-3 ${
-                              i < Math.round(review.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                              i < Math.round(review.rating)
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
                             }`}
                           />
                         ))}
                         <span className="text-xs ml-1">{review.rating}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="max-w-[300px] truncate text-sm">{review.comment}</TableCell>
+                    <TableCell className="max-w-[300px] truncate text-sm">
+                      {review.comment}
+                    </TableCell>
                     <TableCell className="text-sm text-gray-500">
                       {new Date(review.createdAt).toLocaleDateString()}
                     </TableCell>
@@ -79,7 +101,12 @@ export default function ReviewsPage() {
                         variant="ghost"
                         size="sm"
                         className="text-red-600"
-                        onClick={() => deleteReview.mutate({ id: review.id, type: 'product' })}
+                        onClick={() =>
+                          deleteReview.mutate({
+                            id: review.id,
+                            type: 'product',
+                          })
+                        }
                         disabled={deleteReview.isPending}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -90,14 +117,18 @@ export default function ReviewsPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="text-center text-gray-500 py-8">No product reviews yet</p>
+            <p className="text-center text-gray-500 py-8">
+              No product reviews yet
+            </p>
           )}
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Order Reviews ({data?.pagination?.orderReviewTotal || 0})</CardTitle>
+          <CardTitle className="text-lg">
+            Order Reviews ({data?.pagination?.orderReviewTotal || 0})
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {orderReviews.length > 0 ? (
@@ -121,14 +152,18 @@ export default function ReviewsPage() {
                           <Star
                             key={i}
                             className={`h-3 w-3 ${
-                              i < Math.round(review.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                              i < Math.round(review.rating)
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
                             }`}
                           />
                         ))}
                         <span className="text-xs ml-1">{review.rating}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="max-w-[300px] truncate text-sm">{review.comment}</TableCell>
+                    <TableCell className="max-w-[300px] truncate text-sm">
+                      {review.comment}
+                    </TableCell>
                     <TableCell className="text-sm text-gray-500">
                       {new Date(review.createdAt).toLocaleDateString()}
                     </TableCell>
@@ -137,7 +172,9 @@ export default function ReviewsPage() {
                         variant="ghost"
                         size="sm"
                         className="text-red-600"
-                        onClick={() => deleteReview.mutate({ id: review.id, type: 'order' })}
+                        onClick={() =>
+                          deleteReview.mutate({ id: review.id, type: 'order' })
+                        }
                         disabled={deleteReview.isPending}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -148,7 +185,9 @@ export default function ReviewsPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="text-center text-gray-500 py-8">No order reviews yet</p>
+            <p className="text-center text-gray-500 py-8">
+              No order reviews yet
+            </p>
           )}
         </CardContent>
       </Card>

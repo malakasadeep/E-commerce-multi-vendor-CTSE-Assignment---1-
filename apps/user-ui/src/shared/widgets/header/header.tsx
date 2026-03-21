@@ -44,7 +44,10 @@ function Header() {
       {/* Main Header */}
       <div className="w-[90%] max-w-7xl mx-auto py-4 flex items-center justify-between gap-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 flex-shrink-0 group">
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 flex-shrink-0 group"
+        >
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center group-hover:shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
             <ShoppingBag className="h-5 w-5 text-white" />
           </div>
@@ -54,13 +57,16 @@ function Header() {
         </Link>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-xl hidden md:flex">
+        <form
+          onSubmit={handleSearch}
+          className="flex-1 max-w-xl hidden md:flex"
+        >
           <div className="w-full relative group">
             <input
               type="text"
               placeholder="Search for products, brands, and more..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-5 pr-12 py-3 rounded-full border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-300 text-sm font-Poppins placeholder:text-gray-400"
             />
             <button
@@ -93,7 +99,9 @@ function Header() {
                   <User2Icon className="h-4 w-4 text-white" />
                 </div>
                 <div className="hidden lg:block">
-                  <p className="text-[11px] text-gray-500 leading-none">Hello,</p>
+                  <p className="text-[11px] text-gray-500 leading-none">
+                    Hello,
+                  </p>
                   <p className="text-sm font-semibold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
                     {user.firstName || user.name || 'User'}
                   </p>
@@ -182,7 +190,7 @@ function Header() {
             type="text"
             placeholder="Search products..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
             className="w-full pl-4 pr-10 py-2.5 rounded-full border-2 border-gray-200 focus:border-blue-500 outline-none transition-all text-sm"
           />
           <button
@@ -198,7 +206,7 @@ function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t bg-white animate-slide-down">
           <nav className="w-[90%] mx-auto py-3 space-y-1">
-            {NAV_ITEMS.map((item) =>
+            {NAV_ITEMS.map(item =>
               item.external ? (
                 <a
                   key={item.href}

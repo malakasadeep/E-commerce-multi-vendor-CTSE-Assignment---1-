@@ -2,7 +2,11 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosInstance from '../utils/axiosInstance';
-import { Product, CreateProductInput, ProductsResponse } from '../types/product';
+import {
+  Product,
+  CreateProductInput,
+  ProductsResponse,
+} from '../types/product';
 
 export function useSellerProducts(page = 1, limit = 12) {
   return useQuery<ProductsResponse>({
@@ -33,7 +37,10 @@ export function useCreateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (productData: CreateProductInput) => {
-      const { data } = await axiosInstance.post('/product-api/products', productData);
+      const { data } = await axiosInstance.post(
+        '/product-api/products',
+        productData
+      );
       return data;
     },
     onSuccess: () => {
@@ -45,8 +52,14 @@ export function useCreateProduct() {
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...productData }: CreateProductInput & { id: string }) => {
-      const { data } = await axiosInstance.put(`/product-api/products/${id}`, productData);
+    mutationFn: async ({
+      id,
+      ...productData
+    }: CreateProductInput & { id: string }) => {
+      const { data } = await axiosInstance.put(
+        `/product-api/products/${id}`,
+        productData
+      );
       return data;
     },
     onSuccess: () => {
@@ -60,7 +73,9 @@ export function useDeleteProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await axiosInstance.delete(`/product-api/products/${id}`);
+      const { data } = await axiosInstance.delete(
+        `/product-api/products/${id}`
+      );
       return data;
     },
     onSuccess: () => {

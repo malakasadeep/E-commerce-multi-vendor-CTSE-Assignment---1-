@@ -3,7 +3,16 @@
 import React from 'react';
 import { Card, CardContent } from '../ui/card';
 import { DashboardStats } from '../../types';
-import { DollarSign, Package, ShoppingCart, Users, Store, TrendingUp, Clock, CheckCircle } from 'lucide-react';
+import {
+  DollarSign,
+  Package,
+  ShoppingCart,
+  Users,
+  Store,
+  TrendingUp,
+  Clock,
+  CheckCircle,
+} from 'lucide-react';
 
 interface StatsCardsProps {
   stats: DashboardStats;
@@ -63,15 +72,19 @@ export default function StatsCards({ stats }: StatsCardsProps) {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {cards.map((card) => (
+      {cards.map(card => (
         <Card key={card.title}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-muted-foreground">{card.title}</p>
+                <p className="text-xs font-medium text-muted-foreground">
+                  {card.title}
+                </p>
                 <p className="text-2xl font-bold mt-1">{card.value}</p>
               </div>
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${card.color}`}>
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${card.color}`}
+              >
                 <card.icon className="h-5 w-5" />
               </div>
             </div>

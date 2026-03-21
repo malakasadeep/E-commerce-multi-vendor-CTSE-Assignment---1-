@@ -9,7 +9,7 @@ import { publishOrderEvent } from '../utils/kafka.producer';
 import { ORDER_TOPICS } from '@packages/libs/kafka';
 import { generateOrderNumber } from '../utils/orderNumber';
 
-const PLATFORM_FEE_RATE = 0.20; // 20% service fee
+const PLATFORM_FEE_RATE = 0.2; // 20% service fee
 
 // User: Place order
 export const placeOrder = async (
@@ -25,8 +25,17 @@ export const placeOrder = async (
       return next(new ValidationError('Order must contain at least one item'));
     }
 
-    if (!shippingAddress || !shippingAddress.street || !shippingAddress.city || !shippingAddress.country) {
-      return next(new ValidationError('Shipping address is required (street, city, country)'));
+    if (
+      !shippingAddress ||
+      !shippingAddress.street ||
+      !shippingAddress.city ||
+      !shippingAddress.country
+    ) {
+      return next(
+        new ValidationError(
+          'Shipping address is required (street, city, country)'
+        )
+      );
     }
 
     // Validate products and check stock
@@ -45,20 +54,23 @@ export const placeOrder = async (
     const orderItems: any[] = [];
 
     for (const item of items) {
-      const product = products.find((p) => p.id === item.productId);
+      const product = products.find(p => p.id === item.productId);
       if (!product) {
         return next(new ValidationError(`Product ${item.productId} not found`));
       }
 
       if (product.stock < item.quantity) {
         return next(
-          new ValidationError(`Insufficient stock for "${product.name}". Available: ${product.stock}`)
+          new ValidationError(
+            `Insufficient stock for "${product.name}". Available: ${product.stock}`
+          )
         );
       }
 
-      const itemPrice = product.discountPrice && product.discountPrice < product.price
-        ? product.discountPrice
-        : product.price;
+      const itemPrice =
+        product.discountPrice && product.discountPrice < product.price
+          ? product.discountPrice
+          : product.price;
       const itemTotal = itemPrice * item.quantity;
       const sellerAmount = itemTotal * (1 - PLATFORM_FEE_RATE);
       const platformFee = itemTotal * PLATFORM_FEE_RATE;
@@ -266,7 +278,11 @@ export const updateOrderItemStatus = async (
 
     const validStatuses = ['processing', 'shipped', 'delivered'];
     if (!validStatuses.includes(status)) {
-      return next(new ValidationError(`Invalid status. Must be one of: ${validStatuses.join(', ')}`));
+      return next(
+        new ValidationError(
+          `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+        )
+      );
     }
 
     const orderItem = await prisma.orderItem.findUnique({
@@ -279,11 +295,15 @@ export const updateOrderItemStatus = async (
     }
 
     if (orderItem.orderId !== id) {
-      return next(new ValidationError('Order item does not belong to this order'));
+      return next(
+        new ValidationError('Order item does not belong to this order')
+      );
     }
 
     if (orderItem.sellerId !== seller.id) {
-      return next(new ForbiddenError('You can only update your own order items'));
+      return next(
+        new ForbiddenError('You can only update your own order items')
+      );
     }
 
     const updatedItem = await prisma.orderItem.update({
@@ -308,21 +328,29 @@ export const updateOrderItemStatus = async (
       where: { orderId: id },
     });
 
-    const allShipped = allItems.every((item) => item.status === 'shipped' || item.status === 'delivered');
-    const allDelivered = allItems.every((item) => item.status === 'delivered');
+    const allShipped = allItems.every(
+      item => item.status === 'shipped' || item.status === 'delivered'
+    );
+    const allDelivered = allItems.every(item => item.status === 'delivered');
 
     if (allDelivered) {
       await prisma.order.update({
         where: { id },
         data: { status: 'delivered' },
       });
-      publishOrderEvent(ORDER_TOPICS.ORDER_DELIVERED, { id, orderNumber: orderItem.order.orderNumber });
+      publishOrderEvent(ORDER_TOPICS.ORDER_DELIVERED, {
+        id,
+        orderNumber: orderItem.order.orderNumber,
+      });
     } else if (allShipped) {
       await prisma.order.update({
         where: { id },
         data: { status: 'shipped' },
       });
-      publishOrderEvent(ORDER_TOPICS.ORDER_SHIPPED, { id, orderNumber: orderItem.order.orderNumber });
+      publishOrderEvent(ORDER_TOPICS.ORDER_SHIPPED, {
+        id,
+        orderNumber: orderItem.order.orderNumber,
+      });
     }
 
     return res.status(200).json({
@@ -421,9 +449,21 @@ export const updateOrderStatus = async (
     const { id } = req.params;
     const { status } = req.body;
 
-    const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
+    const validStatuses = [
+      'pending',
+      'confirmed',
+      'processing',
+      'shipped',
+      'delivered',
+      'cancelled',
+      'refunded',
+    ];
     if (!validStatuses.includes(status)) {
-      return next(new ValidationError(`Invalid status. Must be one of: ${validStatuses.join(', ')}`));
+      return next(
+        new ValidationError(
+          `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+        )
+      );
     }
 
     const order = await prisma.order.findUnique({ where: { id } });
@@ -515,8 +555,11 @@ export const getRevenue = async (
     const totalSellerPayouts = orders.reduce((sum, o) => sum + o.subtotal, 0);
 
     // Group by date for chart
-    const revenueByDate: Record<string, { total: number; platformFee: number; sellerPayout: number }> = {};
-    orders.forEach((order) => {
+    const revenueByDate: Record<
+      string,
+      { total: number; platformFee: number; sellerPayout: number }
+    > = {};
+    orders.forEach(order => {
       const dateKey = order.createdAt.toISOString().slice(0, 10);
       if (!revenueByDate[dateKey]) {
         revenueByDate[dateKey] = { total: 0, platformFee: 0, sellerPayout: 0 };
@@ -551,11 +594,7 @@ export const getRevenue = async (
 };
 
 // Admin: Dashboard stats
-export const getStats = async (
-  req: any,
-  res: Response,
-  next: NextFunction
-) => {
+export const getStats = async (req: any, res: Response, next: NextFunction) => {
   try {
     const [
       totalOrders,
@@ -615,14 +654,20 @@ export const getSellerRevenue = async (
       },
     });
 
-    const totalSales = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalSales = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
     const totalEarned = items.reduce((sum, item) => sum + item.sellerAmount, 0);
-    const totalPlatformFee = items.reduce((sum, item) => sum + item.platformFee, 0);
+    const totalPlatformFee = items.reduce(
+      (sum, item) => sum + item.platformFee,
+      0
+    );
     const totalItemsSold = items.reduce((sum, item) => sum + item.quantity, 0);
 
     // Group by date
     const salesByDate: Record<string, { sales: number; earned: number }> = {};
-    items.forEach((item) => {
+    items.forEach(item => {
       const dateKey = item.order.createdAt.toISOString().slice(0, 10);
       if (!salesByDate[dateKey]) {
         salesByDate[dateKey] = { sales: 0, earned: 0 };

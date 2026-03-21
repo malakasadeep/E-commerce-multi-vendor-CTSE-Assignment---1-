@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Store, LogOut, ShoppingBag } from 'lucide-react';
@@ -15,9 +15,13 @@ function SideBarWrapper() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/logout-seller`, {}, {
-        withCredentials: true,
-      });
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/logout-seller`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
       router.push('/login');
     } catch (error) {
       console.error('Logout failed:', error);
@@ -83,7 +87,7 @@ function SideBarWrapper() {
                 </h3>
               )}
               <div className="space-y-0.5">
-                {section.items.map((item) => {
+                {section.items.map(item => {
                   const Icon = item.icon;
                   const isActive = pathname === item.href;
 
@@ -112,8 +116,12 @@ function SideBarWrapper() {
               {seller.name?.charAt(0) || 'S'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-gray-300 truncate">{seller.name}</p>
-              <p className="text-[10px] text-gray-600 truncate">{seller.email}</p>
+              <p className="text-xs font-medium text-gray-300 truncate">
+                {seller.name}
+              </p>
+              <p className="text-[10px] text-gray-600 truncate">
+                {seller.email}
+              </p>
             </div>
           </div>
         )}

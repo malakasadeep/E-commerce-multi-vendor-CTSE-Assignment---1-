@@ -45,7 +45,9 @@ export default function CreateProductPage() {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Create Product</h1>
-            <p className="text-gray-500 text-sm">Add a new product to your shop</p>
+            <p className="text-gray-500 text-sm">
+              Add a new product to your shop
+            </p>
           </div>
         </div>
 
