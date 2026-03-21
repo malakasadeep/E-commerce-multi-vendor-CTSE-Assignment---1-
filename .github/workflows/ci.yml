@@ -18,6 +18,9 @@ jobs:
   quality:
     name: Lint, Test, Build, Typecheck
     runs-on: ubuntu-latest
+    env:
+      NX_NO_CLOUD: 'true'
+      NX_DAEMON: 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
