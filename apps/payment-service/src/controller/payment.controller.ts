@@ -1,9 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import prisma from '@packages/libs/prisma';
-import {
-  ValidationError,
-  NotFoundError,
-} from '@packages/error-handler';
+import { ValidationError, NotFoundError } from '@packages/error-handler';
 import { publishPaymentEvent } from '../utils/kafka.producer';
 import { PAYMENT_TOPICS } from '@packages/libs/kafka';
 import Stripe from 'stripe';
@@ -111,7 +108,9 @@ export const handleWebhook = async (
     }
   } catch (err: any) {
     console.error('Webhook signature verification failed:', err.message);
-    return res.status(400).json({ error: 'Webhook signature verification failed' });
+    return res
+      .status(400)
+      .json({ error: 'Webhook signature verification failed' });
   }
 
   try {
@@ -193,7 +192,8 @@ async function transferToSellers(orderId: string) {
     // Group amounts by seller
     const sellerAmounts: Record<string, number> = {};
     for (const item of orderItems) {
-      sellerAmounts[item.sellerId] = (sellerAmounts[item.sellerId] || 0) + item.sellerAmount;
+      sellerAmounts[item.sellerId] =
+        (sellerAmounts[item.sellerId] || 0) + item.sellerAmount;
     }
 
     // Transfer to each seller
@@ -215,7 +215,9 @@ async function transferToSellers(orderId: string) {
           console.error(`Failed to transfer to seller ${sellerId}:`, err);
         }
       } else {
-        console.warn(`Seller ${sellerId} has no Stripe account, skipping transfer`);
+        console.warn(
+          `Seller ${sellerId} has no Stripe account, skipping transfer`
+        );
       }
     }
   } catch (error) {
@@ -277,7 +279,9 @@ export const getAllPayments = async (
         orderBy: { createdAt: 'desc' },
         include: {
           user: { select: { id: true, name: true, email: true } },
-          orders: { select: { id: true, orderNumber: true, status: true, total: true } },
+          orders: {
+            select: { id: true, orderNumber: true, status: true, total: true },
+          },
         },
       }),
       prisma.payment.count({ where }),

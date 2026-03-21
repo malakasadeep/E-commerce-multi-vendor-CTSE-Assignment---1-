@@ -19,7 +19,7 @@ export function CategoryFilter({ selected, onSelect }: CategoryFilterProps) {
       >
         All
       </Button>
-      {PRODUCT_CATEGORIES.map((category) => (
+      {PRODUCT_CATEGORIES.map(category => (
         <Button
           key={category}
           variant={selected === category ? 'default' : 'outline'}

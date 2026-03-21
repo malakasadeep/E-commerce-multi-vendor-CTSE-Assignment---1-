@@ -1,8 +1,16 @@
-"use client";
+'use client';
 
 import { useMutation } from '@tanstack/react-query';
 import GoogleButton from 'apps/user-ui/src/shared/components/google-button';
-import { Eye, EyeOff, Mail, Lock, User, ShoppingBag, ArrowRight } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  ShoppingBag,
+  ArrowRight,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -35,7 +43,7 @@ function SignUpPage() {
 
   const startResendTimer = () => {
     const interval = setInterval(() => {
-      setTimer((prev) => {
+      setTimer(prev => {
         if (prev <= 1) {
           clearInterval(interval);
           setCanResend(true);
@@ -334,14 +342,14 @@ function SignUpPage() {
                   <input
                     key={index}
                     type="text"
-                    ref={(el) => {
+                    ref={el => {
                       if (el) inputRefs.current[index] = el;
                     }}
                     maxLength={1}
                     className="w-14 h-14 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-200"
                     value={digit}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                    onChange={e => handleOtpChange(index, e.target.value)}
+                    onKeyDown={e => handleOtpKeyDown(index, e)}
                   />
                 ))}
               </div>

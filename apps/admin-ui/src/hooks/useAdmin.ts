@@ -5,7 +5,12 @@ import axiosInstance from '../utils/axiosInstance';
 import { Admin } from '../types';
 
 const useAdmin = () => {
-  const { data: admin, isLoading, isError, refetch } = useQuery<Admin>({
+  const {
+    data: admin,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery<Admin>({
     queryKey: ['admin'],
     queryFn: async () => {
       const res = await axiosInstance.get('/api/logged-in-admin');

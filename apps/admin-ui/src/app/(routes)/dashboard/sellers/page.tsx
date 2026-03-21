@@ -3,8 +3,20 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../../../../utils/axiosInstance';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../../components/ui/table';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../../../../components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../../../components/ui/table';
 import { Badge } from '../../../../components/ui/badge';
 import { Button } from '../../../../components/ui/button';
 import { Skeleton } from '../../../../components/ui/skeleton';
@@ -18,7 +30,9 @@ export default function SellersPage() {
     queryKey: ['admin-sellers', page],
     queryFn: async () => {
       // Fetch all sellers via product-service admin endpoint or directly
-      const res = await axiosInstance.get(`/product-api/products?page=1&limit=1000`);
+      const res = await axiosInstance.get(
+        `/product-api/products?page=1&limit=1000`
+      );
       // Extract unique sellers
       const products = res.data.products || [];
       const sellerMap = new Map();
@@ -57,8 +71,12 @@ export default function SellersPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Sellers Management</h1>
-          <p className="text-gray-500 text-sm mt-1">{data?.total || 0} sellers registered</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Sellers Management
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            {data?.total || 0} sellers registered
+          </p>
         </div>
       </div>
 
@@ -88,9 +106,13 @@ export default function SellersPage() {
                     <TableCell>
                       <Badge variant="secondary">{seller.shopCategory}</Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-gray-500">{seller.shopAddress}</TableCell>
+                    <TableCell className="text-sm text-gray-500">
+                      {seller.shopAddress}
+                    </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{seller.productCount} products</Badge>
+                      <Badge variant="outline">
+                        {seller.productCount} products
+                      </Badge>
                     </TableCell>
                   </TableRow>
                 ))}

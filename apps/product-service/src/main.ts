@@ -37,9 +37,11 @@ app.use(errorMiddleware);
 const port = process.env.PRODUCT_SERVICE_PORT || 6002;
 
 const server = app.listen(port, () => {
-  console.log(`Product service listening at http://localhost:${port}/product-api`);
+  console.log(
+    `Product service listening at http://localhost:${port}/product-api`
+  );
   startProductConsumer();
 });
-server.on('error', (err) => {
+server.on('error', err => {
   console.log('Server error: ', err);
 });

@@ -5,8 +5,5 @@
     "types": ["jest", "node"],
     "rootDir": "../../"
   },
-  "include": [
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts"
-  ]
+  "include": ["src/**/*.spec.ts", "src/**/*.test.ts"]
 }

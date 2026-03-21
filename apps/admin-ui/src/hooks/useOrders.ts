@@ -32,7 +32,10 @@ export const useUpdateOrderStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const res = await axiosInstance.put(`/order-api/admin/orders/${id}/status`, { status });
+      const res = await axiosInstance.put(
+        `/order-api/admin/orders/${id}/status`,
+        { status }
+      );
       return res.data;
     },
     onSuccess: () => {

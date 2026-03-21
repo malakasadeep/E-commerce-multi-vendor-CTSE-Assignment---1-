@@ -26,7 +26,11 @@ export const createProduct = async (
     } = req.body;
 
     if (!name || !description || !price || !category) {
-      return next(new ValidationError('Name, description, price, and category are required'));
+      return next(
+        new ValidationError(
+          'Name, description, price, and category are required'
+        )
+      );
     }
 
     const seller = req.seller;
@@ -39,7 +43,9 @@ export const createProduct = async (
     });
 
     if (!shop) {
-      return next(new ValidationError('You must create a shop before adding products'));
+      return next(
+        new ValidationError('You must create a shop before adding products')
+      );
     }
 
     const product = await prisma.product.create({
@@ -236,7 +242,9 @@ export const updateProduct = async (
     if (description !== undefined) updateData.description = description;
     if (price !== undefined) updateData.price = parseFloat(price);
     if (discountPrice !== undefined)
-      updateData.discountPrice = discountPrice ? parseFloat(discountPrice) : null;
+      updateData.discountPrice = discountPrice
+        ? parseFloat(discountPrice)
+        : null;
     if (category !== undefined) updateData.category = category;
     if (tags !== undefined) updateData.tags = tags;
     if (stock !== undefined) updateData.stock = parseInt(stock);
@@ -301,7 +309,10 @@ export const deleteProduct = async (
     });
 
     // Fire-and-forget Kafka event
-    publishProductEvent(PRODUCT_TOPICS.PRODUCT_DELETED, { id, sellerId: seller.id });
+    publishProductEvent(PRODUCT_TOPICS.PRODUCT_DELETED, {
+      id,
+      sellerId: seller.id,
+    });
 
     return res.status(200).json({
       success: true,
@@ -341,10 +352,12 @@ export const createProductReview = async (
 
     // Check if user already reviewed this product
     const existingReview = product.reviews.find(
-      (r) => r.userId === user.id
+      (r: { userId: string }) => r.userId === user.id
     );
     if (existingReview) {
-      return next(new ValidationError('You have already reviewed this product'));
+      return next(
+        new ValidationError('You have already reviewed this product')
+      );
     }
 
     const review = await prisma.productReview.create({
@@ -370,7 +383,10 @@ export const createProductReview = async (
       where: { productId: id },
     });
     const avgRating =
-      allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+      allReviews.reduce(
+        (sum: number, r: { rating: number }) => sum + r.rating,
+        0
+      ) / allReviews.length;
 
     await prisma.product.update({
       where: { id },

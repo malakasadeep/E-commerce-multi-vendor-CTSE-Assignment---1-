@@ -1,58 +1,69 @@
 # ============================================
-# Stage 1: Build
+# Stage 1: Dependencies
 # ============================================
-FROM node:22-alpine AS build
+FROM node:22-alpine AS deps
 
-WORKDIR /app
+WORKDIR /deps
 
-# Copy package files for dependency layer caching
-COPY package.json package-lock.json ./
+COPY package*.json ./
+RUN npm config set fetch-retries 5 \
+  && npm config set fetch-retry-mintimeout 20000 \
+  && npm config set fetch-retry-maxtimeout 120000 \
+  && npm config set fetch-timeout 600000 \
+  && npm install --include=dev --ignore-scripts --no-audit --no-fund
 
-# Install all dependencies (dev included for build tooling)
-RUN npm install
+# ============================================
+# Stage 2: Build
+# ============================================
+FROM node:22-alpine AS builder
 
-# Copy Prisma schema and generate client
+WORKDIR /build
+
+COPY package*.json ./
+COPY tsconfig.base.json nx.json ./
 COPY prisma ./prisma/
 COPY prisma.config.ts ./
-RUN npx prisma generate
+COPY packages ./packages/
+COPY apps/payment-service ./apps/payment-service/
+COPY --from=deps /deps/node_modules ./node_modules/
 
-# Copy monorepo source
-COPY . .
+RUN npx prisma generate --schema=./prisma/schema.prisma
 
-# Build the payment-service
-RUN npx nx build payment-service
+RUN npx nx build payment-service --configuration=production
 
 # ============================================
-# Stage 2: Production
+# Stage 3: Production Runtime Dependencies
+# ============================================
+FROM node:22-alpine AS prod-deps
+
+WORKDIR /prod-deps
+
+COPY apps/payment-service/package.json ./
+RUN npm install --production --ignore-scripts --no-audit --no-fund
+
+# ============================================
+# Stage 4: Production Runtime
 # ============================================
 FROM node:22-alpine
 
-# Install dumb-init for proper PID 1 signal handling
 RUN apk add --no-cache dumb-init
-
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001 -G nodejs
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001 -G nodejs
 
 WORKDIR /app
 
-# Copy built output (includes Nx-generated package.json)
-COPY --from=build /app/apps/payment-service/dist ./
+COPY --from=builder /build/apps/payment-service/dist ./
+COPY --from=prod-deps /prod-deps/node_modules ./node_modules/
+COPY --from=builder /build/node_modules/.prisma ./node_modules/.prisma
 
-# Install production dependencies only
-RUN npm install --omit=dev
-
-# Copy Prisma client runtime (generated engine + client)
-COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
-
-# Set ownership to non-root user
 RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 
 EXPOSE 6004
-
 ENV NODE_ENV=production
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:6004/', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "main.js"]

@@ -6,10 +6,7 @@ export const startProductConsumer = async () => {
     const consumer = await createConsumer('product-service-group');
 
     await consumer.subscribe({
-      topics: [
-        ORDER_TOPICS.ORDER_CANCELLED,
-        ORDER_TOPICS.ORDER_REFUNDED,
-      ],
+      topics: [ORDER_TOPICS.ORDER_CANCELLED, ORDER_TOPICS.ORDER_REFUNDED],
       fromBeginning: false,
     });
 

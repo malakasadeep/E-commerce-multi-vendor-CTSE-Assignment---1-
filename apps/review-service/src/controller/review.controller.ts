@@ -20,7 +20,9 @@ export const createOrderReview = async (
     const { rating, comment, sellerId } = req.body;
 
     if (!rating || !comment || !sellerId) {
-      return next(new ValidationError('Rating, comment, and sellerId are required'));
+      return next(
+        new ValidationError('Rating, comment, and sellerId are required')
+      );
     }
 
     if (rating < 1 || rating > 5) {
@@ -51,13 +53,19 @@ export const createOrderReview = async (
     });
 
     if (existingReview) {
-      return next(new ValidationError('You have already reviewed this seller for this order'));
+      return next(
+        new ValidationError(
+          'You have already reviewed this seller for this order'
+        )
+      );
     }
 
     // Verify seller has items in this order
-    const sellerItems = order.items.filter((item) => item.sellerId === sellerId);
+    const sellerItems = order.items.filter(item => item.sellerId === sellerId);
     if (sellerItems.length === 0) {
-      return next(new ValidationError('This seller has no items in this order'));
+      return next(
+        new ValidationError('This seller has no items in this order')
+      );
     }
 
     const review = await prisma.orderReview.create({
@@ -171,27 +179,28 @@ export const getAllReviews = async (
     const skip = (page - 1) * limit;
 
     // Include both order reviews and product reviews
-    const [orderReviews, orderReviewTotal, productReviews, productReviewTotal] = await Promise.all([
-      prisma.orderReview.findMany({
-        skip,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-        include: {
-          user: { select: { id: true, name: true, email: true } },
-        },
-      }),
-      prisma.orderReview.count(),
-      prisma.productReview.findMany({
-        skip,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-        include: {
-          user: { select: { id: true, name: true, email: true } },
-          product: { select: { id: true, name: true } },
-        },
-      }),
-      prisma.productReview.count(),
-    ]);
+    const [orderReviews, orderReviewTotal, productReviews, productReviewTotal] =
+      await Promise.all([
+        prisma.orderReview.findMany({
+          skip,
+          take: limit,
+          orderBy: { createdAt: 'desc' },
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+          },
+        }),
+        prisma.orderReview.count(),
+        prisma.productReview.findMany({
+          skip,
+          take: limit,
+          orderBy: { createdAt: 'desc' },
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+            product: { select: { id: true, name: true } },
+          },
+        }),
+        prisma.productReview.count(),
+      ]);
 
     return res.status(200).json({
       success: true,
@@ -230,9 +239,10 @@ export const deleteReview = async (
       const allReviews = await prisma.productReview.findMany({
         where: { productId: review.productId },
       });
-      const avgRating = allReviews.length > 0
-        ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length
-        : 0;
+      const avgRating =
+        allReviews.length > 0
+          ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length
+          : 0;
       await prisma.product.update({
         where: { id: review.productId },
         data: { ratings: avgRating },

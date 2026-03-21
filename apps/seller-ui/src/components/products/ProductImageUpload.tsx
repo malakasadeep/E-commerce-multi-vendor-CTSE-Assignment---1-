@@ -10,7 +10,10 @@ interface ProductImageUploadProps {
   onChange: (images: { url: string }[]) => void;
 }
 
-export function ProductImageUpload({ images, onChange }: ProductImageUploadProps) {
+export function ProductImageUpload({
+  images,
+  onChange,
+}: ProductImageUploadProps) {
   const [urlInput, setUrlInput] = useState('');
 
   const addImage = () => {
@@ -37,10 +40,15 @@ export function ProductImageUpload({ images, onChange }: ProductImageUploadProps
         <Input
           placeholder="Paste image URL..."
           value={urlInput}
-          onChange={(e) => setUrlInput(e.target.value)}
+          onChange={e => setUrlInput(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <Button type="button" variant="outline" onClick={addImage} disabled={!urlInput.trim()}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={addImage}
+          disabled={!urlInput.trim()}
+        >
           <Plus className="h-4 w-4" />
         </Button>
       </div>
@@ -48,14 +56,19 @@ export function ProductImageUpload({ images, onChange }: ProductImageUploadProps
       {images.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {images.map((img, index) => (
-            <div key={index} className="relative group rounded-lg overflow-hidden border bg-gray-50 aspect-square">
+            <div
+              key={index}
+              className="relative group rounded-lg overflow-hidden border bg-gray-50 aspect-square"
+            >
               <img
                 src={img.url}
                 alt={`Product ${index + 1}`}
                 className="w-full h-full object-cover"
-                onError={(e) => {
+                onError={e => {
                   (e.target as HTMLImageElement).style.display = 'none';
-                  (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                  (
+                    e.target as HTMLImageElement
+                  ).nextElementSibling?.classList.remove('hidden');
                 }}
               />
               <div className="hidden absolute inset-0 flex items-center justify-center text-gray-400">

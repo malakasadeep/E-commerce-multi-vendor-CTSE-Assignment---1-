@@ -32,14 +32,23 @@ export function DeleteProductDialog({
         <DialogHeader>
           <DialogTitle>Delete Product</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete &quot;{productName}&quot;? This action cannot be undone.
+            Are you sure you want to delete &quot;{productName}&quot;? This
+            action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isDeleting}>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isDeleting}
+          >
             Cancel
           </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={isDeleting}>
+          <Button
+            variant="destructive"
+            onClick={onConfirm}
+            disabled={isDeleting}
+          >
             {isDeleting ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogFooter>

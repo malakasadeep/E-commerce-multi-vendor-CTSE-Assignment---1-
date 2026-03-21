@@ -12,7 +12,7 @@ let isRefreshing = false;
 let failedQueue: any[] = [];
 
 const processQueue = (error: any, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
+  failedQueue.forEach(prom => {
     if (error) {
       prom.reject(error);
     } else {
@@ -23,8 +23,8 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
+  response => response,
+  async error => {
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         })
           .then(() => axiosInstance(originalRequest))
-          .catch((err) => Promise.reject(err));
+          .catch(err => Promise.reject(err));
       }
 
       originalRequest._retry = true;

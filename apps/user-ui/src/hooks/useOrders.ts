@@ -20,7 +20,9 @@ export const useUserOrders = (page = 1, limit = 10) => {
   return useQuery({
     queryKey: ['user-orders', page, limit],
     queryFn: async () => {
-      const res = await axiosInstance.get(`/order-api/orders?page=${page}&limit=${limit}`);
+      const res = await axiosInstance.get(
+        `/order-api/orders?page=${page}&limit=${limit}`
+      );
       return res.data;
     },
     staleTime: 1 * 60 * 1000,

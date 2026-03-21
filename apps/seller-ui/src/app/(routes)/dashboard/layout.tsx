@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React from 'react';
 import SideBarWrapper from '../../shared/components/sidebar/sidebat';
 
@@ -8,9 +8,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       <aside className="flex-shrink-0">
         <SideBarWrapper />
       </aside>
-      <main className="flex-1 overflow-auto">
-        {children}
-      </main>
+      <main className="flex-1 overflow-auto">{children}</main>
     </div>
   );
 }

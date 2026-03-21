@@ -195,7 +195,11 @@ export const refreshToken = async (
   next: NextFunction
 ) => {
   try {
-    const refreshToken =  req.cookies["refreshToken"] || req.cookies["sellerRefreshToken"] || req.cookies["adminRefreshToken"] || req.headers.authorization?.split(' ')[1];
+    const refreshToken =
+      req.cookies['refreshToken'] ||
+      req.cookies['sellerRefreshToken'] ||
+      req.cookies['adminRefreshToken'] ||
+      req.headers.authorization?.split(' ')[1];
 
     if (!refreshToken) {
       throw new ValidationError('Refresh token not found');
@@ -214,11 +218,14 @@ export const refreshToken = async (
     }
 
     let account;
-    if (decoded.role === 'user'){
+    if (decoded.role === 'user') {
       account = await prisma.user.findUnique({ where: { id: decoded.id } });
-    }else if (decoded.role === 'seller'){
-      account = await prisma.sellers.findUnique({ where: { id: decoded.id }, include: { shop: true } });
-    }else if (decoded.role === 'admin'){
+    } else if (decoded.role === 'seller') {
+      account = await prisma.sellers.findUnique({
+        where: { id: decoded.id },
+        include: { shop: true },
+      });
+    } else if (decoded.role === 'admin') {
       account = await prisma.admin.findUnique({ where: { id: decoded.id } });
     }
 
@@ -232,11 +239,11 @@ export const refreshToken = async (
       { expiresIn: '15m' }
     );
 
-    if(decoded.role === 'user'){
+    if (decoded.role === 'user') {
       setCookie(res, 'accessToken', newAccessToken);
-    }else if(decoded.role === 'seller'){
+    } else if (decoded.role === 'seller') {
       setCookie(res, 'sellerAccessToken', newAccessToken);
-    }else if(decoded.role === 'admin'){
+    } else if (decoded.role === 'admin') {
       setCookie(res, 'adminAccessToken', newAccessToken);
     }
 
@@ -528,7 +535,12 @@ export const loginAdmin = async (
     return res.status(200).json({
       success: true,
       message: 'Admin logged in successfully',
-      admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role },
+      admin: {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role,
+      },
       accessToken,
     });
   } catch (error) {
@@ -536,11 +548,7 @@ export const loginAdmin = async (
   }
 };
 
-export const getAdmin = async (
-  req: any,
-  res: Response,
-  next: NextFunction
-) => {
+export const getAdmin = async (req: any, res: Response, next: NextFunction) => {
   try {
     const admin = req.admin;
     if (!admin) {
@@ -548,7 +556,12 @@ export const getAdmin = async (
     }
     return res.status(200).json({
       success: true,
-      admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role },
+      admin: {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role,
+      },
     });
   } catch (error) {
     return next(error);

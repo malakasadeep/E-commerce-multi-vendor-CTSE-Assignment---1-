@@ -12,7 +12,10 @@ interface ProductReviewSectionProps {
   reviews: ProductReview[];
 }
 
-export function ProductReviewSection({ productId, reviews }: ProductReviewSectionProps) {
+export function ProductReviewSection({
+  productId,
+  reviews,
+}: ProductReviewSectionProps) {
   const { user } = useUser();
   const createReview = useCreateReview();
   const [selectedRating, setSelectedRating] = useState(0);
@@ -20,7 +23,7 @@ export function ProductReviewSection({ productId, reviews }: ProductReviewSectio
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');
 
-  const hasReviewed = reviews.some((r) => r.userId === user?.id);
+  const hasReviewed = reviews.some(r => r.userId === user?.id);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +58,10 @@ export function ProductReviewSection({ productId, reviews }: ProductReviewSectio
 
       {/* Review Form */}
       {user && !hasReviewed && (
-        <form onSubmit={handleSubmit} className="bg-gray-50 rounded-lg p-4 space-y-3">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-gray-50 rounded-lg p-4 space-y-3"
+        >
           <p className="font-medium text-sm">Write a Review</p>
           <div className="flex gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -78,7 +84,7 @@ export function ProductReviewSection({ productId, reviews }: ProductReviewSectio
           </div>
           <textarea
             value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            onChange={e => setComment(e.target.value)}
             placeholder="Share your thoughts about this product..."
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm min-h-[80px] focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -91,23 +97,31 @@ export function ProductReviewSection({ productId, reviews }: ProductReviewSectio
 
       {!user && (
         <p className="text-sm text-gray-500 bg-gray-50 p-4 rounded-lg">
-          Please <a href="/login" className="text-blue-600 hover:underline">login</a> to write a review.
+          Please{' '}
+          <a href="/login" className="text-blue-600 hover:underline">
+            login
+          </a>{' '}
+          to write a review.
         </p>
       )}
 
       {/* Reviews List */}
       {reviews.length === 0 ? (
-        <p className="text-gray-500 text-sm">No reviews yet. Be the first to review!</p>
+        <p className="text-gray-500 text-sm">
+          No reviews yet. Be the first to review!
+        </p>
       ) : (
         <div className="space-y-4">
-          {reviews.map((review) => (
+          {reviews.map(review => (
             <div key={review.id} className="border-b pb-4 last:border-0">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold text-sm">
                     {review.user.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className="font-medium text-sm">{review.user.name}</span>
+                  <span className="font-medium text-sm">
+                    {review.user.name}
+                  </span>
                 </div>
                 <span className="text-xs text-gray-400">
                   {new Date(review.createdAt).toLocaleDateString()}

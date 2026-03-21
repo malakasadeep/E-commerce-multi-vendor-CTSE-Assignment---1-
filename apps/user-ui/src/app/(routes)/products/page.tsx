@@ -46,7 +46,10 @@ export default function ProductsPage() {
       {/* Category Filter */}
       {!searchQuery && (
         <div className="mb-6 overflow-x-auto pb-2">
-          <CategoryFilter selected={selectedCategory} onSelect={handleCategoryChange} />
+          <CategoryFilter
+            selected={selectedCategory}
+            onSelect={handleCategoryChange}
+          />
         </div>
       )}
 
@@ -67,7 +70,7 @@ export default function ProductsPage() {
       {/* Products Grid */}
       {!isLoading && data?.products && data.products.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {data.products.map((product) => (
+          {data.products.map(product => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
@@ -77,13 +80,15 @@ export default function ProductsPage() {
       {!isLoading && data?.products && data.products.length === 0 && (
         <div className="text-center py-16">
           <PackageOpen className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            No products found
+          </h3>
           <p className="text-gray-500">
             {searchQuery
               ? 'Try adjusting your search terms'
               : selectedCategory
-              ? 'No products in this category yet'
-              : 'Products will appear here once sellers add them'}
+                ? 'No products in this category yet'
+                : 'Products will appear here once sellers add them'}
           </p>
           {(searchQuery || selectedCategory) && (
             <Button
@@ -107,7 +112,7 @@ export default function ProductsPage() {
             variant="outline"
             size="sm"
             disabled={page <= 1}
-            onClick={() => setPage((p) => p - 1)}
+            onClick={() => setPage(p => p - 1)}
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
             Previous
@@ -119,7 +124,7 @@ export default function ProductsPage() {
             variant="outline"
             size="sm"
             disabled={page >= data.pagination.totalPages}
-            onClick={() => setPage((p) => p + 1)}
+            onClick={() => setPage(p => p + 1)}
           >
             Next
             <ChevronRight className="h-4 w-4 ml-1" />

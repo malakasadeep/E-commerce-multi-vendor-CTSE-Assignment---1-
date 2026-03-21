@@ -36,8 +36,10 @@ app.use(errorMiddleware);
 const port = process.env.REVIEW_SERVICE_PORT || 6005;
 
 const server = app.listen(port, () => {
-  console.log(`Review service listening at http://localhost:${port}/review-api`);
+  console.log(
+    `Review service listening at http://localhost:${port}/review-api`
+  );
 });
-server.on('error', (err) => {
+server.on('error', err => {
   console.log('Server error: ', err);
 });

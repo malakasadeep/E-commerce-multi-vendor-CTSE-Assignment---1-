@@ -4,7 +4,14 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../../../../utils/axiosInstance';
 import { Card, CardContent } from '../../../../components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../../components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../../../components/ui/table';
 import { Skeleton } from '../../../../components/ui/skeleton';
 import { Users, Mail } from 'lucide-react';
 
@@ -32,7 +39,9 @@ export default function CustomersPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
-        <p className="text-gray-500 text-sm mt-1">{data?.totalUsers || 0} registered customers</p>
+        <p className="text-gray-500 text-sm mt-1">
+          {data?.totalUsers || 0} registered customers
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -68,8 +77,9 @@ export default function CustomersPage() {
       <Card>
         <CardContent className="p-6">
           <p className="text-center text-gray-500 py-8">
-            Customer list with detailed profiles will be available once the admin customer endpoint is connected.
-            Currently showing aggregated stats from the order service.
+            Customer list with detailed profiles will be available once the
+            admin customer endpoint is connected. Currently showing aggregated
+            stats from the order service.
           </p>
         </CardContent>
       </Card>

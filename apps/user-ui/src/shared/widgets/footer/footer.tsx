@@ -91,7 +91,7 @@ function Footer() {
                 { label: 'My Orders', href: '/orders' },
                 { label: 'Shopping Cart', href: '/cart' },
                 { label: 'Become a Seller', href: SELLER_URL, external: true },
-              ].map((link) => (
+              ].map(link => (
                 <li key={link.href}>
                   {link.external ? (
                     <a
@@ -129,7 +129,7 @@ function Footer() {
                 'Shipping Policy',
                 'Terms of Service',
                 'Privacy Policy',
-              ].map((item) => (
+              ].map(item => (
                 <li key={item}>
                   <span className="text-sm hover:text-white hover:pl-1 transition-all duration-200 flex items-center gap-2 cursor-pointer">
                     <ArrowRight className="h-3 w-3 text-blue-400" />

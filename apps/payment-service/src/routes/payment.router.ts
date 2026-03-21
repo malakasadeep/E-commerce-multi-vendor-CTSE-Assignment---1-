@@ -12,12 +12,22 @@ import {
 const router: Router = express.Router();
 
 // User routes
-router.post('/create-payment-intent', isAuthenticated, isUser, createPaymentIntent);
+router.post(
+  '/create-payment-intent',
+  isAuthenticated,
+  isUser,
+  createPaymentIntent
+);
 router.get('/payments/:id', isAuthenticated, isUser, getPaymentStatus);
 
 // Admin routes
 router.get('/admin/payments', isAuthenticated, isAdmin, getAllPayments);
-router.post('/admin/refund/:paymentId', isAuthenticated, isAdmin, processRefund);
+router.post(
+  '/admin/refund/:paymentId',
+  isAuthenticated,
+  isAdmin,
+  processRefund
+);
 
 // Webhook router (separate - uses raw body)
 const webhookRouter: Router = express.Router();

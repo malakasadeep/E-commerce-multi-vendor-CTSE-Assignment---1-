@@ -34,20 +34,26 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  const existingCartItem = cart.find((item) => item.productId === id);
+  const existingCartItem = cart.find(item => item.productId === id);
 
   const handleAddToCart = () => {
     if (!data?.product) return;
     const product = data.product;
-    const effectivePrice = product.discountPrice && product.discountPrice < product.price
-      ? product.discountPrice
-      : product.price;
+    const effectivePrice =
+      product.discountPrice && product.discountPrice < product.price
+        ? product.discountPrice
+        : product.price;
 
     if (existingCartItem) {
-      const newQty = Math.min(product.stock, existingCartItem.quantity + quantity);
-      setCart(cart.map((item) =>
-        item.productId === id ? { ...item, quantity: newQty } : item
-      ));
+      const newQty = Math.min(
+        product.stock,
+        existingCartItem.quantity + quantity
+      );
+      setCart(
+        cart.map(item =>
+          item.productId === id ? { ...item, quantity: newQty } : item
+        )
+      );
     } else {
       const newItem: CartItem = {
         productId: product.id,
@@ -86,7 +92,9 @@ export default function ProductDetailPage() {
   if (!data?.product) {
     return (
       <div className="w-[90%] max-w-7xl mx-auto py-16 text-center">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Product not found</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Product not found
+        </h2>
         <Link href="/products">
           <Button variant="outline">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -98,7 +106,8 @@ export default function ProductDetailPage() {
   }
 
   const product = data.product;
-  const hasDiscount = product.discountPrice && product.discountPrice < product.price;
+  const hasDiscount =
+    product.discountPrice && product.discountPrice < product.price;
   const images = product.images || [];
   const reviews = product.reviews || [];
 
@@ -106,7 +115,10 @@ export default function ProductDetailPage() {
     <div className="w-[90%] max-w-7xl mx-auto py-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-        <Link href="/products" className="hover:text-blue-600 transition-colors">
+        <Link
+          href="/products"
+          className="hover:text-blue-600 transition-colors"
+        >
           Products
         </Link>
         <span>/</span>
@@ -132,7 +144,9 @@ export default function ProductDetailPage() {
               <>
                 <button
                   onClick={() =>
-                    setSelectedImageIndex((i) => (i > 0 ? i - 1 : images.length - 1))
+                    setSelectedImageIndex(i =>
+                      i > 0 ? i - 1 : images.length - 1
+                    )
                   }
                   className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow"
                 >
@@ -140,7 +154,9 @@ export default function ProductDetailPage() {
                 </button>
                 <button
                   onClick={() =>
-                    setSelectedImageIndex((i) => (i < images.length - 1 ? i + 1 : 0))
+                    setSelectedImageIndex(i =>
+                      i < images.length - 1 ? i + 1 : 0
+                    )
                   }
                   className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow"
                 >
@@ -156,10 +172,16 @@ export default function ProductDetailPage() {
                   key={img.id}
                   onClick={() => setSelectedImageIndex(i)}
                   className={`w-16 h-16 rounded-lg overflow-hidden border-2 flex-shrink-0 ${
-                    i === selectedImageIndex ? 'border-blue-500' : 'border-transparent'
+                    i === selectedImageIndex
+                      ? 'border-blue-500'
+                      : 'border-transparent'
                   }`}
                 >
-                  <img src={img.url} alt="" className="w-full h-full object-cover" />
+                  <img
+                    src={img.url}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -169,8 +191,12 @@ export default function ProductDetailPage() {
         {/* Product Info */}
         <div className="space-y-5">
           <div>
-            <Badge variant="secondary" className="mb-2">{product.category}</Badge>
-            <h1 className="text-2xl font-bold text-gray-900 font-Poppins">{product.name}</h1>
+            <Badge variant="secondary" className="mb-2">
+              {product.category}
+            </Badge>
+            <h1 className="text-2xl font-bold text-gray-900 font-Poppins">
+              {product.name}
+            </h1>
           </div>
 
           {/* Rating */}
@@ -188,10 +214,13 @@ export default function ProductDetailPage() {
               ))}
             </div>
             <span className="text-sm text-gray-500">
-              {product.ratings > 0 ? product.ratings.toFixed(1) : '0'} ({reviews.length} reviews)
+              {product.ratings > 0 ? product.ratings.toFixed(1) : '0'} (
+              {reviews.length} reviews)
             </span>
             <span className="text-sm text-gray-400">|</span>
-            <span className="text-sm text-gray-500">{product.sold_out} sold</span>
+            <span className="text-sm text-gray-500">
+              {product.sold_out} sold
+            </span>
           </div>
 
           {/* Price */}
@@ -205,7 +234,11 @@ export default function ProductDetailPage() {
                   ${product.price.toFixed(2)}
                 </span>
                 <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
-                  {Math.round(((product.price - product.discountPrice!) / product.price) * 100)}% OFF
+                  {Math.round(
+                    ((product.price - product.discountPrice!) / product.price) *
+                      100
+                  )}
+                  % OFF
                 </Badge>
               </>
             ) : (
@@ -218,13 +251,15 @@ export default function ProductDetailPage() {
           {/* Description */}
           <div>
             <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-            <p className="text-gray-600 text-sm leading-relaxed">{product.description}</p>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {product.description}
+            </p>
           </div>
 
           {/* Tags */}
           {product.tags && product.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {product.tags.map((tag) => (
+              {product.tags.map(tag => (
                 <Badge key={tag} variant="outline" className="text-xs">
                   {tag}
                 </Badge>
@@ -239,8 +274,12 @@ export default function ProductDetailPage() {
                 product.stock > 0 ? 'bg-green-500' : 'bg-red-500'
               }`}
             />
-            <span className={`text-sm font-medium ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {product.stock > 0 ? `In Stock (${product.stock} available)` : 'Out of Stock'}
+            <span
+              className={`text-sm font-medium ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}
+            >
+              {product.stock > 0
+                ? `In Stock (${product.stock} available)`
+                : 'Out of Stock'}
             </span>
           </div>
 
@@ -250,15 +289,19 @@ export default function ProductDetailPage() {
               <span className="text-sm font-medium text-gray-700">Qty:</span>
               <div className="flex items-center border rounded-lg">
                 <button
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
                   className="w-9 h-9 flex items-center justify-center hover:bg-gray-50 rounded-l-lg"
                   disabled={quantity <= 1}
                 >
                   <Minus className="h-3 w-3" />
                 </button>
-                <span className="w-10 text-center font-medium text-sm">{quantity}</span>
+                <span className="w-10 text-center font-medium text-sm">
+                  {quantity}
+                </span>
                 <button
-                  onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+                  onClick={() =>
+                    setQuantity(q => Math.min(product.stock, q + 1))
+                  }
                   className="w-9 h-9 flex items-center justify-center hover:bg-gray-50 rounded-r-lg"
                   disabled={quantity >= product.stock}
                 >
@@ -266,7 +309,9 @@ export default function ProductDetailPage() {
                 </button>
               </div>
               {existingCartItem && (
-                <span className="text-xs text-gray-500">({existingCartItem.quantity} in cart)</span>
+                <span className="text-xs text-gray-500">
+                  ({existingCartItem.quantity} in cart)
+                </span>
               )}
             </div>
           )}
@@ -302,7 +347,9 @@ export default function ProductDetailPage() {
                   <Store className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900 text-sm">{product.shop.name}</p>
+                  <p className="font-semibold text-gray-900 text-sm">
+                    {product.shop.name}
+                  </p>
                   <div className="flex items-center gap-1 text-xs text-gray-500">
                     <MapPin className="h-3 w-3" />
                     {product.shop.address}
