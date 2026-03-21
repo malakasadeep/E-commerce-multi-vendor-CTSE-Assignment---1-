@@ -167,10 +167,41 @@ jobs:
           echo "CommandId=$COMMAND_ID"
           echo "command_id=$COMMAND_ID" >> "$GITHUB_OUTPUT"
 
+          set +e
           aws ssm wait command-executed \
             --region "${{ env.AWS_REGION }}" \
             --command-id "$COMMAND_ID" \
             --instance-id "${{ steps.target.outputs.instance_id }}"
+          WAIT_EXIT=$?
+          set -e
+
+          STATUS=$(aws ssm get-command-invocation \
+            --region "${{ env.AWS_REGION }}" \
+            --command-id "$COMMAND_ID" \
+            --instance-id "${{ steps.target.outputs.instance_id }}" \
+            --query "Status" \
+            --output text || true)
+
+          echo "SSM invocation status: $STATUS"
+          echo "SSM stdout:"
+          aws ssm get-command-invocation \
+            --region "${{ env.AWS_REGION }}" \
+            --command-id "$COMMAND_ID" \
+            --instance-id "${{ steps.target.outputs.instance_id }}" \
+            --query "StandardOutputContent" \
+            --output text || true
+
+          echo "SSM stderr:"
+          aws ssm get-command-invocation \
+            --region "${{ env.AWS_REGION }}" \
+            --command-id "$COMMAND_ID" \
+            --instance-id "${{ steps.target.outputs.instance_id }}" \
+            --query "StandardErrorContent" \
+            --output text || true
+
+          if [ "$WAIT_EXIT" -ne 0 ] || [ "$STATUS" != "Success" ]; then
+            exit 1
+          fi
 
       - name: Show deployment output
         if: always() && steps.deploy_ssm.outputs.command_id != ''
