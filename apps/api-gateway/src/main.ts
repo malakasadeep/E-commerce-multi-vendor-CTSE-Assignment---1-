@@ -57,19 +57,21 @@ app.use(
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
-    onProxyReq: (proxyReq, req, res) => {
-      console.log(
-        `[Proxy] ${req.method} ${req.url} -> ${authServiceUrl}${req.url}`
-      );
-    },
-    onProxyRes: (proxyRes, req, res) => {
-      console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
-    },
-    onError: (err, req, res) => {
-      console.error('Proxy error:', err);
-      (res as express.Response)
-        .status(500)
-        .json({ error: 'Proxy error', message: err.message });
+    on: {
+      proxyReq: (proxyReq, req) => {
+        console.log(
+          `[Proxy] ${req.method} ${req.url} -> ${authServiceUrl}${req.url}`
+        );
+      },
+      proxyRes: (proxyRes, req) => {
+        console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
+      },
+      error: (err, req, res) => {
+        console.error('Proxy error:', err);
+        (res as express.Response)
+          .status(500)
+          .json({ error: 'Proxy error', message: err.message });
+      },
     },
   })
 );
@@ -84,19 +86,21 @@ app.use(
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
-    onProxyReq: (proxyReq, req, res) => {
-      console.log(
-        `[Proxy] ${req.method} ${req.url} -> ${productServiceUrl}${req.url}`
-      );
-    },
-    onProxyRes: (proxyRes, req, res) => {
-      console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
-    },
-    onError: (err, req, res) => {
-      console.error('Product proxy error:', err);
-      (res as express.Response)
-        .status(500)
-        .json({ error: 'Proxy error', message: err.message });
+    on: {
+      proxyReq: (proxyReq, req) => {
+        console.log(
+          `[Proxy] ${req.method} ${req.url} -> ${productServiceUrl}${req.url}`
+        );
+      },
+      proxyRes: (proxyRes, req) => {
+        console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
+      },
+      error: (err, req, res) => {
+        console.error('Product proxy error:', err);
+        (res as express.Response)
+          .status(500)
+          .json({ error: 'Proxy error', message: err.message });
+      },
     },
   })
 );
@@ -111,19 +115,21 @@ app.use(
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
-    onProxyReq: (proxyReq, req, res) => {
-      console.log(
-        `[Proxy] ${req.method} ${req.url} -> ${orderServiceUrl}${req.url}`
-      );
-    },
-    onProxyRes: (proxyRes, req, res) => {
-      console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
-    },
-    onError: (err, req, res) => {
-      console.error('Order proxy error:', err);
-      (res as express.Response)
-        .status(500)
-        .json({ error: 'Proxy error', message: err.message });
+    on: {
+      proxyReq: (proxyReq, req) => {
+        console.log(
+          `[Proxy] ${req.method} ${req.url} -> ${orderServiceUrl}${req.url}`
+        );
+      },
+      proxyRes: (proxyRes, req) => {
+        console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
+      },
+      error: (err, req, res) => {
+        console.error('Order proxy error:', err);
+        (res as express.Response)
+          .status(500)
+          .json({ error: 'Proxy error', message: err.message });
+      },
     },
   })
 );
@@ -138,19 +144,21 @@ app.use(
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
-    onProxyReq: (proxyReq, req, res) => {
-      console.log(
-        `[Proxy] ${req.method} ${req.url} -> ${paymentServiceUrl}${req.url}`
-      );
-    },
-    onProxyRes: (proxyRes, req, res) => {
-      console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
-    },
-    onError: (err, req, res) => {
-      console.error('Payment proxy error:', err);
-      (res as express.Response)
-        .status(500)
-        .json({ error: 'Proxy error', message: err.message });
+    on: {
+      proxyReq: (proxyReq, req) => {
+        console.log(
+          `[Proxy] ${req.method} ${req.url} -> ${paymentServiceUrl}${req.url}`
+        );
+      },
+      proxyRes: (proxyRes, req) => {
+        console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
+      },
+      error: (err, req, res) => {
+        console.error('Payment proxy error:', err);
+        (res as express.Response)
+          .status(500)
+          .json({ error: 'Proxy error', message: err.message });
+      },
     },
   })
 );
@@ -165,19 +173,21 @@ app.use(
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
-    onProxyReq: (proxyReq, req, res) => {
-      console.log(
-        `[Proxy] ${req.method} ${req.url} -> ${reviewServiceUrl}${req.url}`
-      );
-    },
-    onProxyRes: (proxyRes, req, res) => {
-      console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
-    },
-    onError: (err, req, res) => {
-      console.error('Review proxy error:', err);
-      (res as express.Response)
-        .status(500)
-        .json({ error: 'Proxy error', message: err.message });
+    on: {
+      proxyReq: (proxyReq, req) => {
+        console.log(
+          `[Proxy] ${req.method} ${req.url} -> ${reviewServiceUrl}${req.url}`
+        );
+      },
+      proxyRes: (proxyRes, req) => {
+        console.log(`[Proxy Response] ${proxyRes.statusCode} from ${req.url}`);
+      },
+      error: (err, req, res) => {
+        console.error('Review proxy error:', err);
+        (res as express.Response)
+          .status(500)
+          .json({ error: 'Proxy error', message: err.message });
+      },
     },
   })
 );
