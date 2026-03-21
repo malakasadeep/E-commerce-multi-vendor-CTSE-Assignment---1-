@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -83,7 +83,7 @@ function SignUpPage() {
     setTimer(60);
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      setTimer((prev) => {
+      setTimer(prev => {
         if (prev <= 1) {
           if (timerRef.current) clearInterval(timerRef.current);
           setCanResend(true);
@@ -127,7 +127,7 @@ function SignUpPage() {
       );
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data.seller?.id) setSellerId(data.seller.id);
       setServerError(null);
       setActiveStep(2);
@@ -258,7 +258,9 @@ function SignUpPage() {
                   </div>
                   <span
                     className={`text-[11px] mt-2 font-medium transition-colors ${
-                      stepNum <= activeStep ? 'text-indigo-700' : 'text-gray-400'
+                      stepNum <= activeStep
+                        ? 'text-indigo-700'
+                        : 'text-gray-400'
                     }`}
                   >
                     {step.label}
@@ -267,9 +269,7 @@ function SignUpPage() {
                 {idx < 2 && (
                   <div
                     className={`w-16 sm:w-24 h-1 rounded-full mx-2 mb-5 transition-all duration-500 ${
-                      stepNum < activeStep
-                        ? 'bg-green-500'
-                        : 'bg-gray-200'
+                      stepNum < activeStep ? 'bg-green-500' : 'bg-gray-200'
                     }`}
                   />
                 )}
@@ -301,7 +301,7 @@ function SignUpPage() {
                   </div>
 
                   <form
-                    onSubmit={sellerForm.handleSubmit((data) => {
+                    onSubmit={sellerForm.handleSubmit(data => {
                       setServerError(null);
                       signupMutation.mutate(data);
                     })}
@@ -505,16 +505,14 @@ function SignUpPage() {
                       <input
                         key={index}
                         type="text"
-                        ref={(el) => {
+                        ref={el => {
                           if (el) inputRefs.current[index] = el;
                         }}
                         maxLength={1}
                         className="w-14 h-14 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all"
                         value={digit}
-                        onChange={(e) =>
-                          handleOtpChange(index, e.target.value)
-                        }
-                        onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                        onChange={e => handleOtpChange(index, e.target.value)}
+                        onKeyDown={e => handleOtpKeyDown(index, e)}
                       />
                     ))}
                   </div>
@@ -592,7 +590,7 @@ function SignUpPage() {
               </div>
 
               <form
-                onSubmit={shopForm.handleSubmit((data) => {
+                onSubmit={shopForm.handleSubmit(data => {
                   setServerError(null);
                   createShopMutation.mutate(data);
                 })}
@@ -633,7 +631,7 @@ function SignUpPage() {
                     })}
                   >
                     <option value="">Select a category</option>
-                    {SHOP_CATEGORIES.map((cat) => (
+                    {SHOP_CATEGORIES.map(cat => (
                       <option key={cat} value={cat}>
                         {cat}
                       </option>

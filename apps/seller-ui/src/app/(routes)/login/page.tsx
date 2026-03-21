@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
@@ -91,7 +91,7 @@ function LoginPage() {
               { value: '10K+', label: 'Active Sellers' },
               { value: '$2M+', label: 'Monthly Sales' },
               { value: '95%', label: 'Satisfaction' },
-            ].map((stat) => (
+            ].map(stat => (
               <div key={stat.label}>
                 <p className="text-2xl font-bold text-white">{stat.value}</p>
                 <p className="text-xs text-purple-300">{stat.label}</p>

@@ -16,7 +16,10 @@ export const startOrderConsumer = async () => {
     await consumer.run({
       eachMessage: async ({ topic, message }) => {
         const data = JSON.parse(message.value?.toString() || '{}');
-        console.log(`[order-service] Received ${topic}:`, data.id || data.orderId);
+        console.log(
+          `[order-service] Received ${topic}:`,
+          data.id || data.orderId
+        );
 
         switch (topic) {
           case PAYMENT_TOPICS.PAYMENT_SUCCEEDED: {
@@ -35,7 +38,9 @@ export const startOrderConsumer = async () => {
                   where: { orderId: data.orderId },
                   data: { status: 'confirmed' },
                 });
-                console.log(`[order-service] Order ${data.orderId} confirmed via Kafka`);
+                console.log(
+                  `[order-service] Order ${data.orderId} confirmed via Kafka`
+                );
               }
             }
             break;
@@ -52,7 +57,9 @@ export const startOrderConsumer = async () => {
                 where: { orderId: data.orderId },
                 data: { status: 'cancelled' },
               });
-              console.log(`[order-service] Order ${data.orderId} refunded via Kafka`);
+              console.log(
+                `[order-service] Order ${data.orderId} refunded via Kafka`
+              );
             }
             break;
           }

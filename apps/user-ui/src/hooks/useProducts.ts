@@ -47,7 +47,9 @@ export function useFeaturedProducts(limit = 8) {
   return useQuery<ProductsResponse>({
     queryKey: ['featured-products', limit],
     queryFn: async () => {
-      const { data } = await axiosInstance.get(`/product-api/products?page=1&limit=${limit}`);
+      const { data } = await axiosInstance.get(
+        `/product-api/products?page=1&limit=${limit}`
+      );
       return data;
     },
     staleTime: 5 * 60 * 1000,
@@ -73,7 +75,9 @@ export function useCreateReview() {
       return data;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['product', variables.productId] });
+      queryClient.invalidateQueries({
+        queryKey: ['product', variables.productId],
+      });
     },
   });
 }

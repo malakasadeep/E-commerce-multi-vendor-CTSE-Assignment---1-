@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Mail, ShoppingBag, ArrowLeft, KeyRound } from 'lucide-react';
 import Link from 'next/link';

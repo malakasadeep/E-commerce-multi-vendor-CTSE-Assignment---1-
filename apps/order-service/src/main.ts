@@ -40,6 +40,6 @@ const server = app.listen(port, () => {
   console.log(`Order service listening at http://localhost:${port}/order-api`);
   startOrderConsumer();
 });
-server.on('error', (err) => {
+server.on('error', err => {
   console.log('Server error: ', err);
 });

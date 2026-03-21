@@ -81,20 +81,30 @@ export default function SellerRevenuePage() {
   ];
 
   const maxSales = Math.max(...revenue.chartData.map((d: any) => d.sales), 1);
-  const earningsPercent = revenue.totalSales > 0 ? (revenue.totalEarned / revenue.totalSales) * 100 : 0;
-  const feePercent = revenue.totalSales > 0 ? (revenue.totalPlatformFee / revenue.totalSales) * 100 : 0;
+  const earningsPercent =
+    revenue.totalSales > 0
+      ? (revenue.totalEarned / revenue.totalSales) * 100
+      : 0;
+  const feePercent =
+    revenue.totalSales > 0
+      ? (revenue.totalPlatformFee / revenue.totalSales) * 100
+      : 0;
 
   return (
     <div className="min-h-screen bg-[#f8f9fc] p-6 lg:p-8 space-y-6 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 font-Poppins">Revenue</h1>
-        <p className="text-gray-500 text-sm mt-1">Track your sales performance and earnings</p>
+        <h1 className="text-2xl font-bold text-gray-900 font-Poppins">
+          Revenue
+        </h1>
+        <p className="text-gray-500 text-sm mt-1">
+          Track your sales performance and earnings
+        </p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
-        {stats.map((stat) => {
+        {stats.map(stat => {
           const Icon = stat.icon;
           return (
             <div
@@ -102,12 +112,16 @@ export default function SellerRevenuePage() {
               className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg hover:shadow-gray-200/50 transition-all duration-300 hover:-translate-y-0.5 group"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`${stat.bgLight} p-2.5 rounded-xl group-hover:scale-110 transition-transform duration-300`}>
+                <div
+                  className={`${stat.bgLight} p-2.5 rounded-xl group-hover:scale-110 transition-transform duration-300`}
+                >
                   <Icon className={`w-5 h-5 ${stat.iconColor}`} />
                 </div>
                 <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-indigo-400 transition-colors" />
               </div>
-              <p className="text-xs font-medium text-gray-500 mb-1">{stat.title}</p>
+              <p className="text-xs font-medium text-gray-500 mb-1">
+                {stat.title}
+              </p>
               <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
               <p className="text-[10px] text-gray-400 mt-1">{stat.subtitle}</p>
             </div>
@@ -118,8 +132,12 @@ export default function SellerRevenuePage() {
       {/* Earnings Breakdown */}
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
         <div className="p-5 border-b border-gray-50">
-          <h3 className="text-base font-semibold text-gray-900">Earnings Breakdown</h3>
-          <p className="text-xs text-gray-400 mt-0.5">How your revenue is split</p>
+          <h3 className="text-base font-semibold text-gray-900">
+            Earnings Breakdown
+          </h3>
+          <p className="text-xs text-gray-400 mt-0.5">
+            How your revenue is split
+          </p>
         </div>
         <div className="p-5 space-y-5">
           {/* Visual Split Bar */}
@@ -139,9 +157,13 @@ export default function SellerRevenuePage() {
             <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-100">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                <span className="text-xs font-medium text-gray-600">Your Earnings (80%)</span>
+                <span className="text-xs font-medium text-gray-600">
+                  Your Earnings (80%)
+                </span>
               </div>
-              <p className="text-xl font-bold text-emerald-700">${revenue.totalEarned.toFixed(2)}</p>
+              <p className="text-xl font-bold text-emerald-700">
+                ${revenue.totalEarned.toFixed(2)}
+              </p>
               <div className="mt-2 w-full bg-emerald-100 rounded-full h-1.5">
                 <div
                   className="bg-emerald-500 h-1.5 rounded-full transition-all duration-500"
@@ -154,9 +176,13 @@ export default function SellerRevenuePage() {
             <div className="p-4 rounded-xl bg-orange-50/50 border border-orange-100">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-3 h-3 rounded-full bg-orange-400" />
-                <span className="text-xs font-medium text-gray-600">Platform Fee (20%)</span>
+                <span className="text-xs font-medium text-gray-600">
+                  Platform Fee (20%)
+                </span>
               </div>
-              <p className="text-xl font-bold text-orange-700">${revenue.totalPlatformFee.toFixed(2)}</p>
+              <p className="text-xl font-bold text-orange-700">
+                ${revenue.totalPlatformFee.toFixed(2)}
+              </p>
               <div className="mt-2 w-full bg-orange-100 rounded-full h-1.5">
                 <div
                   className="bg-orange-400 h-1.5 rounded-full transition-all duration-500"
@@ -173,8 +199,12 @@ export default function SellerRevenuePage() {
         <div className="p-5 border-b border-gray-50">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-semibold text-gray-900">Sales Over Time</h3>
-              <p className="text-xs text-gray-400 mt-0.5">Your daily sales performance</p>
+              <h3 className="text-base font-semibold text-gray-900">
+                Sales Over Time
+              </h3>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Your daily sales performance
+              </p>
             </div>
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <div className="flex items-center gap-1.5">
@@ -208,11 +238,16 @@ export default function SellerRevenuePage() {
                         </span>
                       </div>
                       {/* Bar */}
-                      <div className="w-full relative rounded-t-md overflow-hidden" style={{ height: `${Math.max(height, 4)}px` }}>
+                      <div
+                        className="w-full relative rounded-t-md overflow-hidden"
+                        style={{ height: `${Math.max(height, 4)}px` }}
+                      >
                         <div className="absolute inset-0 bg-gradient-to-t from-indigo-500 to-purple-400 opacity-80 group-hover:opacity-100 transition-opacity" />
                         <div
                           className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-emerald-500 to-emerald-400 opacity-90"
-                          style={{ height: `${entry.sales > 0 ? (entry.earned / entry.sales) * 100 : 0}%` }}
+                          style={{
+                            height: `${entry.sales > 0 ? (entry.earned / entry.sales) * 100 : 0}%`,
+                          }}
                         />
                       </div>
                     </div>
@@ -224,7 +259,10 @@ export default function SellerRevenuePage() {
                 {revenue.chartData.map((entry: any) => (
                   <div key={entry.date} className="flex-1 text-center">
                     <span className="text-[9px] text-gray-400 font-medium">
-                      {new Date(entry.date).toLocaleDateString('en', { month: 'short', day: 'numeric' })}
+                      {new Date(entry.date).toLocaleDateString('en', {
+                        month: 'short',
+                        day: 'numeric',
+                      })}
                     </span>
                   </div>
                 ))}
@@ -235,8 +273,12 @@ export default function SellerRevenuePage() {
               <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="h-7 w-7 text-gray-300" />
               </div>
-              <p className="text-sm font-medium text-gray-900 mb-1">No sales data yet</p>
-              <p className="text-xs text-gray-400">Revenue will appear here once you get orders</p>
+              <p className="text-sm font-medium text-gray-900 mb-1">
+                No sales data yet
+              </p>
+              <p className="text-xs text-gray-400">
+                Revenue will appear here once you get orders
+              </p>
             </div>
           )}
         </div>

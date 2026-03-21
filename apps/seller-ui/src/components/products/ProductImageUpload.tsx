@@ -23,7 +23,10 @@ const authenticator = async () => {
   return res.json();
 };
 
-export function ProductImageUpload({ images, onChange }: ProductImageUploadProps) {
+export function ProductImageUpload({
+  images,
+  onChange,
+}: ProductImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,11 +67,10 @@ export function ProductImageUpload({ images, onChange }: ProductImageUploadProps
     setDragActive(false);
 
     if (e.dataTransfer.files?.[0]) {
-      // Trigger the IKUpload input with the dropped file
       const input = ikUploadRef.current;
       if (input) {
         const dataTransfer = new DataTransfer();
-        Array.from(e.dataTransfer.files).forEach((file) => {
+        Array.from(e.dataTransfer.files).forEach(file => {
           if (file.type.startsWith('image/')) {
             dataTransfer.items.add(file);
           }
@@ -125,16 +127,12 @@ export function ProductImageUpload({ images, onChange }: ProductImageUploadProps
             <p className="text-sm font-medium">
               Click to upload or drag & drop
             </p>
-            <p className="text-xs text-gray-400">
-              PNG, JPG, WEBP up to 10MB
-            </p>
+            <p className="text-xs text-gray-400">PNG, JPG, WEBP up to 10MB</p>
           </div>
         )}
       </div>
 
-      {error && (
-        <p className="text-sm text-red-500">{error}</p>
-      )}
+      {error && <p className="text-sm text-red-500">{error}</p>}
 
       {/* Image preview grid */}
       {images.length > 0 && (
@@ -148,9 +146,11 @@ export function ProductImageUpload({ images, onChange }: ProductImageUploadProps
                 src={img.url}
                 alt={`Product ${index + 1}`}
                 className="w-full h-full object-cover"
-                onError={(e) => {
+                onError={e => {
                   (e.target as HTMLImageElement).style.display = 'none';
-                  (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                  (
+                    e.target as HTMLImageElement
+                  ).nextElementSibling?.classList.remove('hidden');
                 }}
               />
               <div className="hidden absolute inset-0 flex items-center justify-center text-gray-400">
@@ -158,7 +158,7 @@ export function ProductImageUpload({ images, onChange }: ProductImageUploadProps
               </div>
               <button
                 type="button"
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   removeImage(index);
                 }}

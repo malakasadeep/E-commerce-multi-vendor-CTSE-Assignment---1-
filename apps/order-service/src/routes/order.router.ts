@@ -24,13 +24,23 @@ router.get('/orders/:id', isAuthenticated, isUser, getOrderDetail);
 
 // Seller routes
 router.get('/seller/orders', isAuthenticated, isSeller, getSellerOrders);
-router.put('/seller/orders/:id/items/:itemId/status', isAuthenticated, isSeller, updateOrderItemStatus);
+router.put(
+  '/seller/orders/:id/items/:itemId/status',
+  isAuthenticated,
+  isSeller,
+  updateOrderItemStatus
+);
 router.get('/seller/revenue', isAuthenticated, isSeller, getSellerRevenue);
 
 // Admin routes
 router.get('/admin/orders', isAuthenticated, isAdmin, getAllOrders);
 router.get('/admin/orders/:id', isAuthenticated, isAdmin, getAdminOrderDetail);
-router.put('/admin/orders/:id/status', isAuthenticated, isAdmin, updateOrderStatus);
+router.put(
+  '/admin/orders/:id/status',
+  isAuthenticated,
+  isAdmin,
+  updateOrderStatus
+);
 router.get('/admin/revenue', isAuthenticated, isAdmin, getRevenue);
 router.get('/admin/stats', isAuthenticated, isAdmin, getStats);
 

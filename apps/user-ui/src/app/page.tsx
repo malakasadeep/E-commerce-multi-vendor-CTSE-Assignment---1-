@@ -127,7 +127,7 @@ export default function HomePage() {
                   { value: '10K+', label: 'Products', icon: Package },
                   { value: '5K+', label: 'Sellers', icon: Users },
                   { value: '50K+', label: 'Happy Customers', icon: Star },
-                ].map((stat) => (
+                ].map(stat => (
                   <div key={stat.label} className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
                       <stat.icon className="h-5 w-5 text-amber-400" />
@@ -188,7 +188,7 @@ export default function HomePage() {
                 desc: '30-day return policy',
                 color: 'text-orange-600 bg-orange-50',
               },
-            ].map((item) => (
+            ].map(item => (
               <div
                 key={item.label}
                 className="flex items-center gap-4 p-4 rounded-2xl hover:shadow-md hover:bg-gray-50/50 transition-all duration-300 group cursor-default"
@@ -227,9 +227,10 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-3 stagger-children">
-          {PRODUCT_CATEGORIES.map((category) => {
+          {PRODUCT_CATEGORIES.map(category => {
             const IconComp = CATEGORY_ICONS[category] || Package;
-            const gradient = CATEGORY_COLORS[category] || 'from-gray-500 to-slate-600';
+            const gradient =
+              CATEGORY_COLORS[category] || 'from-gray-500 to-slate-600';
             return (
               <Link
                 key={category}
@@ -255,9 +256,7 @@ export default function HomePage() {
         <div className="w-[90%] max-w-7xl mx-auto">
           <div className="flex justify-between items-end mb-8">
             <div>
-              <p className="text-sm font-medium text-blue-600 mb-1">
-                Trending
-              </p>
+              <p className="text-sm font-medium text-blue-600 mb-1">Trending</p>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-Poppins">
                 Featured Products
               </h2>
@@ -283,7 +282,7 @@ export default function HomePage() {
             </div>
           ) : data?.products && data.products.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 stagger-children">
-              {data.products.map((product) => (
+              {data.products.map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
@@ -339,7 +338,7 @@ export default function HomePage() {
                   { value: '0%', label: 'Listing Fee', icon: Package },
                   { value: '24/7', label: 'Seller Support', icon: Headphones },
                   { value: 'Fast', label: 'Payments', icon: Zap },
-                ].map((item) => (
+                ].map(item => (
                   <div
                     key={item.label}
                     className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-5 text-center"

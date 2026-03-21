@@ -7,7 +7,9 @@ export const useCustomers = (page = 1, limit = 10) => {
   return useQuery({
     queryKey: ['admin-customers', page, limit],
     queryFn: async () => {
-      const res = await axiosInstance.get(`/api/admin/customers?page=${page}&limit=${limit}`);
+      const res = await axiosInstance.get(
+        `/api/admin/customers?page=${page}&limit=${limit}`
+      );
       return res.data;
     },
     staleTime: 2 * 60 * 1000,

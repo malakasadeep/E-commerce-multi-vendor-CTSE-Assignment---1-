@@ -36,9 +36,19 @@ interface ProductFormProps {
   submitLabel: string;
 }
 
-export function ProductForm({ initialData, onSubmit, isSubmitting, submitLabel }: ProductFormProps) {
-  const [images, setImages] = React.useState<{ url: string; file_id?: string }[]>(
-    initialData?.images?.map((img) => ({ url: img.url, file_id: img.file_id })) || []
+export function ProductForm({
+  initialData,
+  onSubmit,
+  isSubmitting,
+  submitLabel,
+}: ProductFormProps) {
+  const [images, setImages] = React.useState<
+    { url: string; file_id?: string }[]
+  >(
+    initialData?.images?.map(img => ({
+      url: img.url,
+      file_id: img.file_id,
+    })) || []
   );
 
   const {
@@ -69,7 +79,12 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, submitLabel }
         tags: initialData.tags?.join(', ') || '',
         stock: initialData.stock.toString(),
       });
-      setImages(initialData.images?.map((img) => ({ url: img.url, file_id: img.file_id })) || []);
+      setImages(
+        initialData.images?.map(img => ({
+          url: img.url,
+          file_id: img.file_id,
+        })) || []
+      );
     }
   }, [initialData, reset]);
 
@@ -78,9 +93,16 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, submitLabel }
       name: data.name,
       description: data.description,
       price: parseFloat(data.price),
-      discountPrice: data.discountPrice ? parseFloat(data.discountPrice) : undefined,
+      discountPrice: data.discountPrice
+        ? parseFloat(data.discountPrice)
+        : undefined,
       category: data.category,
-      tags: data.tags ? data.tags.split(',').map((t) => t.trim()).filter(Boolean) : [],
+      tags: data.tags
+        ? data.tags
+            .split(',')
+            .map(t => t.trim())
+            .filter(Boolean)
+        : [],
       stock: parseInt(data.stock) || 0,
       images,
     });
@@ -111,10 +133,14 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, submitLabel }
               id="description"
               placeholder="Describe your product..."
               rows={4}
-              {...register('description', { required: 'Description is required' })}
+              {...register('description', {
+                required: 'Description is required',
+              })}
             />
             {errors.description && (
-              <p className="text-sm text-red-500">{errors.description.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.description.message}
+              </p>
             )}
           </div>
 
@@ -126,7 +152,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, submitLabel }
               {...register('category', { required: 'Category is required' })}
             >
               <option value="">Select a category</option>
-              {PRODUCT_CATEGORIES.map((cat) => (
+              {PRODUCT_CATEGORIES.map(cat => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
@@ -214,7 +240,11 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, submitLabel }
       </Card>
 
       <div className="flex justify-end gap-3">
-        <Button type="submit" disabled={isSubmitting} className="min-w-[140px]">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="min-w-[140px]"
+        >
           {isSubmitting ? 'Saving...' : submitLabel}
         </Button>
       </div>

@@ -28,6 +28,11 @@ router.put('/products/:id', isAuthenticated, isSeller, updateProduct);
 router.delete('/products/:id', isAuthenticated, isSeller, deleteProduct);
 
 // User routes (authenticated + user role)
-router.post('/products/:id/reviews', isAuthenticated, isUser, createProductReview);
+router.post(
+  '/products/:id/reviews',
+  isAuthenticated,
+  isUser,
+  createProductReview
+);
 
 export default router;

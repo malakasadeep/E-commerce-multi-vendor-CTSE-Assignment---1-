@@ -1,4 +1,4 @@
 type NavItemTypes = {
-    title: string;
-    href: string;
-}
+  title: string;
+  href: string;
+};

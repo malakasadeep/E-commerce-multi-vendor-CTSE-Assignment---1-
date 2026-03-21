@@ -2,38 +2,25 @@
   "name": "@eshop/auth-service",
   "version": "0.0.1",
   "private": true,
-  "scripts": {
-    "dev": "node src/main.ts"
+  "description": "Authentication service for e-commerce platform",
+  "engines": {
+    "node": ">=22.0.0"
   },
-  "nx": {
-    "name": "auth-service",
-    "projectType": "application",
-    "sourceRoot": "apps/auth-service/src",
-    "targets": {
-      "serve": {
-        "executor": "@nx/js:node",
-        "defaultConfiguration": "development",
-        "dependsOn": [
-          "build"
-        ],
-        "options": {
-          "buildTarget": "auth-service:build",
-          "runBuildTargetDependencies": false
-        },
-        "configurations": {
-          "development": {
-            "buildTarget": "auth-service:build:development"
-          },
-          "production": {
-            "buildTarget": "auth-service:build:production"
-          }
-        }
-      },
-      "test": {
-        "options": {
-          "passWithNoTests": true
-        }
-      }
-    }
+  "dependencies": {
+    "@prisma/client": "6.19",
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "ejs": "^4.0.1",
+    "express": "^4.21.2",
+    "ioredis": "^5.9.2",
+    "jsonwebtoken": "^9.0.3",
+    "kafkajs": "^2.2.4",
+    "morgan": "^1.10.1",
+    "nodemailer": "^7.0.13",
+    "stripe": "^20.3.1",
+    "swagger-ui-express": "^5.0.1",
+    "tslib": "^2.3.0"
   }
 }

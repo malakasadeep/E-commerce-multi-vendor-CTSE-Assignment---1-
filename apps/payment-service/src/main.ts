@@ -10,7 +10,11 @@ import { startPaymentConsumer } from './utils/kafka.consumer';
 const app = express();
 
 // Webhook route needs raw body - must be before express.json()
-app.use('/payment-api/webhook', express.raw({ type: 'application/json' }), webhookRouter);
+app.use(
+  '/payment-api/webhook',
+  express.raw({ type: 'application/json' }),
+  webhookRouter
+);
 
 app.use(
   cors({
@@ -41,9 +45,11 @@ app.use(errorMiddleware);
 const port = process.env.PAYMENT_SERVICE_PORT || 6004;
 
 const server = app.listen(port, () => {
-  console.log(`Payment service listening at http://localhost:${port}/payment-api`);
+  console.log(
+    `Payment service listening at http://localhost:${port}/payment-api`
+  );
   startPaymentConsumer();
 });
-server.on('error', (err) => {
+server.on('error', err => {
   console.log('Server error: ', err);
 });

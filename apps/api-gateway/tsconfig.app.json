@@ -11,7 +11,7 @@
     "out-tsc",
     "dist",
     "jest.config.ts",
-    "jest.config.cts",
+    "jest.config.js",
     "src/**/*.spec.ts",
     "src/**/*.test.ts"
   ]
