@@ -4,25 +4,25 @@
  */
 
 import express from 'express';
-import * as path from 'path';
 import cors from 'cors';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-import swaggerUi from 'swagger-ui-express';
-import axios from 'axios';
 import cookieParser from 'cookie-parser';
 
 const app = express();
 
+// Parse ALLOWED_ORIGINS environment variable or use defaults for development
+const allowedOrigins = (
+  process.env.ALLOWED_ORIGINS ||
+  'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4200'
+)
+  .split(',')
+  .map(origin => origin.trim());
+
 app.use(
   cors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://localhost:4200',
-    ],
+    origin: allowedOrigins,
     allowedHeaders: ['Authorization', 'Content-Type'],
     credentials: true,
   })
@@ -48,16 +48,17 @@ app.get('/gateway-health', (req, res) => {
 });
 
 // Auth Service Proxy - Don't use body parsers before proxy middleware
+const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:6001';
 app.use(
   '/api',
   createProxyMiddleware({
-    target: 'http://localhost:6001',
+    target: authServiceUrl,
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
     onProxyReq: (proxyReq, req, res) => {
       console.log(
-        `[Proxy] ${req.method} ${req.url} -> http://localhost:6001${req.url}`
+        `[Proxy] ${req.method} ${req.url} -> ${authServiceUrl}${req.url}`
       );
     },
     onProxyRes: (proxyRes, req, res) => {
@@ -73,16 +74,18 @@ app.use(
 );
 
 // Product Service Proxy
+const productServiceUrl =
+  process.env.PRODUCT_SERVICE_URL || 'http://localhost:6002';
 app.use(
   '/product-api',
   createProxyMiddleware({
-    target: 'http://localhost:6002',
+    target: productServiceUrl,
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
     onProxyReq: (proxyReq, req, res) => {
       console.log(
-        `[Proxy] ${req.method} ${req.url} -> http://localhost:6002${req.url}`
+        `[Proxy] ${req.method} ${req.url} -> ${productServiceUrl}${req.url}`
       );
     },
     onProxyRes: (proxyRes, req, res) => {
@@ -98,16 +101,18 @@ app.use(
 );
 
 // Order Service Proxy
+const orderServiceUrl =
+  process.env.ORDER_SERVICE_URL || 'http://localhost:6003';
 app.use(
   '/order-api',
   createProxyMiddleware({
-    target: 'http://localhost:6003',
+    target: orderServiceUrl,
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
     onProxyReq: (proxyReq, req, res) => {
       console.log(
-        `[Proxy] ${req.method} ${req.url} -> http://localhost:6003${req.url}`
+        `[Proxy] ${req.method} ${req.url} -> ${orderServiceUrl}${req.url}`
       );
     },
     onProxyRes: (proxyRes, req, res) => {
@@ -123,16 +128,18 @@ app.use(
 );
 
 // Payment Service Proxy
+const paymentServiceUrl =
+  process.env.PAYMENT_SERVICE_URL || 'http://localhost:6004';
 app.use(
   '/payment-api',
   createProxyMiddleware({
-    target: 'http://localhost:6004',
+    target: paymentServiceUrl,
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
     onProxyReq: (proxyReq, req, res) => {
       console.log(
-        `[Proxy] ${req.method} ${req.url} -> http://localhost:6004${req.url}`
+        `[Proxy] ${req.method} ${req.url} -> ${paymentServiceUrl}${req.url}`
       );
     },
     onProxyRes: (proxyRes, req, res) => {
@@ -148,16 +155,18 @@ app.use(
 );
 
 // Review Service Proxy
+const reviewServiceUrl =
+  process.env.REVIEW_SERVICE_URL || 'http://localhost:6005';
 app.use(
   '/review-api',
   createProxyMiddleware({
-    target: 'http://localhost:6005',
+    target: reviewServiceUrl,
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
     onProxyReq: (proxyReq, req, res) => {
       console.log(
-        `[Proxy] ${req.method} ${req.url} -> http://localhost:6005${req.url}`
+        `[Proxy] ${req.method} ${req.url} -> ${reviewServiceUrl}${req.url}`
       );
     },
     onProxyRes: (proxyRes, req, res) => {
@@ -174,6 +183,6 @@ app.use(
 
 const port = process.env.PORT || 8080;
 const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`);
+  console.log(`API Gateway listening on port ${port}`);
 });
 server.on('error', console.error);

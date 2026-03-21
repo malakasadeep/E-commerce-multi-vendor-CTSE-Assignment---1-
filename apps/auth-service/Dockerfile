@@ -7,7 +7,11 @@ WORKDIR /deps
 
 # Copy root package files for monorepo dependency resolution
 COPY package*.json ./
-RUN npm install --ignore-scripts
+RUN npm config set fetch-retries 5 \
+  && npm config set fetch-retry-mintimeout 20000 \
+  && npm config set fetch-retry-maxtimeout 120000 \
+  && npm config set fetch-timeout 600000 \
+  && npm install --include=dev --ignore-scripts --no-audit --no-fund
 
 # ============================================
 # Stage 2: Build
@@ -16,6 +20,7 @@ FROM node:22-alpine AS builder
 
 WORKDIR /build
 
+COPY package*.json ./
 # Copy root configuration files
 COPY tsconfig.base.json nx.json ./
 
@@ -32,6 +37,8 @@ COPY apps/auth-service ./apps/auth-service/
 # Copy dependencies from deps stage
 COPY --from=deps /deps/node_modules ./node_modules/
 
+RUN npx prisma generate --schema=./prisma/schema.prisma
+
 # Build auth-service with webpack bundling all packages
 RUN npx nx build auth-service --configuration=production
 
@@ -46,7 +53,7 @@ WORKDIR /prod-deps
 COPY apps/auth-service/package.json ./
 
 # Install only runtime dependencies
-RUN npm install --production --ignore-scripts
+RUN npm install --production --ignore-scripts --no-audit --no-fund
 
 # ============================================
 # Stage 4: Production Runtime

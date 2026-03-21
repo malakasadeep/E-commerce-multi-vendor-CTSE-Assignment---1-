@@ -351,7 +351,9 @@ export const createProductReview = async (
     }
 
     // Check if user already reviewed this product
-    const existingReview = product.reviews.find(r => r.userId === user.id);
+    const existingReview = product.reviews.find(
+      (r: { userId: string }) => r.userId === user.id
+    );
     if (existingReview) {
       return next(
         new ValidationError('You have already reviewed this product')
@@ -381,7 +383,10 @@ export const createProductReview = async (
       where: { productId: id },
     });
     const avgRating =
-      allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+      allReviews.reduce(
+        (sum: number, r: { rating: number }) => sum + r.rating,
+        0
+      ) / allReviews.length;
 
     await prisma.product.update({
       where: { id },

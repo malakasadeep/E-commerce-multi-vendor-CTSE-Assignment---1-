@@ -161,46 +161,46 @@ User Browser ──► User UI (Next.js :3000) ──► API Gateway (:8080) ─
 
 ### Backend
 
-| Technology | Purpose |
-|------------|---------|
-| **Node.js** | Runtime environment |
-| **Express.js** 4.21 | Web framework for microservices |
-| **Prisma** 6.19 | ORM for MongoDB |
-| **MongoDB** | NoSQL database (shared) |
+| Technology                     | Purpose                              |
+| ------------------------------ | ------------------------------------ |
+| **Node.js**                    | Runtime environment                  |
+| **Express.js** 4.21            | Web framework for microservices      |
+| **Prisma** 6.19                | ORM for MongoDB                      |
+| **MongoDB**                    | NoSQL database (shared)              |
 | **Apache Kafka** (KafkaJS 2.2) | Event-driven inter-service messaging |
-| **Redis** (Upstash) | Caching layer |
-| **Stripe** 20.3 | Payment processing |
-| **JWT** (jsonwebtoken 9.0) | Authentication tokens |
-| **bcryptjs** 3.0 | Password hashing |
-| **Nodemailer** 7.0 | Email notifications (Gmail SMTP) |
-| **express-http-proxy** | API Gateway proxying |
-| **express-rate-limit** | Rate limiting |
-| **Swagger** | API documentation |
+| **Redis** (Upstash)            | Caching layer                        |
+| **Stripe** 20.3                | Payment processing                   |
+| **JWT** (jsonwebtoken 9.0)     | Authentication tokens                |
+| **bcryptjs** 3.0               | Password hashing                     |
+| **Nodemailer** 7.0             | Email notifications (Gmail SMTP)     |
+| **express-http-proxy**         | API Gateway proxying                 |
+| **express-rate-limit**         | Rate limiting                        |
+| **Swagger**                    | API documentation                    |
 
 ### Frontend
 
-| Technology | Purpose |
-|------------|---------|
-| **Next.js** 16 | React framework (App Router) |
-| **React** 19 | UI library |
-| **TypeScript** 5.9 | Type safety |
-| **Tailwind CSS** 3.4 | Utility-first styling |
-| **shadcn/ui** (Radix UI + CVA) | Component library |
-| **TanStack React Query** 5.90 | Server state management |
-| **Jotai** 2.17 | Client state management |
-| **Axios** 1.13 | HTTP client |
-| **Lucide React** | Icon library |
+| Technology                     | Purpose                      |
+| ------------------------------ | ---------------------------- |
+| **Next.js** 16                 | React framework (App Router) |
+| **React** 19                   | UI library                   |
+| **TypeScript** 5.9             | Type safety                  |
+| **Tailwind CSS** 3.4           | Utility-first styling        |
+| **shadcn/ui** (Radix UI + CVA) | Component library            |
+| **TanStack React Query** 5.90  | Server state management      |
+| **Jotai** 2.17                 | Client state management      |
+| **Axios** 1.13                 | HTTP client                  |
+| **Lucide React**               | Icon library                 |
 
 ### DevOps & Tooling
 
-| Technology | Purpose |
-|------------|---------|
-| **Nx** 22.4 | Monorepo management |
-| **Docker Compose** | Containerized Kafka (KRaft mode) |
-| **Webpack** 5.98 | Module bundling (backend) |
-| **SWC** | Fast TypeScript/JavaScript compiler |
-| **Jest** 30 | Testing framework |
-| **Prettier** 3.8 | Code formatting |
+| Technology         | Purpose                             |
+| ------------------ | ----------------------------------- |
+| **Nx** 22.4        | Monorepo management                 |
+| **Docker Compose** | Containerized Kafka (KRaft mode)    |
+| **Webpack** 5.98   | Module bundling (backend)           |
+| **SWC**            | Fast TypeScript/JavaScript compiler |
+| **Jest** 30        | Testing framework                   |
+| **Prettier** 3.8   | Code formatting                     |
 
 ---
 
@@ -299,13 +299,13 @@ eshop/
 
 Central entry point for all client requests. Routes traffic to backend microservices via HTTP proxy.
 
-| Route Pattern | Target Service |
-|---------------|----------------|
-| `/api/*` | Auth Service (:6001) |
+| Route Pattern    | Target Service          |
+| ---------------- | ----------------------- |
+| `/api/*`         | Auth Service (:6001)    |
 | `/product-api/*` | Product Service (:6002) |
-| `/order-api/*` | Order Service (:6003) |
+| `/order-api/*`   | Order Service (:6003)   |
 | `/payment-api/*` | Payment Service (:6004) |
-| `/review-api/*` | Review Service (:6005) |
+| `/review-api/*`  | Review Service (:6005)  |
 
 **Features:** CORS (origins 3000, 3001, 3002), rate limiting, request logging (Morgan)
 
@@ -313,65 +313,65 @@ Central entry point for all client requests. Routes traffic to backend microserv
 
 Handles user, seller, and admin authentication with JWT tokens stored in HTTP-only cookies.
 
-| Feature | Description |
-|---------|-------------|
-| User Registration | Email/password signup with email verification |
-| Seller Registration | Create seller account with shop details |
-| Admin Login | Seeded admin account with super-admin role |
-| JWT Tokens | Access (15min) + Refresh (7d) tokens |
-| Token Refresh | Automatic refresh with cookie rotation |
-| Password Reset | Email-based reset flow via Nodemailer |
+| Feature             | Description                                   |
+| ------------------- | --------------------------------------------- |
+| User Registration   | Email/password signup with email verification |
+| Seller Registration | Create seller account with shop details       |
+| Admin Login         | Seeded admin account with super-admin role    |
+| JWT Tokens          | Access (15min) + Refresh (7d) tokens          |
+| Token Refresh       | Automatic refresh with cookie rotation        |
+| Password Reset      | Email-based reset flow via Nodemailer         |
 
 ### 3. Product Service (Port 6002)
 
 Manages the product catalog, inventory, and product reviews.
 
-| Feature | Description |
-|---------|-------------|
-| Product CRUD | Create, update, delete products (seller) |
-| Image Management | Multiple product images with URLs |
-| Search & Filter | By category, price range, tags, keyword |
-| Stock Management | Inventory tracking, auto-decrement on order |
-| Product Reviews | Star ratings + comments (customers) |
-| Rating Aggregation | Auto-calculated average ratings |
-| Kafka Consumer | Restores stock on order cancellation/refund |
+| Feature            | Description                                 |
+| ------------------ | ------------------------------------------- |
+| Product CRUD       | Create, update, delete products (seller)    |
+| Image Management   | Multiple product images with URLs           |
+| Search & Filter    | By category, price range, tags, keyword     |
+| Stock Management   | Inventory tracking, auto-decrement on order |
+| Product Reviews    | Star ratings + comments (customers)         |
+| Rating Aggregation | Auto-calculated average ratings             |
+| Kafka Consumer     | Restores stock on order cancellation/refund |
 
 ### 4. Order Service (Port 6003)
 
 Manages the complete order lifecycle with 20% platform service fee.
 
-| Feature | Description |
-|---------|-------------|
-| Order Placement | Cart-to-order with stock validation |
-| Order Number | Auto-generated `ORD-YYYYMMDD-XXXX` format |
-| Fee Calculation | 20% service fee, per-item seller/platform split |
+| Feature         | Description                                            |
+| --------------- | ------------------------------------------------------ |
+| Order Placement | Cart-to-order with stock validation                    |
+| Order Number    | Auto-generated `ORD-YYYYMMDD-XXXX` format              |
+| Fee Calculation | 20% service fee, per-item seller/platform split        |
 | Status Tracking | pending - confirmed - processing - shipped - delivered |
-| Seller Orders | Filtered view of items belonging to seller |
-| Admin Dashboard | Revenue stats, order management, analytics |
-| Kafka Consumer | Listens for payment.succeeded/refunded events |
+| Seller Orders   | Filtered view of items belonging to seller             |
+| Admin Dashboard | Revenue stats, order management, analytics             |
+| Kafka Consumer  | Listens for payment.succeeded/refunded events          |
 
 ### 5. Payment Service (Port 6004)
 
 Handles Stripe payment processing with webhook integration.
 
-| Feature | Description |
-|---------|-------------|
-| PaymentIntent | Creates Stripe payment intents for orders |
-| Webhook Handler | Processes payment_intent.succeeded/failed |
-| Seller Transfers | Transfers 80% to seller Stripe connected accounts |
-| Refund Processing | Admin-initiated refunds via Stripe |
-| Kafka Consumer | Auto-refunds on order cancellation |
+| Feature           | Description                                       |
+| ----------------- | ------------------------------------------------- |
+| PaymentIntent     | Creates Stripe payment intents for orders         |
+| Webhook Handler   | Processes payment_intent.succeeded/failed         |
+| Seller Transfers  | Transfers 80% to seller Stripe connected accounts |
+| Refund Processing | Admin-initiated refunds via Stripe                |
+| Kafka Consumer    | Auto-refunds on order cancellation                |
 
 ### 6. Review Service (Port 6005)
 
 Manages order-based seller reviews and admin review moderation.
 
-| Feature | Description |
-|---------|-------------|
-| Order Reviews | Customers review sellers after delivery |
-| Seller Ratings | Aggregated ratings per seller |
-| Admin Moderation | View all reviews, delete inappropriate ones |
-| Duplicate Prevention | One review per user per order |
+| Feature              | Description                                 |
+| -------------------- | ------------------------------------------- |
+| Order Reviews        | Customers review sellers after delivery     |
+| Seller Ratings       | Aggregated ratings per seller               |
+| Admin Moderation     | View all reviews, delete inappropriate ones |
+| Duplicate Prevention | One review per user per order               |
 
 ---
 
@@ -379,43 +379,44 @@ Manages order-based seller reviews and admin review moderation.
 
 ### User UI (Port 3000) - Customer Storefront
 
-| Page | Description |
-|------|-------------|
-| **Home** | Featured products, categories |
-| **Products** | Product listing with search, filters, pagination |
-| **Product Detail** | Image gallery, reviews, add to cart with qty selector |
-| **Cart** | View/edit cart items, quantity controls, order summary with fees |
-| **Checkout** | Shipping address form, order summary, place order |
-| **Orders** | Order history with status badges |
-| **Order Detail** | Status timeline, shipping/payment info, item details |
-| **Login/Register** | User authentication |
+| Page               | Description                                                      |
+| ------------------ | ---------------------------------------------------------------- |
+| **Home**           | Featured products, categories                                    |
+| **Products**       | Product listing with search, filters, pagination                 |
+| **Product Detail** | Image gallery, reviews, add to cart with qty selector            |
+| **Cart**           | View/edit cart items, quantity controls, order summary with fees |
+| **Checkout**       | Shipping address form, order summary, place order                |
+| **Orders**         | Order history with status badges                                 |
+| **Order Detail**   | Status timeline, shipping/payment info, item details             |
+| **Login/Register** | User authentication                                              |
 
 **State Management:**
+
 - Cart stored in localStorage via Jotai `atomWithStorage`
 - Cart badge in header shows real-time count
 - React Query for server state (products, orders)
 
 ### Seller UI (Port 3001) - Seller Dashboard
 
-| Page | Description |
-|------|-------------|
-| **Dashboard** | Stats cards (sales, earnings, items sold), recent orders, quick actions |
-| **Products** | Product list, create/edit/delete with image upload |
-| **Orders** | Order items table with status progression (pending - processing - shipped - delivered) |
-| **Revenue** | Earnings breakdown (80/20 split), sales chart, items sold |
+| Page          | Description                                                                            |
+| ------------- | -------------------------------------------------------------------------------------- |
+| **Dashboard** | Stats cards (sales, earnings, items sold), recent orders, quick actions                |
+| **Products**  | Product list, create/edit/delete with image upload                                     |
+| **Orders**    | Order items table with status progression (pending - processing - shipped - delivered) |
+| **Revenue**   | Earnings breakdown (80/20 split), sales chart, items sold                              |
 
 ### Admin UI (Port 3002) - Admin Dashboard
 
-| Page | Description |
-|------|-------------|
-| **Dashboard** | Platform-wide stats, recent orders |
-| **Sellers** | Manage all sellers and their shops |
-| **Products** | View/manage all products across sellers |
-| **Customers** | View all registered users |
-| **Orders** | All orders with status filters, confirm/cancel actions |
+| Page             | Description                                             |
+| ---------------- | ------------------------------------------------------- |
+| **Dashboard**    | Platform-wide stats, recent orders                      |
+| **Sellers**      | Manage all sellers and their shops                      |
+| **Products**     | View/manage all products across sellers                 |
+| **Customers**    | View all registered users                               |
+| **Orders**       | All orders with status filters, confirm/cancel actions  |
 | **Order Detail** | Full order info with customer, shipping, payment, items |
-| **Revenue** | Platform revenue dashboard with period filters, charts |
-| **Reviews** | Moderate product and order reviews |
+| **Revenue**      | Platform revenue dashboard with period filters, charts  |
+| **Reviews**      | Moderate product and order reviews                      |
 
 ---
 
@@ -425,32 +426,32 @@ Manages order-based seller reviews and admin review moderation.
 
 Centralized error classes used across all microservices:
 
-| Error Class | HTTP Status | Usage |
-|------------|-------------|-------|
-| `ValidationError` | 400 | Invalid input data |
-| `UnauthorizedError` | 401 | Missing/invalid authentication |
-| `ForbiddenError` | 403 | Insufficient permissions |
-| `NotFoundError` | 404 | Resource not found |
-| `RateLimitError` | 429 | Too many requests |
-| `AppError` | 500 | General server error |
-| `DatabaseError` | 500 | Database operation failure |
+| Error Class         | HTTP Status | Usage                          |
+| ------------------- | ----------- | ------------------------------ |
+| `ValidationError`   | 400         | Invalid input data             |
+| `UnauthorizedError` | 401         | Missing/invalid authentication |
+| `ForbiddenError`    | 403         | Insufficient permissions       |
+| `NotFoundError`     | 404         | Resource not found             |
+| `RateLimitError`    | 429         | Too many requests              |
+| `AppError`          | 500         | General server error           |
+| `DatabaseError`     | 500         | Database operation failure     |
 
 ### Middleware (`packages/middleware/`)
 
-| Middleware | Description |
-|-----------|-------------|
+| Middleware        | Description                                                                                                                                                    |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `isAuthenticated` | Verifies JWT from cookies (`accessToken`, `sellerAccessToken`, or `adminAccessToken`), looks up account in DB, attaches to `req.user`/`req.seller`/`req.admin` |
-| `isUser` | Ensures `req.role === 'user'` |
-| `isSeller` | Ensures `req.role === 'seller'` |
-| `isAdmin` | Ensures `req.role === 'admin'` |
+| `isUser`          | Ensures `req.role === 'user'`                                                                                                                                  |
+| `isSeller`        | Ensures `req.role === 'seller'`                                                                                                                                |
+| `isAdmin`         | Ensures `req.role === 'admin'`                                                                                                                                 |
 
 ### Libs (`packages/libs/`)
 
-| Library | Description |
-|---------|-------------|
-| `prisma` | Shared PrismaClient singleton for MongoDB access |
-| `redis` | Redis client with Upstash TLS support and retry logic |
-| `kafka` | Kafka client factory, producer/consumer creators, topic constants |
+| Library  | Description                                                       |
+| -------- | ----------------------------------------------------------------- |
+| `prisma` | Shared PrismaClient singleton for MongoDB access                  |
+| `redis`  | Redis client with Upstash TLS support and retry logic             |
+| `kafka`  | Kafka client factory, producer/consumer creators, topic constants |
 
 ---
 
@@ -535,31 +536,31 @@ Built with **Prisma ORM** targeting **MongoDB**. All models use ObjectId as prim
 
 ### Topics
 
-| Topic | Publisher | Consumer(s) |
-|-------|-----------|-------------|
-| `order.placed` | Order Service | Payment Service |
-| `order.confirmed` | Order Service | — |
-| `order.shipped` | Order Service | — |
-| `order.delivered` | Order Service | Review Service (enables reviews) |
-| `order.cancelled` | Order Service | Payment Service (auto-refund), Product Service (restore stock) |
-| `order.refunded` | Order Service | Product Service (restore stock) |
-| `payment.created` | Payment Service | — |
-| `payment.succeeded` | Payment Service | Order Service (confirm order) |
-| `payment.failed` | Payment Service | — |
-| `payment.refunded` | Payment Service | Order Service (mark refunded) |
-| `product.created` | Product Service | — |
-| `product.updated` | Product Service | — |
-| `product.deleted` | Product Service | — |
-| `review.created` | Review Service | — |
-| `review.deleted` | Review Service | — |
+| Topic               | Publisher       | Consumer(s)                                                    |
+| ------------------- | --------------- | -------------------------------------------------------------- |
+| `order.placed`      | Order Service   | Payment Service                                                |
+| `order.confirmed`   | Order Service   | —                                                              |
+| `order.shipped`     | Order Service   | —                                                              |
+| `order.delivered`   | Order Service   | Review Service (enables reviews)                               |
+| `order.cancelled`   | Order Service   | Payment Service (auto-refund), Product Service (restore stock) |
+| `order.refunded`    | Order Service   | Product Service (restore stock)                                |
+| `payment.created`   | Payment Service | —                                                              |
+| `payment.succeeded` | Payment Service | Order Service (confirm order)                                  |
+| `payment.failed`    | Payment Service | —                                                              |
+| `payment.refunded`  | Payment Service | Order Service (mark refunded)                                  |
+| `product.created`   | Product Service | —                                                              |
+| `product.updated`   | Product Service | —                                                              |
+| `product.deleted`   | Product Service | —                                                              |
+| `review.created`    | Review Service  | —                                                              |
+| `review.deleted`    | Review Service  | —                                                              |
 
 ### Consumer Groups
 
-| Consumer Group | Service | Subscribed Topics |
-|----------------|---------|-------------------|
-| `order-service-group` | Order Service | `payment.succeeded`, `payment.refunded` |
-| `payment-service-group` | Payment Service | `order.cancelled` |
-| `product-service-group` | Product Service | `order.cancelled`, `order.refunded` |
+| Consumer Group          | Service         | Subscribed Topics                       |
+| ----------------------- | --------------- | --------------------------------------- |
+| `order-service-group`   | Order Service   | `payment.succeeded`, `payment.refunded` |
+| `payment-service-group` | Payment Service | `order.cancelled`                       |
+| `product-service-group` | Product Service | `order.cancelled`, `order.refunded`     |
 
 ---
 
@@ -567,67 +568,67 @@ Built with **Prisma ORM** targeting **MongoDB**. All models use ObjectId as prim
 
 ### Auth Service (`/api`)
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/user-registration` | Public | Register new user |
-| POST | `/api/login-user` | Public | User login |
-| POST | `/api/login-seller` | Public | Seller login |
-| POST | `/api/login-admin` | Public | Admin login |
-| GET | `/api/logged-in-user` | User | Get current user |
-| GET | `/api/logged-in-seller` | Seller | Get current seller |
-| GET | `/api/logged-in-admin` | Admin | Get current admin |
-| POST | `/api/refresh-tocken` | Public | Refresh JWT tokens |
-| POST | `/api/logout-user` | User | Logout user |
-| POST | `/api/logout-seller` | Seller | Logout seller |
-| POST | `/api/logout-admin` | Admin | Logout admin |
+| Method | Endpoint                 | Auth   | Description        |
+| ------ | ------------------------ | ------ | ------------------ |
+| POST   | `/api/user-registration` | Public | Register new user  |
+| POST   | `/api/login-user`        | Public | User login         |
+| POST   | `/api/login-seller`      | Public | Seller login       |
+| POST   | `/api/login-admin`       | Public | Admin login        |
+| GET    | `/api/logged-in-user`    | User   | Get current user   |
+| GET    | `/api/logged-in-seller`  | Seller | Get current seller |
+| GET    | `/api/logged-in-admin`   | Admin  | Get current admin  |
+| POST   | `/api/refresh-tocken`    | Public | Refresh JWT tokens |
+| POST   | `/api/logout-user`       | User   | Logout user        |
+| POST   | `/api/logout-seller`     | Seller | Logout seller      |
+| POST   | `/api/logout-admin`      | Admin  | Logout admin       |
 
 ### Product Service (`/product-api`)
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/product-api/products` | Public | List products (search, filter, paginate) |
-| GET | `/product-api/products/:id` | Public | Get product detail |
-| POST | `/product-api/products` | Seller | Create product |
-| PUT | `/product-api/products/:id` | Seller | Update product |
-| DELETE | `/product-api/products/:id` | Seller | Delete product |
-| GET | `/product-api/seller/products` | Seller | Get seller's products |
-| POST | `/product-api/products/:id/reviews` | User | Add product review |
+| Method | Endpoint                            | Auth   | Description                              |
+| ------ | ----------------------------------- | ------ | ---------------------------------------- |
+| GET    | `/product-api/products`             | Public | List products (search, filter, paginate) |
+| GET    | `/product-api/products/:id`         | Public | Get product detail                       |
+| POST   | `/product-api/products`             | Seller | Create product                           |
+| PUT    | `/product-api/products/:id`         | Seller | Update product                           |
+| DELETE | `/product-api/products/:id`         | Seller | Delete product                           |
+| GET    | `/product-api/seller/products`      | Seller | Get seller's products                    |
+| POST   | `/product-api/products/:id/reviews` | User   | Add product review                       |
 
 ### Order Service (`/order-api`)
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/order-api/orders` | User | Place order |
-| GET | `/order-api/orders` | User | Get user's orders |
-| GET | `/order-api/orders/:id` | User | Get order detail |
-| GET | `/order-api/seller/orders` | Seller | Get seller's order items |
-| PUT | `/order-api/seller/orders/:id/items/:itemId/status` | Seller | Update item status |
-| GET | `/order-api/seller/revenue` | Seller | Get seller revenue stats |
-| GET | `/order-api/admin/orders` | Admin | List all orders |
-| GET | `/order-api/admin/orders/:id` | Admin | Get any order detail |
-| PUT | `/order-api/admin/orders/:id/status` | Admin | Update order status |
-| GET | `/order-api/admin/revenue` | Admin | Platform revenue dashboard |
-| GET | `/order-api/admin/stats` | Admin | Dashboard aggregate stats |
+| Method | Endpoint                                            | Auth   | Description                |
+| ------ | --------------------------------------------------- | ------ | -------------------------- |
+| POST   | `/order-api/orders`                                 | User   | Place order                |
+| GET    | `/order-api/orders`                                 | User   | Get user's orders          |
+| GET    | `/order-api/orders/:id`                             | User   | Get order detail           |
+| GET    | `/order-api/seller/orders`                          | Seller | Get seller's order items   |
+| PUT    | `/order-api/seller/orders/:id/items/:itemId/status` | Seller | Update item status         |
+| GET    | `/order-api/seller/revenue`                         | Seller | Get seller revenue stats   |
+| GET    | `/order-api/admin/orders`                           | Admin  | List all orders            |
+| GET    | `/order-api/admin/orders/:id`                       | Admin  | Get any order detail       |
+| PUT    | `/order-api/admin/orders/:id/status`                | Admin  | Update order status        |
+| GET    | `/order-api/admin/revenue`                          | Admin  | Platform revenue dashboard |
+| GET    | `/order-api/admin/stats`                            | Admin  | Dashboard aggregate stats  |
 
 ### Payment Service (`/payment-api`)
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/payment-api/create-payment-intent` | User | Create Stripe PaymentIntent |
-| POST | `/payment-api/webhook` | Public (Stripe) | Stripe webhook handler |
-| GET | `/payment-api/payments/:id` | User | Get payment status |
-| GET | `/payment-api/admin/payments` | Admin | List all payments |
-| POST | `/payment-api/admin/refund/:paymentId` | Admin | Process refund |
+| Method | Endpoint                               | Auth            | Description                 |
+| ------ | -------------------------------------- | --------------- | --------------------------- |
+| POST   | `/payment-api/create-payment-intent`   | User            | Create Stripe PaymentIntent |
+| POST   | `/payment-api/webhook`                 | Public (Stripe) | Stripe webhook handler      |
+| GET    | `/payment-api/payments/:id`            | User            | Get payment status          |
+| GET    | `/payment-api/admin/payments`          | Admin           | List all payments           |
+| POST   | `/payment-api/admin/refund/:paymentId` | Admin           | Process refund              |
 
 ### Review Service (`/review-api`)
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/review-api/orders/:orderId/review` | User | Submit order review |
-| GET | `/review-api/orders/:orderId/review` | User | Get user's order review |
-| GET | `/review-api/seller/:sellerId/reviews` | Public | Get seller reviews |
-| GET | `/review-api/admin/reviews` | Admin | List all reviews |
-| DELETE | `/review-api/admin/reviews/:id` | Admin | Delete review |
+| Method | Endpoint                               | Auth   | Description             |
+| ------ | -------------------------------------- | ------ | ----------------------- |
+| POST   | `/review-api/orders/:orderId/review`   | User   | Submit order review     |
+| GET    | `/review-api/orders/:orderId/review`   | User   | Get user's order review |
+| GET    | `/review-api/seller/:sellerId/reviews` | Public | Get seller reviews      |
+| GET    | `/review-api/admin/reviews`            | Admin  | List all reviews        |
+| DELETE | `/review-api/admin/reviews/:id`        | Admin  | Delete review           |
 
 ---
 
@@ -648,6 +649,7 @@ For the order:
 ```
 
 **Example:** Customer buys 2 items at $50 each:
+
 - Subtotal: $100.00
 - Service Fee (20%): $20.00
 - **Total charged: $120.00**
@@ -662,14 +664,14 @@ The system uses **JWT-based authentication** with HTTP-only cookies for security
 
 ### Token Strategy
 
-| Token | Cookie Name | Expiry | Purpose |
-|-------|------------|--------|---------|
-| User Access | `accessToken` | 15 min | API authentication |
-| User Refresh | `refreshToken` | 7 days | Token renewal |
-| Seller Access | `sellerAccessToken` | 15 min | Seller API auth |
-| Seller Refresh | `sellerRefreshToken` | 7 days | Token renewal |
-| Admin Access | `adminAccessToken` | 15 min | Admin API auth |
-| Admin Refresh | `adminRefreshToken` | 7 days | Token renewal |
+| Token          | Cookie Name          | Expiry | Purpose            |
+| -------------- | -------------------- | ------ | ------------------ |
+| User Access    | `accessToken`        | 15 min | API authentication |
+| User Refresh   | `refreshToken`       | 7 days | Token renewal      |
+| Seller Access  | `sellerAccessToken`  | 15 min | Seller API auth    |
+| Seller Refresh | `sellerRefreshToken` | 7 days | Token renewal      |
+| Admin Access   | `adminAccessToken`   | 15 min | Admin API auth     |
+| Admin Refresh  | `adminRefreshToken`  | 7 days | Token renewal      |
 
 ### JWT Payload
 
@@ -752,17 +754,17 @@ npm run seller-ui    # Seller dashboard on :3001
 
 ### 7. Access the Applications
 
-| Application | URL |
-|-------------|-----|
-| User UI | http://localhost:3000 |
-| Seller UI | http://localhost:3001 |
-| Admin UI | http://localhost:3002 |
-| API Gateway | http://localhost:8080 |
-| Auth Service | http://localhost:6001 |
+| Application     | URL                   |
+| --------------- | --------------------- |
+| User UI         | http://localhost:3000 |
+| Seller UI       | http://localhost:3001 |
+| Admin UI        | http://localhost:3002 |
+| API Gateway     | http://localhost:8080 |
+| Auth Service    | http://localhost:6001 |
 | Product Service | http://localhost:6002 |
-| Order Service | http://localhost:6003 |
+| Order Service   | http://localhost:6003 |
 | Payment Service | http://localhost:6004 |
-| Review Service | http://localhost:6005 |
+| Review Service  | http://localhost:6005 |
 
 ### 8. Default Admin Credentials
 
@@ -824,12 +826,14 @@ ADMIN_SEED_PASSWORD="admin123"
 For the frontend apps, create `.env.local` files:
 
 **User UI & Seller UI** (`apps/user-ui/.env.local` and `apps/seller-ui/.env.local`):
+
 ```env
 NEXT_PUBLIC_API_URL="http://localhost:8080"
 NEXT_PUBLIC_API_BASE_URL="http://localhost:8080/api"
 ```
 
 **Admin UI** (`apps/admin-ui/.env.local`):
+
 ```env
 NEXT_PUBLIC_API_URL="http://localhost:8080"
 NEXT_PUBLIC_API_BASE_URL="http://localhost:8080/api"
@@ -839,14 +843,14 @@ NEXT_PUBLIC_API_BASE_URL="http://localhost:8080/api"
 
 ## Available Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `dev` | `npm run dev` | Start all services and UIs |
-| `user-ui` | `npm run user-ui` | Start only customer frontend |
-| `seller-ui` | `npm run seller-ui` | Start only seller frontend |
-| `auth-doc` | `npm run auth-doc` | Generate Swagger docs for auth service |
-| `format` | `npm run format` | Format all files with Prettier |
-| `format:check` | `npm run format:check` | Check formatting |
+| Script         | Command                | Description                            |
+| -------------- | ---------------------- | -------------------------------------- |
+| `dev`          | `npm run dev`          | Start all services and UIs             |
+| `user-ui`      | `npm run user-ui`      | Start only customer frontend           |
+| `seller-ui`    | `npm run seller-ui`    | Start only seller frontend             |
+| `auth-doc`     | `npm run auth-doc`     | Generate Swagger docs for auth service |
+| `format`       | `npm run format`       | Format all files with Prettier         |
+| `format:check` | `npm run format:check` | Check formatting                       |
 
 ### Nx Commands
 
@@ -878,10 +882,10 @@ services:
     image: confluentinc/cp-kafka:7.5.0
     container_name: eshop-kafka
     ports:
-      - "9092:9092"
+      - '9092:9092'
     environment:
-      CLUSTER_ID: "eshop-kafka-cluster-001"
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      CLUSTER_ID: 'eshop-kafka-cluster-001'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_LOG_RETENTION_HOURS: 168
 ```
 
