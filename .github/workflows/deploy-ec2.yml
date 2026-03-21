@@ -159,7 +159,8 @@ jobs:
               \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.vars.outputs.registry }}\",
               \"docker pull ${{ steps.vars.outputs.image_uri }}\",
               \"docker rm -f ${{ steps.vars.outputs.container_name }} || true\",
-              \"docker run -d --name ${{ steps.vars.outputs.container_name }} --restart unless-stopped --env-file /opt/${{ matrix.service }}/.env -p ${{ matrix.port }}:${{ matrix.port }} ${{ steps.vars.outputs.image_uri }}\"
+              \"ENV_FILE=/opt/${{ matrix.service }}/.env\",
+              \"if [ -f \\\"$ENV_FILE\\\" ]; then docker run -d --name ${{ steps.vars.outputs.container_name }} --restart unless-stopped --env-file \\\"$ENV_FILE\\\" -p ${{ matrix.port }}:${{ matrix.port }} ${{ steps.vars.outputs.image_uri }}; else echo \\\"Warning: $ENV_FILE not found; starting without --env-file\\\"; docker run -d --name ${{ steps.vars.outputs.container_name }} --restart unless-stopped -p ${{ matrix.port }}:${{ matrix.port }} ${{ steps.vars.outputs.image_uri }}; fi\"
             ]" \
             --query "Command.CommandId" \
             --output text)
