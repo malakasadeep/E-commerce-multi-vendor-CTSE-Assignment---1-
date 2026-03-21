@@ -38,6 +38,11 @@ services:
       - '8080:8080'
     environment:
       - NODE_ENV=production
+      - AUTH_SERVICE_URL=http://auth-service:6001
+      - PRODUCT_SERVICE_URL=http://product-service:6002
+      - ORDER_SERVICE_URL=http://order-service:6003
+      - PAYMENT_SERVICE_URL=http://payment-service:6004
+      - REVIEW_SERVICE_URL=http://review-service:6005
     depends_on:
       auth-service:
         condition: service_started
