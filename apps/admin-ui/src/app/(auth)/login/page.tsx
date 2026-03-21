@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
                 type="email"
                 placeholder="admin@eshop.com"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e: any) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -77,7 +77,7 @@ export default function AdminLoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={(e: any) => setPassword(e.target.value)}
                   required
                 />
                 <button
