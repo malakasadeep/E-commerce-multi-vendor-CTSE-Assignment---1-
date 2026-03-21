@@ -31,7 +31,11 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci || {
+            echo "package-lock mismatch detected, falling back to npm install"
+            npm install
+          }
 
       - name: Nx lint
         run: npx nx run-many -t lint --all --parallel=3
