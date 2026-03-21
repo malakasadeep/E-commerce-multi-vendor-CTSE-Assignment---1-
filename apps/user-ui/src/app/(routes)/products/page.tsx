@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useProducts } from '../../../hooks/useProducts';
 import { ProductCard } from '../../../components/products/ProductCard';
@@ -9,7 +9,7 @@ import { Skeleton } from '../../../components/ui/skeleton';
 import { Button } from '../../../components/ui/button';
 import { ChevronLeft, ChevronRight, PackageOpen } from 'lucide-react';
 
-export default function ProductsPage() {
+function ProductsPageContent() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const categoryParam = searchParams.get('category') || '';
@@ -132,5 +132,13 @@ export default function ProductsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="w-[90%] max-w-7xl mx-auto py-8" />}>
+      <ProductsPageContent />
+    </Suspense>
   );
 }

@@ -1,17 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../../../../utils/axiosInstance';
 import { Card, CardContent } from '../../../../components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '../../../../components/ui/table';
 import { Skeleton } from '../../../../components/ui/skeleton';
 import { Users, Mail } from 'lucide-react';
 

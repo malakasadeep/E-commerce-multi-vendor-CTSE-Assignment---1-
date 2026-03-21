@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useUser from '../../../hooks/useUser';
@@ -26,7 +26,7 @@ const SIDEBAR_ITEMS = [
   { key: 'settings', label: 'Settings', icon: Settings },
 ];
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isLoading, isError } = useUser();
@@ -89,7 +89,7 @@ export default function ProfilePage() {
           {/* Navigation */}
           <nav className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="p-2">
-              {SIDEBAR_ITEMS.map((item) => {
+              {SIDEBAR_ITEMS.map(item => {
                 const isActive = item.key === activeTab;
                 const isLink = !!item.href;
 
@@ -156,6 +156,14 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div className="w-[90%] max-w-7xl mx-auto py-8" />}>
+      <ProfilePageContent />
+    </Suspense>
   );
 }
 
