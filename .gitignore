@@ -44,7 +44,16 @@ Thumbs.db
 test-output
 
 /generated/prisma
+
+# Environment variables (all variants — never commit secrets)
 .env
+.env.*
+!.env.example
+**/.env
+**/.env.local
+**/.env.*.local
+**/.env.*
+!**/.env.example
 
 # Next.js
 .next

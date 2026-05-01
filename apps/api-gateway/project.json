@@ -1,0 +1,27 @@
+{
+  "name": "@eshop/api-gateway",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/api-gateway/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "@eshop/api-gateway:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "@eshop/api-gateway:build:development"
+        },
+        "production": {
+          "buildTarget": "@eshop/api-gateway:build:production"
+        }
+      }
+    }
+  }
+}

@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import router from './routes/payment.router';
 import { webhookRouter } from './routes/payment.router';
 import { startPaymentConsumer } from './utils/kafka.consumer';
+import swaggerUi from 'swagger-ui-express';
+const swaggerDocument = require('./swagger-output.json');
 
 const app = express();
 
@@ -16,14 +18,16 @@ app.use(
   webhookRouter
 );
 
+const allowedOrigins = (
+  process.env.ALLOWED_ORIGINS ||
+  'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4200'
+)
+  .split(',')
+  .map(origin => origin.trim());
+
 app.use(
   cors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://localhost:4200',
-    ],
+    origin: allowedOrigins,
     allowedHeaders: ['Authorization', 'Content-Type'],
     credentials: true,
   })
@@ -36,6 +40,11 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.get('/', (req, res) => {
   res.send({ message: 'Welcome to payment-service!' });
+});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.get('/docs-json', (req, res) => {
+  res.json(swaggerDocument);
 });
 
 app.use('/payment-api', router);

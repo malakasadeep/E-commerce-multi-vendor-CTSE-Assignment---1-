@@ -15,9 +15,11 @@ import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import { setCookie } from '../utils/cookies/setCookie';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2026-01-28.clover',
-});
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('STRIPE_SECRET_KEY is required');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const userRegistration = async (
   req: Request,
@@ -422,10 +424,24 @@ export const createStripeLink = async (
       where: { id: sellerId },
       data: { stripeId: account.id },
     });
+    const onboardingBase =
+      process.env.STRIPE_ONBOARDING_RETURN_URL ||
+      (process.env.NODE_ENV === 'production'
+        ? null
+        : 'http://localhost:3001/stripe/onboarding');
+
+    if (!onboardingBase) {
+      return next(
+        new ValidationError(
+          'STRIPE_ONBOARDING_RETURN_URL must be configured in production'
+        )
+      );
+    }
+
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: 'http://localhost:3000/success',
-      return_url: 'http://localhost:3000/success',
+      refresh_url: `${onboardingBase}?refresh=1`,
+      return_url: `${onboardingBase}?success=1`,
       type: 'account_onboarding',
     });
     res.status(200).json({

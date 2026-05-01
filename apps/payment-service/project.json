@@ -1,0 +1,27 @@
+{
+  "name": "@eshop/payment-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/payment-service/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "@eshop/payment-service:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "@eshop/payment-service:build:development"
+        },
+        "production": {
+          "buildTarget": "@eshop/payment-service:build:production"
+        }
+      }
+    }
+  }
+}

@@ -26,6 +26,8 @@ const router: Router = express.Router();
 router.post('/user-registration', userRegistration);
 router.post('/verify-user', verifyUser);
 router.post('/login-user', login);
+router.post('/refresh-token', refreshToken);
+// Backwards-compatible alias for the legacy misspelling
 router.post('/refresh-tocken', refreshToken);
 router.get('/logged-in-user', isAuthenticated, getUser);
 router.post('/forgot-password-user', userForgotPassword);

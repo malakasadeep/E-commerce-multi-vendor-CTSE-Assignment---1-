@@ -7,9 +7,11 @@ import prisma from '@packages/libs/prisma';
 import { publishPaymentEvent } from './kafka.producer';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2026-01-28.clover',
-});
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('STRIPE_SECRET_KEY is required');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const startPaymentConsumer = async () => {
   try {

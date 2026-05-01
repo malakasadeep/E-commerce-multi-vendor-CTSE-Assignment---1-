@@ -2,6 +2,12 @@ import prisma from '@packages/libs/prisma';
 import { NextFunction, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
+if (!process.env.ACCESS_TOKEN_SECRET) {
+  throw new Error('ACCESS_TOKEN_SECRET is required');
+}
+
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+
 const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
   try {
     const token =
@@ -14,7 +20,7 @@ const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as {
+    const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET) as {
       id: string;
       role: 'user' | 'seller' | 'admin';
     };

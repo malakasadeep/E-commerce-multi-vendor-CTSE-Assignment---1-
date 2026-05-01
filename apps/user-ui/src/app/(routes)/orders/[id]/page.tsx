@@ -4,9 +4,12 @@ import React from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useOrderDetail } from '../../../../hooks/useOrders';
+import { useOrderReviews } from '../../../../hooks/useReviews';
 import { Button } from '../../../../components/ui/button';
 import { Badge } from '../../../../components/ui/badge';
 import { Skeleton } from '../../../../components/ui/skeleton';
+import { PayUnpaidOrder } from '../../../../components/checkout/PayUnpaidOrder';
+import { OrderReviewForm } from '../../../../components/review/OrderReviewForm';
 import {
   ArrowLeft,
   Package,
@@ -16,6 +19,7 @@ import {
   CheckCircle,
   Truck,
   XCircle,
+  Star,
 } from 'lucide-react';
 
 const STATUS_COLORS: Record<string, string> = {
@@ -40,6 +44,9 @@ export default function OrderDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const { data, isLoading } = useOrderDetail(id);
+  const order = data?.order;
+  const isDelivered = order?.status === 'delivered';
+  const { data: reviewData } = useOrderReviews(id, isDelivered);
 
   if (isLoading) {
     return (
@@ -50,7 +57,6 @@ export default function OrderDetailPage() {
     );
   }
 
-  const order = data?.order;
   if (!order) {
     return (
       <div className="w-[90%] max-w-5xl mx-auto py-16 text-center">
@@ -69,6 +75,24 @@ export default function OrderDetailPage() {
   const isCancelled =
     order.status === 'cancelled' || order.status === 'refunded';
   const currentStep = STATUS_TIMELINE.indexOf(order.status);
+  const paymentStatus = order.payment?.status;
+  const needsPayment =
+    order.status === 'pending' &&
+    (!paymentStatus || paymentStatus === 'pending' || paymentStatus === 'failed');
+
+  // Group order items by seller for review form
+  const sellersInOrder: Record<string, { sellerId: string; shopName: string }> = {};
+  for (const item of order.items as any[]) {
+    if (!sellersInOrder[item.sellerId]) {
+      sellersInOrder[item.sellerId] = {
+        sellerId: item.sellerId,
+        shopName: item.product?.shop?.name || 'Seller',
+      };
+    }
+  }
+  const reviewedSellerIds = new Set(
+    (reviewData?.reviews || []).map(r => r.sellerId)
+  );
 
   return (
     <div className="w-[90%] max-w-5xl mx-auto py-8">
@@ -93,8 +117,23 @@ export default function OrderDetailPage() {
         </Badge>
       </div>
 
-      {/* Order Timeline */}
-      {!isCancelled && (
+      {needsPayment && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-6">
+          <p className="font-medium text-yellow-900 mb-1">
+            Payment required
+          </p>
+          <p className="text-sm text-yellow-800 mb-4">
+            This order is awaiting payment. Complete it to confirm your order
+            and reserve stock.
+          </p>
+          <PayUnpaidOrder
+            orderId={order.id}
+            totalLabel={`$${order.total.toFixed(2)}`}
+          />
+        </div>
+      )}
+
+      {!isCancelled && !needsPayment && (
         <div className="bg-white rounded-xl border p-6 mb-6">
           <div className="flex items-center justify-between">
             {STATUS_TIMELINE.map((status, i) => {
@@ -152,7 +191,6 @@ export default function OrderDetailPage() {
         </div>
       )}
 
-      {/* Shipping & Payment */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div className="bg-white rounded-xl border p-5">
           <div className="flex items-center gap-2 mb-3">
@@ -192,8 +230,7 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
-      {/* Order Items */}
-      <div className="bg-white rounded-xl border p-5">
+      <div className="bg-white rounded-xl border p-5 mb-6">
         <h3 className="font-semibold text-gray-900 mb-4">Order Items</h3>
         <div className="space-y-4">
           {order.items.map((item: any) => (
@@ -252,6 +289,34 @@ export default function OrderDetailPage() {
           </div>
         </div>
       </div>
+
+      {isDelivered && (
+        <div className="bg-white rounded-xl border p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Star className="h-5 w-5 text-yellow-500 fill-yellow-400" />
+            <h3 className="font-semibold text-gray-900">Reviews</h3>
+          </div>
+          <div className="space-y-4">
+            {Object.values(sellersInOrder).map(s =>
+              reviewedSellerIds.has(s.sellerId) ? (
+                <div
+                  key={s.sellerId}
+                  className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-green-800"
+                >
+                  Thanks for reviewing {s.shopName}.
+                </div>
+              ) : (
+                <OrderReviewForm
+                  key={s.sellerId}
+                  orderId={order.id}
+                  sellerId={s.sellerId}
+                  sellerName={s.shopName}
+                />
+              )
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

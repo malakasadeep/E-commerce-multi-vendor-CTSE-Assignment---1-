@@ -8,16 +8,25 @@ import { seedAdmin } from './controller/auth.controller';
 import swaggerUi from 'swagger-ui-express';
 const swaggerDocument = require('./swagger-output.json');
 
+const requiredEnv = ['ACCESS_TOKEN_SECRET', 'REFRESH_TOKEN_SECRET'];
+for (const key of requiredEnv) {
+  if (!process.env[key]) {
+    throw new Error(`${key} is required`);
+  }
+}
+
 const app = express();
+
+const allowedOrigins = (
+  process.env.ALLOWED_ORIGINS ||
+  'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4200'
+)
+  .split(',')
+  .map(origin => origin.trim());
 
 app.use(
   cors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://localhost:4200',
-    ],
+    origin: allowedOrigins,
     allowedHeaders: ['Authorization', 'Content-Type'],
     credentials: true,
   })

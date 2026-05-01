@@ -1,0 +1,27 @@
+{
+  "name": "@eshop/order-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/order-service/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "@eshop/order-service:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "@eshop/order-service:build:development"
+        },
+        "production": {
+          "buildTarget": "@eshop/order-service:build:production"
+        }
+      }
+    }
+  }
+}

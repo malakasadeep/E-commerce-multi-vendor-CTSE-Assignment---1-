@@ -99,6 +99,15 @@ jobs:
             -t "${{ steps.tags.outputs.image_uri }}:latest" \
             .
 
+      - name: Trivy image scan (HIGH/CRITICAL CVEs)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ steps.tags.outputs.image_uri }}:${{ steps.tags.outputs.sha_tag }}
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '0'
+
       - name: Push image tags
         run: |
           docker push "${{ steps.tags.outputs.image_uri }}:${{ steps.tags.outputs.sha_tag }}"

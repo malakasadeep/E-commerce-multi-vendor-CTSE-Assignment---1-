@@ -117,13 +117,8 @@ export const placeOrder = async (
       },
     });
 
-    // Decrement stock for each product
-    for (const item of items) {
-      await prisma.product.update({
-        where: { id: item.productId },
-        data: { stock: { decrement: item.quantity } },
-      });
-    }
+    // Stock is decremented later, when payment.succeeded is received via Kafka.
+    // This avoids inventory drift when a user abandons the Stripe step.
 
     // Publish Kafka event
     publishOrderEvent(ORDER_TOPICS.ORDER_PLACED, {
@@ -480,18 +475,15 @@ export const updateOrderStatus = async (
       },
     });
 
-    // If cancelled, restore stock
+    // product-service owns stock restoration. Tell it whether the stock
+    // had previously been decremented (i.e. order had moved past 'pending').
     if (status === 'cancelled') {
-      for (const item of updatedOrder.items) {
-        await prisma.product.update({
-          where: { id: item.productId },
-          data: { stock: { increment: item.quantity } },
-        });
-      }
+      const stockWasDecremented = order.status !== 'pending';
       publishOrderEvent(ORDER_TOPICS.ORDER_CANCELLED, {
         id: order.id,
         orderNumber: order.orderNumber,
         paymentId: order.paymentId,
+        stockWasDecremented,
       });
     }
 
