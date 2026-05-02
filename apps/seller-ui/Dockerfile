@@ -21,7 +21,7 @@ COPY apps ./apps
 COPY packages ./packages
 COPY --from=deps /repo/node_modules ./node_modules/
 
-RUN npx nx build seller-ui --configuration=production
+RUN mkdir -p apps/seller-ui/public && npx nx build seller-ui --configuration=production
 
 # Stage 3: Runtime
 FROM node:22-alpine
