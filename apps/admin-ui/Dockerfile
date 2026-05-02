@@ -13,8 +13,10 @@ RUN npm config set fetch-retries 5 \
 # Stage 2: Build
 FROM node:22-alpine AS builder
 
+ARG NEXT_PUBLIC_API_BASE_URL=http://zudox.online
 ARG NEXT_PUBLIC_API_URL=http://zudox.online
 
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 WORKDIR /repo
