@@ -40,7 +40,7 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await axiosInstance.post('/api/refresh-tocken');
+        await axiosInstance.post('/api/auth-api/refresh-tocken');
         processQueue(null);
         return axiosInstance(originalRequest);
       } catch (refreshError) {
