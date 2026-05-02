@@ -154,15 +154,15 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --comment "Deploy ${{ matrix.service }} from GitHub Actions" \
             --instance-ids "${{ steps.target.outputs.instance_id }}" \
-            --parameters commands="[
-              \"set -e\",
-              \"aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.vars.outputs.registry }}\",
-              \"docker pull ${{ steps.vars.outputs.image_uri }}\",
-              \"docker rm -f ${{ steps.vars.outputs.container_name }} || true\",
-              \"ENV_FILE=/opt/${{ matrix.service }}/.env\",
-              "if [ ! -f \\\"$ENV_FILE\\\" ]; then echo \\\"Error: $ENV_FILE not found; refusing to start ${{ matrix.service }} without required environment variables\\\"; exit 1; fi",
-              "docker run -d --name ${{ steps.vars.outputs.container_name }} --restart unless-stopped --env-file \\\"$ENV_FILE\\\" -p ${{ matrix.port }}:${{ matrix.port }} ${{ steps.vars.outputs.image_uri }}"
-            ]" \
+            --parameters commands='[
+              "set -e",
+              "aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.vars.outputs.registry }}",
+              "docker pull ${{ steps.vars.outputs.image_uri }}",
+              "docker rm -f ${{ steps.vars.outputs.container_name }} || true",
+              "ENV_FILE=/opt/${{ matrix.service }}/.env",
+              "if [ ! -f \"$ENV_FILE\" ]; then echo \"Error: $ENV_FILE not found; refusing to start ${{ matrix.service }} without required environment variables\"; exit 1; fi",
+              "docker run -d --name ${{ steps.vars.outputs.container_name }} --restart unless-stopped --env-file \"$ENV_FILE\" -p ${{ matrix.port }}:${{ matrix.port }} ${{ steps.vars.outputs.image_uri }}"
+            ]' \
             --query "Command.CommandId" \
             --output text)
 
@@ -180,8 +180,7 @@ jobs:
           STATUS=$(aws ssm get-command-invocation \
             --region "${{ env.AWS_REGION }}" \
             --command-id "$COMMAND_ID" \
-              "if [ ! -f \"$ENV_FILE\" ]; then echo \"Error: $ENV_FILE not found; refusing to start ${{ matrix.service }} without required environment variables\"; exit 1; fi",
-              "docker run -d --name ${{ steps.vars.outputs.container_name }} --restart unless-stopped --env-file \"$ENV_FILE\" -p ${{ matrix.port }}:${{ matrix.port }} ${{ steps.vars.outputs.image_uri }}"
+            --instance-id "${{ steps.target.outputs.instance_id }}" \
             --query "Status" \
             --output text || true)
 
