@@ -14,28 +14,12 @@ import bcrypt from 'bcryptjs';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import { setCookie } from '../utils/cookies/setCookie';
 import Stripe from 'stripe';
-import dotenv from 'dotenv';
-import path from 'path';
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('STRIPE_SECRET_KEY is required');
+}
 
-let stripeClient: Stripe | null = null;
-
-const getStripeClient = () => {
-  if (!stripeClient) {
-    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-
-    if (!stripeSecretKey) {
-      throw new ValidationError('STRIPE_SECRET_KEY is missing');
-    }
-
-    stripeClient = new Stripe(stripeSecretKey, {
-      apiVersion: '2026-01-28.clover',
-    });
-  }
-
-  return stripeClient;
-};
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const userRegistration = async (
   req: Request,
@@ -420,9 +404,6 @@ export const createStripeLink = async (
     if (!sellerId) {
       return next(new ValidationError('Missing required fields'));
     }
-
-    const stripe = getStripeClient();
-
     const seller = await prisma.sellers.findUnique({
       where: { id: sellerId },
     });
@@ -443,10 +424,24 @@ export const createStripeLink = async (
       where: { id: sellerId },
       data: { stripeId: account.id },
     });
+    const onboardingBase =
+      process.env.STRIPE_ONBOARDING_RETURN_URL ||
+      (process.env.NODE_ENV === 'production'
+        ? null
+        : 'http://localhost:3001/stripe/onboarding');
+
+    if (!onboardingBase) {
+      return next(
+        new ValidationError(
+          'STRIPE_ONBOARDING_RETURN_URL must be configured in production'
+        )
+      );
+    }
+
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: 'http://localhost:3000/success',
-      return_url: 'http://localhost:3000/success',
+      refresh_url: `${onboardingBase}?refresh=1`,
+      return_url: `${onboardingBase}?success=1`,
       type: 'account_onboarding',
     });
     res.status(200).json({

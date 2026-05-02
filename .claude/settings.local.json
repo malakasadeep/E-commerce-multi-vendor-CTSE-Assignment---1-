@@ -13,7 +13,12 @@
       "Bash(find \"/d/SLIIT/CTSE project/eshop/apps/seller-ui/src/app/\\(routes\\)/dashboard\" -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" \\\\\\))",
       "Bash(grep -r NEXT_PUBLIC_API_URL '/d/SLIIT/CTSE project/eshop/apps/seller-ui' --include=*.ts --include=*.tsx --include=*.js)",
       "Bash(npx nx:*)",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "Bash(node swagger.js)",
+      "Bash(Get-ChildItem -Path \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem -Path \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\" -Recurse -Directory)",
+      "Bash(Select-Object -First 20 FullName)"
     ]
   }
 }

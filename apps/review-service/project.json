@@ -1,0 +1,27 @@
+{
+  "name": "@eshop/review-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/review-service/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "@eshop/review-service:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "@eshop/review-service:build:development"
+        },
+        "production": {
+          "buildTarget": "@eshop/review-service:build:production"
+        }
+      }
+    }
+  }
+}

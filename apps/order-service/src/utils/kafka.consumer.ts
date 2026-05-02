@@ -1,5 +1,10 @@
-import { createConsumer, PAYMENT_TOPICS } from '@packages/libs/kafka';
+import {
+  createConsumer,
+  ORDER_TOPICS,
+  PAYMENT_TOPICS,
+} from '@packages/libs/kafka';
 import prisma from '@packages/libs/prisma';
+import { publishOrderEvent } from './kafka.producer';
 
 export const startOrderConsumer = async () => {
   try {
@@ -23,7 +28,8 @@ export const startOrderConsumer = async () => {
 
         switch (topic) {
           case PAYMENT_TOPICS.PAYMENT_SUCCEEDED: {
-            // Confirm the order when payment succeeds
+            // Confirm the order. product-service owns stock; we publish
+            // ORDER_CONFIRMED so it can decrement stock authoritatively.
             if (data.orderId) {
               const order = await prisma.order.findUnique({
                 where: { id: data.orderId },
@@ -38,6 +44,10 @@ export const startOrderConsumer = async () => {
                   where: { orderId: data.orderId },
                   data: { status: 'confirmed' },
                 });
+                publishOrderEvent(ORDER_TOPICS.ORDER_CONFIRMED, {
+                  id: order.id,
+                  orderNumber: order.orderNumber,
+                });
                 console.log(
                   `[order-service] Order ${data.orderId} confirmed via Kafka`
                 );
@@ -47,19 +57,32 @@ export const startOrderConsumer = async () => {
           }
 
           case PAYMENT_TOPICS.PAYMENT_REFUNDED: {
-            // Mark order as refunded
+            // Mark order refunded. product-service handles stock restoration
+            // when it receives ORDER_REFUNDED.
             if (data.orderId) {
-              await prisma.order.update({
+              const order = await prisma.order.findUnique({
                 where: { id: data.orderId },
-                data: { status: 'refunded' },
               });
-              await prisma.orderItem.updateMany({
-                where: { orderId: data.orderId },
-                data: { status: 'cancelled' },
-              });
-              console.log(
-                `[order-service] Order ${data.orderId} refunded via Kafka`
-              );
+
+              if (order && order.status !== 'refunded') {
+                const wasConfirmed = order.status !== 'pending';
+                await prisma.order.update({
+                  where: { id: data.orderId },
+                  data: { status: 'refunded' },
+                });
+                await prisma.orderItem.updateMany({
+                  where: { orderId: data.orderId },
+                  data: { status: 'cancelled' },
+                });
+                publishOrderEvent(ORDER_TOPICS.ORDER_REFUNDED, {
+                  id: order.id,
+                  orderNumber: order.orderNumber,
+                  stockWasDecremented: wasConfirmed,
+                });
+                console.log(
+                  `[order-service] Order ${data.orderId} refunded via Kafka`
+                );
+              }
             }
             break;
           }

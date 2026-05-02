@@ -18,21 +18,22 @@ export const startProductConsumer = async () => {
         switch (topic) {
           case ORDER_TOPICS.ORDER_CANCELLED:
           case ORDER_TOPICS.ORDER_REFUNDED: {
-            // Restore stock for cancelled/refunded orders
-            if (data.id) {
-              const orderItems = await prisma.orderItem.findMany({
-                where: { orderId: data.id },
-              });
+            // Only restore stock if it had previously been decremented.
+            // order-service tells us via stockWasDecremented in the payload.
+            if (!data.id || data.stockWasDecremented === false) break;
 
-              for (const item of orderItems) {
-                await prisma.product.update({
-                  where: { id: item.productId },
-                  data: { stock: { increment: item.quantity } },
-                });
-                console.log(
-                  `[product-service] Restored ${item.quantity} stock for product ${item.productId}`
-                );
-              }
+            const orderItems = await prisma.orderItem.findMany({
+              where: { orderId: data.id },
+            });
+
+            for (const item of orderItems) {
+              await prisma.product.update({
+                where: { id: item.productId },
+                data: { stock: { increment: item.quantity } },
+              });
+              console.log(
+                `[product-service] Restored ${item.quantity} stock for product ${item.productId}`
+              );
             }
             break;
           }

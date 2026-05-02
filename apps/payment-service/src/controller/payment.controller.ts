@@ -5,9 +5,11 @@ import { publishPaymentEvent } from '../utils/kafka.producer';
 import { PAYMENT_TOPICS } from '@packages/libs/kafka';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2026-01-28.clover',
-});
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('STRIPE_SECRET_KEY is required');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // User: Create payment intent for an order
 export const createPaymentIntent = async (
@@ -97,15 +99,17 @@ export const handleWebhook = async (
   const sig = req.headers['stripe-signature'] as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+  if (!webhookSecret) {
+    console.error('STRIPE_WEBHOOK_SECRET is not configured');
+    return res
+      .status(500)
+      .json({ error: 'Webhook secret not configured on server' });
+  }
+
   let event: Stripe.Event;
 
   try {
-    if (webhookSecret) {
-      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-    } else {
-      // For development without webhook secret
-      event = JSON.parse(req.body.toString()) as Stripe.Event;
-    }
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
   } catch (err: any) {
     console.error('Webhook signature verification failed:', err.message);
     return res

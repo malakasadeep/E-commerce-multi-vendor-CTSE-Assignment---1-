@@ -4,6 +4,163 @@ A production-grade, microservices-based multi-vendor e-commerce platform built w
 
 ---
 
+## CTSE SE4010 Assignment Report (2026)
+
+> Module: Current Trends in Software Engineering — Cloud Computing
+> Assignment | Group of 4 students | Each student owns one microservice
+> with at least one working integration to another team member's service.
+
+### 1. Group service ownership
+
+| # | Student | Service(s) | Inter-service integrations |
+|---|---|---|---|
+| 1 | _Student A_ | `auth-service` | Issues the JWT consumed by every other service; creates Stripe Connect accounts that `payment-service` later transfers funds to |
+| 2 | _Student B_ | `product-service` | Receives `order.cancelled` / `order.refunded` from `order-service` to restore stock; publishes `product.deleted` consumed by `review-service` |
+| 3 | _Student C_ | `order-service` + `payment-service` (paired) | Publishes `order.*`, consumes `payment.succeeded` / `payment.refunded` from `payment-service`; payment-service calls Stripe sandbox |
+| 4 | _Student D_ | `review-service` | Consumes `order.delivered` (from `order-service`) and `product.deleted` (from `product-service`); publishes `review.*` |
+
+`api-gateway` is shared infrastructure and is not counted toward the
+four assignment microservices.
+
+### 2. Architecture
+
+The shared, single-page architecture diagram is in
+[`docs/architecture.md`](./docs/architecture.md). It shows all four
+student services, the api-gateway, the Next.js UIs, AWS deployment
+(ECR + EC2 + IAM via OIDC), the data layer (MongoDB Atlas + Upstash
+Redis), Kafka topics, and external Stripe / SMTP integrations.
+
+### 3. DevOps practices
+
+- **Public GitHub repository**, monorepo (Nx 22).
+- **CI** on every push/PR — `.github/workflows/ci.yml` runs
+  `nx run-many` lint → test → build → typecheck.
+- **Build & push** — `.github/workflows/build-and-push.yml` builds a
+  multi-stage, non-root, dumb-init Docker image per service and pushes
+  to **AWS ECR** with `sha-XXXX` and `latest` tags.
+- **Deploy** — `.github/workflows/deploy-ec2.yml` uses **AWS SSM Run
+  Command** against EC2 instances tagged `Service=<svc>` /
+  `Environment=<env>`, pulls the new image, and restarts the container
+  (`unless-stopped`).
+- **Authentication** to AWS uses **OIDC** (no long-lived IAM keys).
+
+### 4. Containerization
+
+- One `Dockerfile` per service (4-stage: deps → build → prod-deps →
+  runtime). Health-checks, non-root user, dumb-init for signal
+  handling.
+- `docker-compose.yml` at the repo root brings up Kafka and all six
+  containers locally.
+- Container registry: **AWS ECR**.
+
+### 5. Cloud deployment
+
+- **Public cloud**: AWS, Free Tier.
+- **Compute**: EC2 instances, one (or one set per service), tagged for
+  the deploy workflow to discover.
+- **Secrets/config**: per-host `/opt/<service>/.env` file — never in
+  git (see `docs/SECRETS_TO_ROTATE.md`).
+- **Networking**: services exposed only through the api-gateway;
+  security groups restrict ports 6001–6005 to the gateway's SG.
+
+### 6. Security & DevSecOps
+
+| Concern | Control |
+|---|---|
+| AuthN | JWT (HS256) with `ACCESS_TOKEN_SECRET` / `REFRESH_TOKEN_SECRET`, validated at module load (fail-fast). Cookies are httpOnly. |
+| AuthZ | Role-based middleware (`isUser`, `isSeller`, `isAdmin`) in `packages/middleware/`. |
+| Stripe | Webhook signatures **mandatory** — unsigned webhooks rejected. Stripe SDK key validated at boot. |
+| CORS | `ALLOWED_ORIGINS` env var on every service (default localhost only). |
+| IAM | GitHub Actions assumes a single OIDC role scoped to ECR + SSM Run Command on tagged EC2. |
+| Secrets | `.env*` blocked by `.gitignore`. See `docs/SECRETS_TO_ROTATE.md`. |
+| SAST | **SonarCloud** quality gate in CI (`.github/workflows/ci.yml`). |
+| Dependency CVEs | **Snyk** scan (`.github/workflows/snyk.yml`). |
+| Container CVEs | **Trivy** image scan in build-and-push (HIGH/CRITICAL). |
+
+### 7. Stripe sandbox checkout
+
+The customer checkout uses **Stripe Elements** with a real
+`PaymentIntent`:
+
+1. `user-ui` posts the order → `order-service` (status `pending`,
+   stock not yet decremented).
+2. `user-ui` posts the order id → `payment-service` →
+   `Stripe.paymentIntents.create` → returns `clientSecret`.
+3. `user-ui` mounts `<PaymentElement>` and calls
+   `stripe.confirmPayment({ redirect: 'if_required' })`. Test card:
+   `4242 4242 4242 4242`.
+4. Stripe sends `payment_intent.succeeded` to
+   `/payment-api/webhook` → signature verified → publishes
+   `payment.succeeded` to Kafka.
+5. `order-service` consumes the event, marks order `confirmed`, and
+   publishes `order.confirmed`. `product-service` listens to subsequent
+   `order.refunded` / `order.cancelled` events to restore stock.
+6. `payment-service` then transfers each seller's share to their
+   Stripe Connect account.
+
+### 8. Per-student report sections (fill in)
+
+> Each student should expand this when finalising the report.
+
+#### Student A — auth-service
+- **My role**:
+- **Integration with another service**:
+- **Challenges**:
+
+#### Student B — product-service
+- **My role**:
+- **Integration with another service**:
+- **Challenges**:
+
+#### Student C — order-service + payment-service
+- **My role**:
+- **Integration with another service**:
+- **Challenges**:
+
+#### Student D — review-service
+- **My role**:
+- **Integration with another service**:
+- **Challenges**:
+
+### 9. API contracts
+
+Each service exposes Swagger UI at `/api-docs` (and JSON at
+`/docs-json`):
+
+| Service | Local URL |
+|---|---|
+| auth-service | http://localhost:6001/api-docs |
+| product-service | http://localhost:6002/api-docs |
+| order-service | http://localhost:6003/api-docs |
+| payment-service | http://localhost:6004/api-docs |
+| review-service | http://localhost:6005/api-docs |
+
+Regenerate the JSON contracts with:
+
+```bash
+node apps/auth-service/src/swagger.js
+node apps/product-service/src/swagger.js
+node apps/order-service/src/swagger.js
+node apps/payment-service/src/swagger.js
+node apps/review-service/src/swagger.js
+```
+
+### 10. Verification (live demo checklist)
+
+1. `docker compose up -d kafka` then `npm run dev`.
+2. Sign up as a customer; sign up as a seller; complete Stripe Connect
+   onboarding link from auth-service.
+3. Add a product (seller-ui) → place an order (user-ui) → enter test
+   card 4242 4242 4242 4242 in Stripe Elements → success screen shows
+   only after the webhook flips `payment.status = succeeded`.
+4. Mark items delivered (seller-ui) → write a seller review (user-ui).
+5. Push a one-line change → watch CI → build → ECR → deploy → SSM
+   command → curl new container.
+6. Open SonarCloud, Snyk, and Trivy reports; show IAM role used, SGs
+   on EC2.
+
+---
+
 ## Table of Contents
 
 - [System Architecture](#system-architecture)

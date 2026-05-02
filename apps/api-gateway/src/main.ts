@@ -92,6 +92,7 @@ app.use(
   '/product-api',
   createProxyMiddleware({
     target: productServiceUrl,
+    pathRewrite: path => `/product-api${path}`,
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
@@ -105,6 +106,7 @@ app.use(
   '/order-api',
   createProxyMiddleware({
     target: orderServiceUrl,
+    pathRewrite: path => `/order-api${path}`,
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
@@ -118,6 +120,7 @@ app.use(
   '/payment-api',
   createProxyMiddleware({
     target: paymentServiceUrl,
+    pathRewrite: path => `/payment-api${path}`,
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
@@ -131,6 +134,7 @@ app.use(
   '/review-api',
   createProxyMiddleware({
     target: reviewServiceUrl,
+    pathRewrite: path => `/review-api${path}`,
     changeOrigin: true,
     timeout: 60000,
     proxyTimeout: 60000,
