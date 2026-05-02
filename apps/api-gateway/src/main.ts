@@ -4,7 +4,7 @@
  */
 
 import express from 'express';
-// import cors from 'cors';
+import cors from 'cors';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
@@ -27,6 +27,29 @@ const app = express();
 //     credentials: true,
 //   })
 // );
+
+// Parse ALLOWED_ORIGINS environment variable or use defaults for development
+const allowedOrigins = (
+  process.env.ALLOWED_ORIGINS ||
+  'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4200,http://zudox.online,https://zudox.online,http://admin.zudox.online,http://seller.zudox.online'
+)
+  .split(',')
+  .map(origin => origin.trim());
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        return callback(null, true);
+      }
+      return callback(new Error('Not allowed by CORS'));
+    },
+    allowedHeaders: ['Authorization', 'Content-Type'],
+    credentials: true,
+  })
+);
 
 app.use(morgan('dev'));
 app.use(cookieParser());
