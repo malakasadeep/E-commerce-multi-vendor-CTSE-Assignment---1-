@@ -8,7 +8,7 @@ export const useSellers = (page = 1, limit = 10) => {
     queryKey: ['admin-sellers', page, limit],
     queryFn: async () => {
       const res = await axiosInstance.get(
-        `/api/admin/sellers?page=${page}&limit=${limit}`
+        `/auth-api/admin/sellers?page=${page}&limit=${limit}`
       );
       return res.data;
     },
@@ -20,7 +20,7 @@ export const useSellerDetail = (id: string) => {
   return useQuery({
     queryKey: ['admin-seller', id],
     queryFn: async () => {
-      const res = await axiosInstance.get(`/api/admin/sellers/${id}`);
+      const res = await axiosInstance.get(`/auth-api/admin/sellers/${id}`);
       return res.data;
     },
     enabled: !!id,

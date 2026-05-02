@@ -13,16 +13,39 @@ import cookieParser from 'cookie-parser';
 const app = express();
 
 // Parse ALLOWED_ORIGINS environment variable or use defaults for development
+// const allowedOrigins = (
+//   process.env.ALLOWED_ORIGINS ||
+//   'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4200,http://zudox.online/,http://www.zudox.online/,https://zudox.online/,https://www.zudox.online/,https://admin.zudox.online/,https://www.admin.zudox.online/,https://seller.zudox.online/,https://www.seller.zudox.online/'
+// )
+//   .split(',')
+//   .map(origin => origin.trim());
+
+// app.use(
+//   cors({
+//     origin: allowedOrigins,
+//     allowedHeaders: ['Authorization', 'Content-Type'],
+//     credentials: true,
+//   })
+// );
+
+// Parse ALLOWED_ORIGINS environment variable or use defaults for development
 const allowedOrigins = (
   process.env.ALLOWED_ORIGINS ||
-  'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4200'
+  'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4200,http://zudox.online,https://zudox.online,http://admin.zudox.online,http://seller.zudox.online'
 )
   .split(',')
   .map(origin => origin.trim());
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        return callback(null, true);
+      }
+      return callback(new Error('Not allowed by CORS'));
+    },
     allowedHeaders: ['Authorization', 'Content-Type'],
     credentials: true,
   })
@@ -50,11 +73,13 @@ app.get('/gateway-health', (req, res) => {
 // Auth Service Proxy - Don't use body parsers before proxy middleware
 const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:6001';
 app.use(
-  '/api',
+  '/auth-api',
   createProxyMiddleware({
     target: authServiceUrl,
-    pathRewrite: path => `/api${path}`,
     changeOrigin: true,
+    pathRewrite: {
+      '^/auth-api': '/api',
+    },
     timeout: 60000,
     proxyTimeout: 60000,
   })

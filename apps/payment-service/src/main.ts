@@ -1,7 +1,7 @@
 import { errorMiddleware } from '@packages/error-handler/error-middleware';
 import express from 'express';
 import * as path from 'path';
-import cors from 'cors';
+// import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import router from './routes/payment.router';
 import { webhookRouter } from './routes/payment.router';
@@ -18,20 +18,18 @@ app.use(
   webhookRouter
 );
 
-const allowedOrigins = (
-  process.env.ALLOWED_ORIGINS ||
-  'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4200'
-)
-  .split(',')
-  .map(origin => origin.trim());
-
-app.use(
-  cors({
-    origin: allowedOrigins,
-    allowedHeaders: ['Authorization', 'Content-Type'],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: [
+//       'http://localhost:3000',
+//       'http://localhost:3001',
+//       'http://localhost:3002',
+//       'http://localhost:4200',
+//     ],
+//     allowedHeaders: ['Authorization', 'Content-Type'],
+//     credentials: true,
+//   })
+// );
 
 app.use(express.json());
 app.use(cookieParser());

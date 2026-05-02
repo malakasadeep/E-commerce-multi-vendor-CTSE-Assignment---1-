@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+const runtimeBaseURL =
+  typeof window !== 'undefined'
+    ? window.location.origin
+    : process.env.NEXT_PUBLIC_API_BASE_URL || '';
+
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: runtimeBaseURL,
   withCredentials: true,
 });
 
@@ -45,11 +50,7 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
       try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/refresh-token`,
-          {},
-          { withCredentials: true }
-        );
+        await axiosInstance.post('/auth-api/refresh-tocken');
         isRefreshing = false;
         onRefreshSuccess();
 

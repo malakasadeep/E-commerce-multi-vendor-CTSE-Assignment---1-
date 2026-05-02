@@ -28,7 +28,10 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      await axiosInstance.post('/api/login-admin', { email, password });
+      await axiosInstance.post('/auth-api/login-admin', {
+        email,
+        password,
+      });
       router.push('/dashboard');
     } catch (err: any) {
       setError(
