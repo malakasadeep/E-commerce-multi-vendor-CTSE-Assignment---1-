@@ -15,7 +15,7 @@ const app = express();
 // Parse ALLOWED_ORIGINS environment variable or use defaults for development
 const allowedOrigins = (
   process.env.ALLOWED_ORIGINS ||
-  'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4200'
+  'http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4200,http://zudox.online/,http://www.zudox.online/,https://zudox.online/,https://www.zudox.online/,https://admin.zudox.online/,https://www.admin.zudox.online/,https://seller.zudox.online/,https://www.seller.zudox.online/'
 )
   .split(',')
   .map(origin => origin.trim());
