@@ -20,13 +20,13 @@ const allowedOrigins = (
   .split(',')
   .map(origin => origin.trim());
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    allowedHeaders: ['Authorization', 'Content-Type'],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: allowedOrigins,
+//     allowedHeaders: ['Authorization', 'Content-Type'],
+//     credentials: true,
+//   })
+// );
 
 app.use(morgan('dev'));
 app.use(cookieParser());
