@@ -14,10 +14,28 @@ import bcrypt from 'bcryptjs';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import { setCookie } from '../utils/cookies/setCookie';
 import Stripe from 'stripe';
+import dotenv from 'dotenv';
+import path from 'path';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2026-01-28.clover',
-});
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+
+let stripeClient: Stripe | null = null;
+
+const getStripeClient = () => {
+  if (!stripeClient) {
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+    if (!stripeSecretKey) {
+      throw new ValidationError('STRIPE_SECRET_KEY is missing');
+    }
+
+    stripeClient = new Stripe(stripeSecretKey, {
+      apiVersion: '2026-01-28.clover',
+    });
+  }
+
+  return stripeClient;
+};
 
 export const userRegistration = async (
   req: Request,
@@ -402,6 +420,9 @@ export const createStripeLink = async (
     if (!sellerId) {
       return next(new ValidationError('Missing required fields'));
     }
+
+    const stripe = getStripeClient();
+
     const seller = await prisma.sellers.findUnique({
       where: { id: sellerId },
     });
