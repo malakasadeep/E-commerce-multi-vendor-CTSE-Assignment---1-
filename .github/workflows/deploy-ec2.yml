@@ -160,8 +160,8 @@ jobs:
               \"docker pull ${{ steps.vars.outputs.image_uri }}\",
               \"docker rm -f ${{ steps.vars.outputs.container_name }} || true\",
               \"ENV_FILE=/opt/${{ matrix.service }}/.env\",
-              "if [ ! -f \"$ENV_FILE\" ]; then echo \"Error: $ENV_FILE not found; refusing to start ${{ matrix.service }} without required environment variables\"; exit 1; fi",
-              "docker run -d --name ${{ steps.vars.outputs.container_name }} --restart unless-stopped --env-file \"$ENV_FILE\" -p ${{ matrix.port }}:${{ matrix.port }} ${{ steps.vars.outputs.image_uri }}"
+              "if [ ! -f \\\"$ENV_FILE\\\" ]; then echo \\\"Error: $ENV_FILE not found; refusing to start ${{ matrix.service }} without required environment variables\\\"; exit 1; fi",
+              "docker run -d --name ${{ steps.vars.outputs.container_name }} --restart unless-stopped --env-file \\\"$ENV_FILE\\\" -p ${{ matrix.port }}:${{ matrix.port }} ${{ steps.vars.outputs.image_uri }}"
             ]" \
             --query "Command.CommandId" \
             --output text)
