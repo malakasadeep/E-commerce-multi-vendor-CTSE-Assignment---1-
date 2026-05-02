@@ -11,7 +11,7 @@ RUN npm config set fetch-retries 5 \
   && npm config set fetch-retry-mintimeout 20000 \
   && npm config set fetch-retry-maxtimeout 120000 \
   && npm config set fetch-timeout 600000 \
-  && npm install --include=dev --ignore-scripts --no-audit --no-fund
+  && npm install --include=dev --ignore-scripts --no-audit --no-fund --legacy-peer-deps
 
 # ============================================
 # Stage 2: Build
