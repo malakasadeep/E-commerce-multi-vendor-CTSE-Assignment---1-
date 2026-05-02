@@ -54,6 +54,9 @@ app.use(
   createProxyMiddleware({
     target: authServiceUrl,
     changeOrigin: true,
+    pathRewrite: {
+      '^/auth-api': '/api',
+    },
     timeout: 60000,
     proxyTimeout: 60000,
   })
