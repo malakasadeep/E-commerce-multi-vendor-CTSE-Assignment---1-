@@ -7,27 +7,29 @@ export const setCookie = (
   value: string
 ) => {
   const isProduction = process.env.NODE_ENV === 'production';
+  // Detect HTTPS via direct connection or reverse-proxy forwarding header.
+  // The gateway sets X-Forwarded-Proto when it proxies requests, so this
+  // works correctly whether the auth service is behind a proxy or not.
+  const isHttps =
+    req.secure || req.headers['x-forwarded-proto'] === 'https';
+  const useSecureCookie = isProduction && isHttps;
+
   const options: any = {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'none' : 'lax',
+    secure: useSecureCookie,
+    // sameSite:'none' requires secure:true; fall back to 'lax' for HTTP.
+    sameSite: useSecureCookie ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/',
   };
 
-  // Extract domain from request origin header
-  // In production, use .zudox.online for subdomain sharing
-  // In development, use the actual domain from the request
   if (isProduction) {
     options.domain = '.zudox.online';
   } else if (req.headers.origin) {
-    // Extract domain from origin (e.g., http://zudox.online or http://localhost:3000)
     const url = new URL(req.headers.origin);
     if (url.hostname !== 'localhost' && !url.hostname.startsWith('127.')) {
-      // For actual domains (not localhost), set domain so subdomains can access it
-      options.domain = url.hostname.split('.').slice(-2).join('.'); // e.g., zudox.online
+      options.domain = url.hostname.split('.').slice(-2).join('.');
     }
-    // For localhost/127.x.x.x, don't set domain (host-only cookie)
   }
 
   res.cookie(name, value, options);
