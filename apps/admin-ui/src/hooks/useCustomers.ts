@@ -8,7 +8,7 @@ export const useCustomers = (page = 1, limit = 10) => {
     queryKey: ['admin-customers', page, limit],
     queryFn: async () => {
       const res = await axiosInstance.get(
-        `/api/admin/customers?page=${page}&limit=${limit}`
+        `/auth-api/admin/customers?page=${page}&limit=${limit}`
       );
       return res.data;
     },
@@ -20,7 +20,7 @@ export const useCustomerDetail = (id: string) => {
   return useQuery({
     queryKey: ['admin-customer', id],
     queryFn: async () => {
-      const res = await axiosInstance.get(`/api/admin/customers/${id}`);
+      const res = await axiosInstance.get(`/auth-api/admin/customers/${id}`);
       return res.data;
     },
     enabled: !!id,

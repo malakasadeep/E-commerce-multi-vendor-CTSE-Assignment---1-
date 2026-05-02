@@ -21,7 +21,7 @@ interface Seller {
 }
 
 const fetchSeller = async (): Promise<Seller> => {
-  const response = await axiosInstance.get('/api/logged-in-seller');
+  const response = await axiosInstance.get('/auth-api/logged-in-seller');
   return response.data.seller;
 };
 

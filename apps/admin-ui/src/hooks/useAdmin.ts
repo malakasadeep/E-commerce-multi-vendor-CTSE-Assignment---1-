@@ -13,7 +13,7 @@ const useAdmin = () => {
   } = useQuery<Admin>({
     queryKey: ['admin'],
     queryFn: async () => {
-      const res = await axiosInstance.get('/api/logged-in-admin');
+      const res = await axiosInstance.get('/auth-api/logged-in-admin');
       return res.data.admin;
     },
     staleTime: 5 * 60 * 1000,
