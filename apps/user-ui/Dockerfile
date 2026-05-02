@@ -31,16 +31,13 @@ RUN apk add --no-cache dumb-init
 WORKDIR /app
 
 COPY package*.json ./
-COPY nx.json ./
-COPY tsconfig.base.json ./
 COPY --from=deps /repo/node_modules ./node_modules/
-COPY --from=builder /repo/dist ./dist
-COPY --from=builder /repo/apps/user-ui/project.json ./apps/user-ui/project.json
-COPY --from=builder /repo/apps/user-ui/next.config.js ./apps/user-ui/next.config.js
+COPY --from=builder /repo/dist/apps/user-ui .
 
 ENV NODE_ENV=production
+ENV PORT=3000
 
 EXPOSE 3000
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["npx", "nx", "start", "user-ui", "--configuration=production"]
+CMD ["node_modules/.bin/next", "start", "-p", "3000"]
