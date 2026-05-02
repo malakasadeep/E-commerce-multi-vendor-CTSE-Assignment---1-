@@ -167,6 +167,10 @@ jobs:
             --instance-ids "${{ steps.target.outputs.instance_id }}" \
             --parameters commands='[
               "set -e",
+              "docker container prune -f || true",
+              "docker image prune -af || true",
+              "docker builder prune -af || true",
+              "docker volume prune -f || true",
               "aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.vars.outputs.registry }}",
               "docker pull ${{ steps.vars.outputs.image_uri }}",
               "docker rm -f ${{ steps.vars.outputs.container_name }} || true",
