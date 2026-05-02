@@ -135,8 +135,8 @@ export const login = async (
       process.env.REFRESH_TOKEN_SECRET as string,
       { expiresIn: '7d' }
     );
-    setCookie(res, 'refreshToken', refreshToken);
-    setCookie(res, 'accessToken', accsessToken);
+    setCookie(req, res, 'refreshToken', refreshToken);
+    setCookie(req, res, 'accessToken', accsessToken);
 
     res.status(200).json({
       success: true,
@@ -258,11 +258,11 @@ export const refreshToken = async (
     );
 
     if (decoded.role === 'user') {
-      setCookie(res, 'accessToken', newAccessToken);
+      setCookie(req, res, 'accessToken', newAccessToken);
     } else if (decoded.role === 'seller') {
-      setCookie(res, 'sellerAccessToken', newAccessToken);
+      setCookie(req, res, 'sellerAccessToken', newAccessToken);
     } else if (decoded.role === 'admin') {
-      setCookie(res, 'adminAccessToken', newAccessToken);
+      setCookie(req, res, 'adminAccessToken', newAccessToken);
     }
 
     return res.status(200).json({
@@ -489,8 +489,8 @@ export const loginSeller = async (
       process.env.REFRESH_TOKEN_SECRET as string,
       { expiresIn: '7d' }
     );
-    setCookie(res, 'sellerAccessToken', accessToken);
-    setCookie(res, 'sellerRefreshToken', refreshToken);
+    setCookie(req, res, 'sellerAccessToken', accessToken);
+    setCookie(req, res, 'sellerRefreshToken', refreshToken);
     return res.status(200).json({
       success: true,
       message: 'Seller logged in successfully',
@@ -551,8 +551,8 @@ export const loginAdmin = async (
       process.env.REFRESH_TOKEN_SECRET as string,
       { expiresIn: '7d' }
     );
-    setCookie(res, 'adminAccessToken', accessToken);
-    setCookie(res, 'adminRefreshToken', adminRefreshToken);
+    setCookie(req, res, 'adminAccessToken', accessToken);
+    setCookie(req, res, 'adminRefreshToken', adminRefreshToken);
     return res.status(200).json({
       success: true,
       message: 'Admin logged in successfully',
