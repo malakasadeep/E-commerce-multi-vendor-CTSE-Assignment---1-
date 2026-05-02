@@ -97,7 +97,7 @@ function SignUpPage() {
   const signupMutation = useMutation({
     mutationFn: async (data: SellerFormData) => {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth-api/seller-registration`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth-api/seller-registration`,
         data,
         { withCredentials: true }
       );
@@ -121,7 +121,7 @@ function SignUpPage() {
     mutationFn: async () => {
       if (!sellerData) throw new Error('No seller data');
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth-api/verify-seller`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth-api/verify-seller`,
         { ...sellerData, otp: otp.join('') },
         { withCredentials: true }
       );
@@ -145,7 +145,7 @@ function SignUpPage() {
     mutationFn: async (data: ShopFormData) => {
       if (!sellerId) throw new Error('Seller ID not found');
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth-api/create-shop`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth-api/create-shop`,
         { ...data, sellerId },
         { withCredentials: true }
       );
@@ -191,7 +191,7 @@ function SignUpPage() {
   const handleConnectStripe = async () => {
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth-api/create-stripe-link`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth-api/create-stripe-link`,
         { sellerId }
       );
       if (response.data.url) window.location.href = response.data.url;
