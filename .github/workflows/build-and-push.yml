@@ -60,6 +60,12 @@ jobs:
             dockerfile: apps/payment-service/Dockerfile
           - service: review-service
             dockerfile: apps/review-service/Dockerfile
+          - service: user-ui
+            dockerfile: apps/user-ui/Dockerfile
+          - service: seller-ui
+            dockerfile: apps/seller-ui/Dockerfile
+          - service: admin-ui
+            dockerfile: apps/admin-ui/Dockerfile
 
     steps:
       - name: Checkout

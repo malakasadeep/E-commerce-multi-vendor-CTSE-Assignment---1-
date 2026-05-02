@@ -83,6 +83,12 @@ jobs:
             port: 6005
           - service: api-gateway
             port: 8080
+          - service: user-ui
+            port: 3000
+          - service: seller-ui
+            port: 3001
+          - service: admin-ui
+            port: 3002
 
     environment:
       name: ${{ needs.guard.outputs.deploy_env }}
@@ -113,13 +119,18 @@ jobs:
       - name: Resolve target instance from tags
         id: target
         run: |
-          echo "Resolving target for service=${{ matrix.service }} env=${{ needs.guard.outputs.deploy_env }} region=${{ env.AWS_REGION }}"
+          TARGET_SERVICE="${{ matrix.service }}"
+          if [[ "${{ matrix.service }}" == *"-ui" ]]; then
+            TARGET_SERVICE="ui-server"
+          fi
+
+          echo "Resolving target for service=${{ matrix.service }} target_service=$TARGET_SERVICE env=${{ needs.guard.outputs.deploy_env }} region=${{ env.AWS_REGION }}"
           aws sts get-caller-identity
 
           INSTANCE_IDS=$(aws ec2 describe-instances \
             --region "${{ env.AWS_REGION }}" \
             --filters \
-              "Name=tag:Service,Values=${{ matrix.service }}" \
+              "Name=tag:Service,Values=$TARGET_SERVICE" \
               "Name=tag:Environment,Values=${{ needs.guard.outputs.deploy_env }}" \
               "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
@@ -128,7 +139,7 @@ jobs:
           COUNT=$(echo "$INSTANCE_IDS" | wc -w | tr -d ' ')
 
           if [ "$COUNT" -eq 0 ]; then
-            echo "No running EC2 instance found for Service=${{ matrix.service }} Environment=${{ needs.guard.outputs.deploy_env }}"
+            echo "No running EC2 instance found for Service=$TARGET_SERVICE Environment=${{ needs.guard.outputs.deploy_env }}"
             echo "Debug: running instances and tags in region ${{ env.AWS_REGION }}"
             aws ec2 describe-instances \
               --region "${{ env.AWS_REGION }}" \
@@ -139,7 +150,7 @@ jobs:
           fi
 
           if [ "$COUNT" -gt 1 ]; then
-            echo "Multiple running instances found for Service=${{ matrix.service }} Environment=${{ needs.guard.outputs.deploy_env }}: $INSTANCE_IDS"
+            echo "Multiple running instances found for Service=$TARGET_SERVICE Environment=${{ needs.guard.outputs.deploy_env }}: $INSTANCE_IDS"
             echo "For Option A, deployment expects exactly one target instance per service/environment tag pair."
             exit 1
           fi
