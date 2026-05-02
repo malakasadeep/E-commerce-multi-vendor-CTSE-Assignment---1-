@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+const runtimeBaseURL =
+  typeof window !== 'undefined'
+    ? window.location.origin
+    : process.env.NEXT_PUBLIC_API_URL || '';
+
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: runtimeBaseURL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -40,7 +45,7 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await axiosInstance.post('/api/auth-api/refresh-tocken');
+        await axiosInstance.post('/auth-api/refresh-tocken');
         processQueue(null);
         return axiosInstance(originalRequest);
       } catch (refreshError) {
