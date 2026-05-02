@@ -1,7 +1,7 @@
 import { errorMiddleware } from '@packages/error-handler/error-middleware';
 import express from 'express';
 import * as path from 'path';
-import cors from 'cors';
+// import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import router from './routes/product.router';
 import { startProductConsumer } from './utils/kafka.consumer';
