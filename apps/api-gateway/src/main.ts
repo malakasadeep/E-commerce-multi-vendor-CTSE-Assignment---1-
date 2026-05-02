@@ -50,7 +50,7 @@ app.get('/gateway-health', (req, res) => {
 // Auth Service Proxy - Don't use body parsers before proxy middleware
 const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:6001';
 app.use(
-  '/api',
+  '/auth-api',
   createProxyMiddleware({
     target: authServiceUrl,
     pathRewrite: path => `/api${path}`,
