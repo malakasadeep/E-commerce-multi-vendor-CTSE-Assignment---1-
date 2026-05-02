@@ -8,22 +8,32 @@ if (!process.env.ACCESS_TOKEN_SECRET) {
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 
-const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
+const tryVerify = (token: string | undefined) => {
+  if (!token) return null;
   try {
-    const token =
-      req.cookies['accessToken'] ||
-      req.cookies['sellerAccessToken'] ||
-      req.cookies['adminAccessToken'] ||
-      req.headers.authorization?.split(' ')[1];
-
-    if (!token) {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-
-    const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET) as {
+    return jwt.verify(token, ACCESS_TOKEN_SECRET) as {
       id: string;
       role: 'user' | 'seller' | 'admin';
     };
+  } catch {
+    return null;
+  }
+};
+
+const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    // Each named cookie is only trusted when its decoded role matches the cookie's purpose,
+    // preventing a stale user accessToken from shadowing a sellerAccessToken (or vice versa).
+    const sellerDecoded = tryVerify(req.cookies['sellerAccessToken']);
+    const adminDecoded = tryVerify(req.cookies['adminAccessToken']);
+    const userDecoded = tryVerify(req.cookies['accessToken']);
+    const headerDecoded = tryVerify(req.headers.authorization?.split(' ')[1]);
+
+    const decoded =
+      (sellerDecoded?.role === 'seller' ? sellerDecoded : null) ||
+      (adminDecoded?.role === 'admin' ? adminDecoded : null) ||
+      (userDecoded?.role === 'user' ? userDecoded : null) ||
+      headerDecoded;
 
     if (!decoded || !decoded.id || !decoded.role) {
       return res.status(401).json({ message: 'Unauthorized' });
