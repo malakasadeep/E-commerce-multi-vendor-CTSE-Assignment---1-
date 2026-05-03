@@ -229,7 +229,7 @@ async function transferToSellers(orderId: string) {
   }
 }
 
-// User: Get payment status
+// User: Get payment status (syncs from Stripe when still pending)
 export const getPaymentStatus = async (
   req: any,
   res: Response,
@@ -252,6 +252,72 @@ export const getPaymentStatus = async (
 
     if (payment.userId !== user.id) {
       return next(new ValidationError('You can only view your own payments'));
+    }
+
+    // If still pending, check Stripe directly so the client doesn't depend on webhooks
+    if (payment.status === 'pending') {
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        payment.stripePaymentId
+      );
+
+      if (paymentIntent.status === 'succeeded') {
+        // Atomic update — skip if webhook already processed it
+        const updated = await prisma.payment.updateMany({
+          where: { id, status: 'pending' },
+          data: { status: 'succeeded' },
+        });
+
+        if (updated.count > 0) {
+          const order = await prisma.order.findFirst({
+            where: { paymentId: id },
+          });
+          if (order) {
+            await prisma.order.update({
+              where: { id: order.id },
+              data: { status: 'confirmed' },
+            });
+            await prisma.orderItem.updateMany({
+              where: { orderId: order.id },
+              data: { status: 'confirmed' },
+            });
+            publishPaymentEvent(PAYMENT_TOPICS.PAYMENT_SUCCEEDED, {
+              id,
+              orderId: order.id,
+              stripePaymentId: paymentIntent.id,
+              amount: paymentIntent.amount / 100,
+            });
+            await transferToSellers(order.id);
+          }
+        }
+
+        const refreshed = await prisma.payment.findUnique({
+          where: { id },
+          include: {
+            orders: { select: { id: true, orderNumber: true, status: true } },
+          },
+        });
+        return res.status(200).json({ success: true, payment: refreshed });
+      }
+
+      if (
+        paymentIntent.status === 'canceled' ||
+        paymentIntent.last_payment_error
+      ) {
+        await prisma.payment.updateMany({
+          where: { id, status: 'pending' },
+          data: { status: 'failed' },
+        });
+        publishPaymentEvent(PAYMENT_TOPICS.PAYMENT_FAILED, {
+          stripePaymentId: paymentIntent.id,
+        });
+        const refreshed = await prisma.payment.findUnique({
+          where: { id },
+          include: {
+            orders: { select: { id: true, orderNumber: true, status: true } },
+          },
+        });
+        return res.status(200).json({ success: true, payment: refreshed });
+      }
     }
 
     return res.status(200).json({ success: true, payment });
