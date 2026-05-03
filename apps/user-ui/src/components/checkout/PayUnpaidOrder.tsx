@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   useCreatePaymentIntent,
   usePaymentStatus,
+  useSyncPayment,
 } from '../../hooks/usePayment';
 import { Button } from '../ui/button';
 import { CreditCard, Loader2 } from 'lucide-react';
@@ -21,6 +22,7 @@ export const PayUnpaidOrder: React.FC<PayUnpaidOrderProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const createPayment = useCreatePaymentIntent();
+  const syncPayment = useSyncPayment();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [confirming, setConfirming] = useState(false);
@@ -103,6 +105,14 @@ export const PayUnpaidOrder: React.FC<PayUnpaidOrderProps> = ({
           setConfirming(true);
         }}
         onError={msg => setError(msg)}
+        onConfirmed={async () => {
+          if (!paymentId) return;
+          try {
+            await syncPayment.mutateAsync(paymentId);
+          } catch {
+            // ignore — polling will pick up the status
+          }
+        }}
       />
     </div>
   );

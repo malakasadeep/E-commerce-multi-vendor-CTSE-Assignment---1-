@@ -9,8 +9,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        Roboto: ['var(--font-roboto)'],
-        Poppins: ['var(--font-poppins)'],
+        Roboto: ['Roboto', 'system-ui', 'sans-serif'],
+        Poppins: ['Poppins', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',

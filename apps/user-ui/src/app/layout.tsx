@@ -1,25 +1,12 @@
 import Header from '../shared/widgets/header';
 import Footer from '../shared/widgets/footer';
 import './global.css';
-import { Poppins, Roboto } from 'next/font/google';
 import Providers from './providers';
 
 export const metadata = {
   title: 'Eshop',
   description: 'Eshop User Interface',
 };
-
-const roboto = Roboto({
-  subsets: ['latin'],
-  weight: ['100', '300', '400', '500', '700', '900'],
-  variable: '--font-roboto',
-});
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  variable: '--font-poppins',
-});
 
 export default function RootLayout({
   children,
@@ -28,7 +15,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${roboto.variable} ${poppins.variable} font-Roboto`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&display=swap"
+        />
+      </head>
+      <body className="font-Roboto">
         <Providers>
           <div className="min-h-screen flex flex-col">
             <Header />
