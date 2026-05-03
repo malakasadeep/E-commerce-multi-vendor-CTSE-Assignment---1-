@@ -70,16 +70,27 @@ const STATUS_STYLES: Record<
   },
 };
 
-const ITEM_STATUSES = ['pending', 'processing', 'shipped', 'delivered'];
+const ITEM_STATUSES = [
+  'pending',
+  'confirmed',
+  'processing',
+  'shipped',
+  'delivered',
+];
 
 const STATUS_ICONS: Record<string, React.ElementType> = {
   pending: Clock,
+  confirmed: CheckCircle,
   processing: Package,
   shipped: Truck,
   delivered: CheckCircle,
 };
 
 function getNextStatus(current: string): string | null {
+  // The order-service only accepts processing/shipped/delivered as transition
+  // targets, so both "pending" (unpaid) and "confirmed" (paid) advance to
+  // "processing" rather than the literal next entry in ITEM_STATUSES.
+  if (current === 'pending' || current === 'confirmed') return 'processing';
   const idx = ITEM_STATUSES.indexOf(current);
   if (idx === -1 || idx >= ITEM_STATUSES.length - 1) return null;
   return ITEM_STATUSES[idx + 1];
