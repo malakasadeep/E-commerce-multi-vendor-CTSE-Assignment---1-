@@ -20,7 +20,9 @@
       "Bash(Get-ChildItem -Path \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\" -Recurse -Directory)",
       "Bash(Select-Object -First 20 FullName)",
       "Bash(Get-ChildItem -Path \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\" -Recurse -Force)",
-      "Bash(Select-Object -First 30)"
+      "Bash(Select-Object -First 30)",
+      "Bash(Get-ChildItem \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\\\\apps\\\\user-ui\" -Force)",
+      "PowerShell(Get-ChildItem \"d:\\\\SLIIT\\\\CTSE project\\\\eshop\\\\apps\\\\user-ui\" -Force | ForEach-Object { $_.Name })"
     ]
   }
 }

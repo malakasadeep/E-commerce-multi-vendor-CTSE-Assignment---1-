@@ -53,11 +53,11 @@ export class DatabaseError extends AppError {
 }
 
 //rate limit error
-export class RateLimitError extends AppError {
-  constructor(
-    message = 'Too many requests, please try again later.',
-    details?: any
-  ) {
-    super(message, 429, true, details);
-  }
-}
+// export class RateLimitError extends AppError {
+//   constructor(
+//     message = 'Too many requests, please try again later.',
+//     details?: any
+//   ) {
+//     super(message, 429, true, details);
+//   }
+// }
