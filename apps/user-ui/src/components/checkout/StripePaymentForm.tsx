@@ -46,8 +46,10 @@ const PayButton: React.FC<PayButtonProps> = ({
     if (!stripe || !elements) return;
 
     setSubmitting(true);
-    onPaying();
 
+    // IMPORTANT: do not call onPaying() here. The parent unmounts this form
+    // when it transitions to "confirming", which destroys the PaymentElement
+    // and makes stripe.confirmPayment fail with IntegrationError.
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {},
@@ -59,6 +61,9 @@ const PayButton: React.FC<PayButtonProps> = ({
       setSubmitting(false);
       return;
     }
+
+    // Stripe is done with elements — safe to unmount the form now.
+    onPaying();
 
     if (paymentIntent && paymentIntent.status === 'succeeded') {
       onConfirmed(paymentIntent.id);
