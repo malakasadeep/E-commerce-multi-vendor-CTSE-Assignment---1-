@@ -38,7 +38,10 @@ export const usePaymentStatus = (paymentId: string | null, enabled = true) => {
     queryKey: ['payment-status', paymentId],
     enabled: !!paymentId && enabled,
     queryFn: async () => {
-      const res = await axiosInstance.get(`/payment-api/payments/${paymentId}`);
+      const res = await axiosInstance.get(
+        `/payment-api/payments/${paymentId}?_t=${Date.now()}`,
+        { headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' } }
+      );
       return res.data;
     },
     refetchInterval: query => {
@@ -48,5 +51,7 @@ export const usePaymentStatus = (paymentId: string | null, enabled = true) => {
       }
       return 2000;
     },
+    staleTime: 0,
+    gcTime: 0,
   });
 };

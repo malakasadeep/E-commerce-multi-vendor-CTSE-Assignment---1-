@@ -296,6 +296,7 @@ export const getPaymentStatus = async (
             orders: { select: { id: true, orderNumber: true, status: true } },
           },
         });
+            res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
         return res.status(200).json({ success: true, payment: refreshed });
       }
 
@@ -316,10 +317,12 @@ export const getPaymentStatus = async (
             orders: { select: { id: true, orderNumber: true, status: true } },
           },
         });
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
         return res.status(200).json({ success: true, payment: refreshed });
       }
     }
 
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
     return res.status(200).json({ success: true, payment });
   } catch (error) {
     return next(error);
