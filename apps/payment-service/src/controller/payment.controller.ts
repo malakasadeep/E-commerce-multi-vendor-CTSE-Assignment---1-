@@ -256,23 +256,42 @@ export const getPaymentStatus = async (
 
     // If still pending, check Stripe directly so the client doesn't depend on webhooks
     if (payment.status === 'pending') {
-      console.log(
-        `[getPaymentStatus] Syncing pending payment ${id} (stripeId=${payment.stripePaymentId}) from Stripe`
-      );
-
       let paymentIntent: Stripe.PaymentIntent | null = null;
       try {
         paymentIntent = await stripe.paymentIntents.retrieve(
           payment.stripePaymentId
-        );
-        console.log(
-          `[getPaymentStatus] Stripe returned status="${paymentIntent.status}" for ${payment.stripePaymentId}`
         );
       } catch (stripeErr: any) {
         console.error(
           `[getPaymentStatus] Stripe retrieve failed for ${payment.stripePaymentId}:`,
           stripeErr?.message || stripeErr
         );
+      }
+
+      // If Stripe still says "requires_payment_method" 5+ minutes after creation,
+      // the user abandoned the form (or the client confirmPayment never ran).
+      // Mark as failed so the polling stops.
+      if (
+        paymentIntent &&
+        paymentIntent.status === 'requires_payment_method'
+      ) {
+        const ageMs = Date.now() - new Date(payment.createdAt).getTime();
+        if (ageMs > 5 * 60 * 1000) {
+          await prisma.payment.updateMany({
+            where: { id, status: 'pending' },
+            data: { status: 'failed' },
+          });
+          const refreshed = await prisma.payment.findUnique({
+            where: { id },
+            include: {
+              orders: {
+                select: { id: true, orderNumber: true, status: true },
+              },
+            },
+          });
+          res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+          return res.status(200).json({ success: true, payment: refreshed });
+        }
       }
 
       if (paymentIntent && paymentIntent.status === 'succeeded') {

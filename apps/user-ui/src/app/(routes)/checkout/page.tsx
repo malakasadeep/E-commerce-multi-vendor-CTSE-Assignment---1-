@@ -80,13 +80,28 @@ export default function CheckoutPage() {
     return () => clearTimeout(timer);
   }, [step, stripeConfirmedAt, setCart]);
 
+  // Hard timeout: if "confirming" state runs for more than 90s without
+  // Stripe ever confirming client-side, give up and show an error.
+  React.useEffect(() => {
+    if (step !== 'confirming' || stripeConfirmedAt) return;
+    const timer = setTimeout(() => {
+      if (step === 'confirming') {
+        setError(
+          'Payment timed out. Your card was not charged — please try again.'
+        );
+        setStep('payment');
+      }
+    }, 90000);
+    return () => clearTimeout(timer);
+  }, [step, stripeConfirmedAt]);
+
   const handleStripeConfirmed = async () => {
     setStripeConfirmedAt(Date.now());
     if (!paymentId) return;
     try {
       await syncPayment.mutateAsync(paymentId);
     } catch (e) {
-      // ignore — polling + 15s fallback will handle it
+      console.warn('Payment sync failed; polling will retry:', e);
     }
   };
 
