@@ -256,11 +256,26 @@ export const getPaymentStatus = async (
 
     // If still pending, check Stripe directly so the client doesn't depend on webhooks
     if (payment.status === 'pending') {
-      const paymentIntent = await stripe.paymentIntents.retrieve(
-        payment.stripePaymentId
+      console.log(
+        `[getPaymentStatus] Syncing pending payment ${id} (stripeId=${payment.stripePaymentId}) from Stripe`
       );
 
-      if (paymentIntent.status === 'succeeded') {
+      let paymentIntent: Stripe.PaymentIntent | null = null;
+      try {
+        paymentIntent = await stripe.paymentIntents.retrieve(
+          payment.stripePaymentId
+        );
+        console.log(
+          `[getPaymentStatus] Stripe returned status="${paymentIntent.status}" for ${payment.stripePaymentId}`
+        );
+      } catch (stripeErr: any) {
+        console.error(
+          `[getPaymentStatus] Stripe retrieve failed for ${payment.stripePaymentId}:`,
+          stripeErr?.message || stripeErr
+        );
+      }
+
+      if (paymentIntent && paymentIntent.status === 'succeeded') {
         // Atomic update — skip if webhook already processed it
         const updated = await prisma.payment.updateMany({
           where: { id, status: 'pending' },
@@ -280,13 +295,21 @@ export const getPaymentStatus = async (
               where: { orderId: order.id },
               data: { status: 'confirmed' },
             });
-            publishPaymentEvent(PAYMENT_TOPICS.PAYMENT_SUCCEEDED, {
-              id,
-              orderId: order.id,
-              stripePaymentId: paymentIntent.id,
-              amount: paymentIntent.amount / 100,
-            });
-            await transferToSellers(order.id);
+            try {
+              publishPaymentEvent(PAYMENT_TOPICS.PAYMENT_SUCCEEDED, {
+                id,
+                orderId: order.id,
+                stripePaymentId: paymentIntent.id,
+                amount: paymentIntent.amount / 100,
+              });
+            } catch (e) {
+              console.error('[getPaymentStatus] Kafka publish failed:', e);
+            }
+            try {
+              await transferToSellers(order.id);
+            } catch (e) {
+              console.error('[getPaymentStatus] transferToSellers failed:', e);
+            }
           }
         }
 
@@ -296,21 +319,26 @@ export const getPaymentStatus = async (
             orders: { select: { id: true, orderNumber: true, status: true } },
           },
         });
-            res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
         return res.status(200).json({ success: true, payment: refreshed });
       }
 
       if (
-        paymentIntent.status === 'canceled' ||
-        paymentIntent.last_payment_error
+        paymentIntent &&
+        (paymentIntent.status === 'canceled' ||
+          paymentIntent.last_payment_error)
       ) {
         await prisma.payment.updateMany({
           where: { id, status: 'pending' },
           data: { status: 'failed' },
         });
-        publishPaymentEvent(PAYMENT_TOPICS.PAYMENT_FAILED, {
-          stripePaymentId: paymentIntent.id,
-        });
+        try {
+          publishPaymentEvent(PAYMENT_TOPICS.PAYMENT_FAILED, {
+            stripePaymentId: paymentIntent.id,
+          });
+        } catch (e) {
+          console.error('[getPaymentStatus] Kafka publish failed:', e);
+        }
         const refreshed = await prisma.payment.findUnique({
           where: { id },
           include: {
@@ -325,6 +353,104 @@ export const getPaymentStatus = async (
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
     return res.status(200).json({ success: true, payment });
   } catch (error) {
+    console.error('[getPaymentStatus] Unhandled error:', error);
+    return next(error);
+  }
+};
+
+// User: Force-sync payment status from Stripe (called by client after confirmPayment succeeds)
+export const syncPayment = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const user = req.user;
+
+    const payment = await prisma.payment.findUnique({
+      where: { id },
+      include: {
+        orders: { select: { id: true, orderNumber: true, status: true } },
+      },
+    });
+
+    if (!payment) return next(new NotFoundError('Payment not found'));
+    if (payment.userId !== user.id)
+      return next(new ValidationError('You can only sync your own payments'));
+
+    if (payment.status !== 'pending') {
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+      return res.status(200).json({ success: true, payment });
+    }
+
+    console.log(
+      `[syncPayment] Retrieving Stripe PI ${payment.stripePaymentId} for payment ${id}`
+    );
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      payment.stripePaymentId
+    );
+    console.log(
+      `[syncPayment] Stripe status="${paymentIntent.status}" for ${payment.stripePaymentId}`
+    );
+
+    if (paymentIntent.status === 'succeeded') {
+      const updated = await prisma.payment.updateMany({
+        where: { id, status: 'pending' },
+        data: { status: 'succeeded' },
+      });
+
+      if (updated.count > 0) {
+        const order = await prisma.order.findFirst({
+          where: { paymentId: id },
+        });
+        if (order) {
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { status: 'confirmed' },
+          });
+          await prisma.orderItem.updateMany({
+            where: { orderId: order.id },
+            data: { status: 'confirmed' },
+          });
+          try {
+            publishPaymentEvent(PAYMENT_TOPICS.PAYMENT_SUCCEEDED, {
+              id,
+              orderId: order.id,
+              stripePaymentId: paymentIntent.id,
+              amount: paymentIntent.amount / 100,
+            });
+          } catch (e) {
+            console.error('[syncPayment] Kafka publish failed:', e);
+          }
+          try {
+            await transferToSellers(order.id);
+          } catch (e) {
+            console.error('[syncPayment] transferToSellers failed:', e);
+          }
+        }
+      }
+    } else if (
+      paymentIntent.status === 'canceled' ||
+      paymentIntent.last_payment_error
+    ) {
+      await prisma.payment.updateMany({
+        where: { id, status: 'pending' },
+        data: { status: 'failed' },
+      });
+    }
+
+    const refreshed = await prisma.payment.findUnique({
+      where: { id },
+      include: {
+        orders: { select: { id: true, orderNumber: true, status: true } },
+      },
+    });
+
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    return res.status(200).json({ success: true, payment: refreshed });
+  } catch (error) {
+    console.error('[syncPayment] error:', error);
     return next(error);
   }
 };

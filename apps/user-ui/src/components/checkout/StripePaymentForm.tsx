@@ -27,10 +27,16 @@ const getStripe = () => {
 interface PayButtonProps {
   onPaying: () => void;
   onError: (msg: string) => void;
+  onConfirmed: (stripePaymentIntentId: string) => void;
   totalLabel: string;
 }
 
-const PayButton: React.FC<PayButtonProps> = ({ onPaying, onError, totalLabel }) => {
+const PayButton: React.FC<PayButtonProps> = ({
+  onPaying,
+  onError,
+  onConfirmed,
+  totalLabel,
+}) => {
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
@@ -42,7 +48,7 @@ const PayButton: React.FC<PayButtonProps> = ({ onPaying, onError, totalLabel }) 
     setSubmitting(true);
     onPaying();
 
-    const { error } = await stripe.confirmPayment({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {},
       redirect: 'if_required',
@@ -53,7 +59,10 @@ const PayButton: React.FC<PayButtonProps> = ({ onPaying, onError, totalLabel }) 
       setSubmitting(false);
       return;
     }
-    // On success, the parent polls payment status until the webhook confirms.
+
+    if (paymentIntent && paymentIntent.status === 'succeeded') {
+      onConfirmed(paymentIntent.id);
+    }
   };
 
   return (
@@ -85,6 +94,7 @@ interface StripePaymentFormProps {
   clientSecret: string;
   onPaying: () => void;
   onError: (msg: string) => void;
+  onConfirmed: (stripePaymentIntentId: string) => void;
   totalLabel: string;
 }
 
@@ -92,6 +102,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   clientSecret,
   onPaying,
   onError,
+  onConfirmed,
   totalLabel,
 }) => {
   const [stripeReady, setStripeReady] = useState<Stripe | null>(null);
@@ -126,7 +137,12 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
 
   return (
     <Elements stripe={stripeReady} options={{ clientSecret }}>
-      <PayButton onPaying={onPaying} onError={onError} totalLabel={totalLabel} />
+      <PayButton
+        onPaying={onPaying}
+        onError={onError}
+        onConfirmed={onConfirmed}
+        totalLabel={totalLabel}
+      />
     </Elements>
   );
 };

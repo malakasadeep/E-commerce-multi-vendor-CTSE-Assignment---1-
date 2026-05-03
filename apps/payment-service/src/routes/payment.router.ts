@@ -5,6 +5,7 @@ import {
   createPaymentIntent,
   handleWebhook,
   getPaymentStatus,
+  syncPayment,
   getAllPayments,
   processRefund,
 } from '../controller/payment.controller';
@@ -19,6 +20,7 @@ router.post(
   createPaymentIntent
 );
 router.get('/payments/:id', isAuthenticated, isUser, getPaymentStatus);
+router.post('/payments/:id/sync', isAuthenticated, isUser, syncPayment);
 
 // Admin routes
 router.get('/admin/payments', isAuthenticated, isAdmin, getAllPayments);

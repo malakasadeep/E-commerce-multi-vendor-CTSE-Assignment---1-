@@ -33,6 +33,19 @@ export interface PaymentStatusResponse {
   };
 }
 
+export const useSyncPayment = () => {
+  return useMutation({
+    mutationFn: async (paymentId: string): Promise<PaymentStatusResponse> => {
+      const res = await axiosInstance.post(
+        `/payment-api/payments/${paymentId}/sync`,
+        {},
+        { headers: { 'Cache-Control': 'no-cache' } }
+      );
+      return res.data;
+    },
+  });
+};
+
 export const usePaymentStatus = (paymentId: string | null, enabled = true) => {
   return useQuery<PaymentStatusResponse>({
     queryKey: ['payment-status', paymentId],

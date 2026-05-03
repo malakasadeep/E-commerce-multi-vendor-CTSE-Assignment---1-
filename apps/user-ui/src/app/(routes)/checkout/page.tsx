@@ -8,6 +8,7 @@ import { useCreateOrder } from '../../../hooks/useOrders';
 import {
   useCreatePaymentIntent,
   usePaymentStatus,
+  useSyncPayment,
 } from '../../../hooks/usePayment';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
@@ -30,6 +31,7 @@ export default function CheckoutPage() {
   const [cartTotal] = useAtom(cartTotalAtom);
   const createOrder = useCreateOrder();
   const createPayment = useCreatePaymentIntent();
+  const syncPayment = useSyncPayment();
 
   const [step, setStep] = useState<Step>('shipping');
   const [error, setError] = useState('');
@@ -63,6 +65,30 @@ export default function CheckoutPage() {
       setStep('payment');
     }
   }, [paymentStatus, step, setCart]);
+
+  // Fallback: if Stripe confirmed client-side but backend stays "pending" too long,
+  // succeed the UI anyway after 15s so the user isn't stuck forever.
+  const [stripeConfirmedAt, setStripeConfirmedAt] = useState<number | null>(null);
+  React.useEffect(() => {
+    if (step !== 'confirming' || !stripeConfirmedAt) return;
+    const timer = setTimeout(() => {
+      if (step === 'confirming') {
+        setCart([]);
+        setStep('success');
+      }
+    }, 15000);
+    return () => clearTimeout(timer);
+  }, [step, stripeConfirmedAt, setCart]);
+
+  const handleStripeConfirmed = async () => {
+    setStripeConfirmedAt(Date.now());
+    if (!paymentId) return;
+    try {
+      await syncPayment.mutateAsync(paymentId);
+    } catch (e) {
+      // ignore — polling + 15s fallback will handle it
+    }
+  };
 
   if (!userLoading && !user) {
     router.replace('/login');
@@ -287,6 +313,7 @@ export default function CheckoutPage() {
                   setError(msg);
                   setStep('payment');
                 }}
+                onConfirmed={handleStripeConfirmed}
               />
             </div>
           )}
