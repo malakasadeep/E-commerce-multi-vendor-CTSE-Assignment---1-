@@ -5,6 +5,7 @@ import {
   placeOrder,
   getUserOrders,
   getOrderDetail,
+  confirmReceived,
   getSellerOrders,
   updateOrderItemStatus,
   getAllOrders,
@@ -21,6 +22,12 @@ const router: Router = express.Router();
 router.post('/orders', isAuthenticated, isUser, placeOrder);
 router.get('/orders', isAuthenticated, isUser, getUserOrders);
 router.get('/orders/:id', isAuthenticated, isUser, getOrderDetail);
+router.post(
+  '/orders/:id/confirm-received',
+  isAuthenticated,
+  isUser,
+  confirmReceived
+);
 
 // Seller routes
 router.get('/seller/orders', isAuthenticated, isSeller, getSellerOrders);

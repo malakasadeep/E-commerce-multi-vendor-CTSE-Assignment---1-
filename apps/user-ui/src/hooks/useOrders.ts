@@ -40,3 +40,19 @@ export const useOrderDetail = (id: string) => {
     staleTime: 1 * 60 * 1000,
   });
 };
+
+export const useConfirmReceived = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (orderId: string) => {
+      const res = await axiosInstance.post(
+        `/order-api/orders/${orderId}/confirm-received`
+      );
+      return res.data;
+    },
+    onSuccess: (_, orderId) => {
+      queryClient.invalidateQueries({ queryKey: ['user-order', orderId] });
+      queryClient.invalidateQueries({ queryKey: ['user-orders'] });
+    },
+  });
+};

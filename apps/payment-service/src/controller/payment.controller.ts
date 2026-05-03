@@ -123,38 +123,45 @@ export const handleWebhook = async (
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         console.log(`Payment succeeded: ${paymentIntent.id}`);
 
-        // Update payment status
-        const payment = await prisma.payment.update({
-          where: { stripePaymentId: paymentIntent.id },
+        // Atomic flip — skip if polling-sync already processed it
+        const updatedCount = await prisma.payment.updateMany({
+          where: { stripePaymentId: paymentIntent.id, status: 'pending' },
           data: { status: 'succeeded' },
         });
 
-        // Update order status to confirmed
-        const order = await prisma.order.findFirst({
-          where: { paymentId: payment.id },
+        if (updatedCount.count === 0) {
+          console.log(
+            `[webhook] Payment ${paymentIntent.id} already processed, skipping side effects`
+          );
+          break;
+        }
+
+        const payment = await prisma.payment.findUnique({
+          where: { stripePaymentId: paymentIntent.id },
         });
+        const order = payment
+          ? await prisma.order.findFirst({ where: { paymentId: payment.id } })
+          : null;
 
         if (order) {
           await prisma.order.update({
             where: { id: order.id },
             data: { status: 'confirmed' },
           });
-
-          // Update all order items to confirmed
           await prisma.orderItem.updateMany({
             where: { orderId: order.id },
             data: { status: 'confirmed' },
           });
+          await decrementStockForOrder(order.id);
         }
 
         publishPaymentEvent(PAYMENT_TOPICS.PAYMENT_SUCCEEDED, {
-          id: payment.id,
+          id: payment?.id,
           orderId: order?.id,
           stripePaymentId: paymentIntent.id,
           amount: paymentIntent.amount / 100,
         });
 
-        // Transfer funds to sellers
         if (order) {
           await transferToSellers(order.id);
         }
@@ -185,6 +192,37 @@ export const handleWebhook = async (
     return res.status(500).json({ error: 'Webhook processing failed' });
   }
 };
+
+// Decrement product stock for each line item in the order.
+// Caller MUST ensure this runs at most once per order (e.g. guarded by an
+// atomic payment-status flip from "pending" to "succeeded").
+async function decrementStockForOrder(orderId: string) {
+  try {
+    const orderItems = await prisma.orderItem.findMany({
+      where: { orderId },
+      select: { productId: true, quantity: true },
+    });
+
+    for (const item of orderItems) {
+      try {
+        await prisma.product.update({
+          where: { id: item.productId },
+          data: { stock: { decrement: item.quantity } },
+        });
+        console.log(
+          `[stock] Decremented ${item.quantity} from product ${item.productId} for order ${orderId}`
+        );
+      } catch (err) {
+        console.error(
+          `[stock] Failed to decrement stock for product ${item.productId}:`,
+          err
+        );
+      }
+    }
+  } catch (error) {
+    console.error('[stock] decrementStockForOrder failed:', error);
+  }
+}
 
 // Transfer seller amounts to their Stripe connected accounts
 async function transferToSellers(orderId: string) {
@@ -314,6 +352,7 @@ export const getPaymentStatus = async (
               where: { orderId: order.id },
               data: { status: 'confirmed' },
             });
+            await decrementStockForOrder(order.id);
             try {
               publishPaymentEvent(PAYMENT_TOPICS.PAYMENT_SUCCEEDED, {
                 id,
@@ -432,6 +471,7 @@ export const syncPayment = async (
             where: { orderId: order.id },
             data: { status: 'confirmed' },
           });
+          await decrementStockForOrder(order.id);
           try {
             publishPaymentEvent(PAYMENT_TOPICS.PAYMENT_SUCCEEDED, {
               id,

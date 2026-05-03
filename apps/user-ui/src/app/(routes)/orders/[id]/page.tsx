@@ -1,15 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useOrderDetail } from '../../../../hooks/useOrders';
+import {
+  useOrderDetail,
+  useConfirmReceived,
+} from '../../../../hooks/useOrders';
 import { useOrderReviews } from '../../../../hooks/useReviews';
 import { Button } from '../../../../components/ui/button';
 import { Badge } from '../../../../components/ui/badge';
 import { Skeleton } from '../../../../components/ui/skeleton';
 import { PayUnpaidOrder } from '../../../../components/checkout/PayUnpaidOrder';
 import { OrderReviewForm } from '../../../../components/review/OrderReviewForm';
+import { ProductReviewModal } from '../../../../components/review/ProductReviewModal';
 import {
   ArrowLeft,
   Package,
@@ -20,6 +24,8 @@ import {
   Truck,
   XCircle,
   Star,
+  Loader2,
+  PackageCheck,
 } from 'lucide-react';
 
 const STATUS_COLORS: Record<string, string> = {
@@ -46,7 +52,43 @@ export default function OrderDetailPage() {
   const { data, isLoading } = useOrderDetail(id);
   const order = data?.order;
   const isDelivered = order?.status === 'delivered';
+  const isShipped = order?.status === 'shipped';
   const { data: reviewData } = useOrderReviews(id, isDelivered);
+  const confirmReceived = useConfirmReceived();
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [confirmError, setConfirmError] = useState('');
+
+  const handleConfirmReceived = async () => {
+    setConfirmError('');
+    try {
+      await confirmReceived.mutateAsync(id);
+      setShowReviewModal(true);
+    } catch (err: any) {
+      setConfirmError(
+        err?.response?.data?.message || 'Failed to confirm. Please try again.'
+      );
+    }
+  };
+
+  // Build unique product list for the review modal (one form per product)
+  const reviewableProducts: {
+    productId: string;
+    productName: string;
+    productImage: string | null;
+  }[] = [];
+  if (order) {
+    const seen = new Set<string>();
+    for (const item of (order.items as any[]) || []) {
+      if (seen.has(item.productId)) continue;
+      seen.add(item.productId);
+      reviewableProducts.push({
+        productId: item.productId,
+        productName: item.productName,
+        productImage:
+          item.product?.images?.[0]?.url || item.productImage || null,
+      });
+    }
+  }
 
   if (isLoading) {
     return (
@@ -190,6 +232,62 @@ export default function OrderDetailPage() {
           </div>
         </div>
       )}
+
+      {isShipped && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-6">
+          <div className="flex items-start gap-3">
+            <Truck className="h-6 w-6 text-blue-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="font-medium text-blue-900 mb-1">
+                Has your order arrived?
+              </p>
+              <p className="text-sm text-blue-700 mb-4">
+                Confirm receipt so we can mark this order as delivered. You'll
+                also be able to review the products you bought.
+              </p>
+              {confirmError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-md text-sm mb-3">
+                  {confirmError}
+                </div>
+              )}
+              <Button
+                onClick={handleConfirmReceived}
+                disabled={confirmReceived.isPending}
+              >
+                {confirmReceived.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Confirming...
+                  </>
+                ) : (
+                  <>
+                    <PackageCheck className="h-4 w-4 mr-2" />
+                    Confirm as received
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isDelivered && reviewableProducts.length > 0 && (
+        <div className="mb-6">
+          <Button
+            variant="outline"
+            onClick={() => setShowReviewModal(true)}
+          >
+            <Star className="h-4 w-4 mr-2" />
+            Review your products
+          </Button>
+        </div>
+      )}
+
+      <ProductReviewModal
+        open={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        products={reviewableProducts}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div className="bg-white rounded-xl border p-5">

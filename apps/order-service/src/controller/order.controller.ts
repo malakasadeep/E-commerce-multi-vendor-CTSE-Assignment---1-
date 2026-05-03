@@ -117,8 +117,9 @@ export const placeOrder = async (
       },
     });
 
-    // Stock is decremented later, when payment.succeeded is received via Kafka.
-    // This avoids inventory drift when a user abandons the Stripe step.
+    // Stock is decremented by payment-service when payment flips to "succeeded"
+    // (atomically guarded so it runs at most once per order). This avoids
+    // inventory drift when a user abandons the Stripe step.
 
     // Publish Kafka event
     publishOrderEvent(ORDER_TOPICS.ORDER_PLACED, {
@@ -211,6 +212,71 @@ export const getOrderDetail = async (
     }
 
     return res.status(200).json({ success: true, order });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// User: Confirm order as received (shipped → delivered)
+export const confirmReceived = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+    const { id } = req.params;
+
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: { items: true },
+    });
+
+    if (!order) return next(new NotFoundError('Order not found'));
+    if (order.userId !== user.id)
+      return next(new ForbiddenError('You can only confirm your own orders'));
+    if (order.status !== 'shipped')
+      return next(
+        new ValidationError(
+          `Cannot confirm order in status "${order.status}". The order must be shipped first.`
+        )
+      );
+
+    const updated = await prisma.order.update({
+      where: { id },
+      data: { status: 'delivered' },
+    });
+
+    await prisma.orderItem.updateMany({
+      where: { orderId: id },
+      data: { status: 'delivered' },
+    });
+
+    // Increment sold_out counter on each product
+    for (const item of order.items) {
+      try {
+        await prisma.product.update({
+          where: { id: item.productId },
+          data: { sold_out: { increment: item.quantity } },
+        });
+      } catch (err) {
+        console.error(
+          `[confirmReceived] Failed to increment sold_out for product ${item.productId}:`,
+          err
+        );
+      }
+    }
+
+    publishOrderEvent(ORDER_TOPICS.ORDER_DELIVERED, {
+      id: order.id,
+      orderNumber: order.orderNumber,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Order confirmed as received',
+      order: updated,
+    });
   } catch (error) {
     return next(error);
   }
