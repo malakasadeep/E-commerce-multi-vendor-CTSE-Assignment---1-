@@ -44,7 +44,7 @@ function HeaderBottom() {
         <div className="relative">
           <button
             onClick={() => setShow(!show)}
-            className="flex items-center gap-2 px-4 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-lg text-white text-sm font-medium transition-all duration-200"
+            className="flex items-center gap-2 px-4 h-10 bg-gradient-to-r from-red-600 to-red-600 hover:from-red-700 hover:to-indigo-700 rounded-lg text-white text-sm font-medium transition-all duration-200"
           >
             <LayoutGrid className="h-4 w-4" />
             <span>Categories</span>
